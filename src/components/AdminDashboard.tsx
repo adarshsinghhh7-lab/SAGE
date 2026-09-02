@@ -27,7 +27,6 @@ import {
   FileSpreadsheet,
   RotateCcw,
   Crown,
-  UserCheck,
   Zap,
   Send
 } from 'lucide-react';
@@ -112,6 +111,42 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     };
   }, [activeRole]);
 
+  // For resolved complaints missing a stored `resolvedAt`, derive the
+  // resolution timestamp from the immutable `statusUpdates` ledger so the
+  // average resolution time below is always computed from real Firestore
+  // records — never from fabricated/padded values.
+  const [resolutionLedgerTs, setResolutionLedgerTs] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const missing = complaints
+        .filter((c) => (c.status || '').toLowerCase() === 'resolved' && !c.resolvedAt)
+        .slice(0, 10);
+      if (missing.length === 0) return;
+
+      const found: Record<string, string> = {};
+      await Promise.all(
+        missing.map(async (c) => {
+          const id = c.complaintId || c.id || '';
+          try {
+            const updates = await ApiService.getStatusUpdates(id);
+            const resolutionUpdate = [...updates]
+              .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+              .find((u) => (u.newStatus || '').toLowerCase() === 'resolved');
+            if (resolutionUpdate) found[id] = resolutionUpdate.timestamp;
+          } catch {
+            // ignore individual failures
+          }
+        })
+      );
+      if (!cancelled) setResolutionLedgerTs((prev) => ({ ...prev, ...found }));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [complaints]);
+
   // 1. Unique Hostels / Locations
   const uniqueLocations = useMemo(() => {
     const locations = new Set<string>();
@@ -182,26 +217,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     })).sort((a, b) => b.complaints - a.complaints);
   }, [complaints]);
 
-  // 4. Analytics: Average Resolution Time calculation
+  // 4. Analytics: Average Resolution Time calculation (real data only)
   const resolutionStats = useMemo(() => {
     const resolvedItems = complaints.filter((c) => (c.status || '').toLowerCase() === 'resolved');
-    
+
     let totalHours = 0;
     let resolvedCount = 0;
 
     resolvedItems.forEach((c) => {
-      if (c.resolvedAt) {
-        const diffMs = new Date(c.resolvedAt).getTime() - new Date(c.createdAt).getTime();
-        const diffHours = Math.max(1, Math.round(diffMs / (1000 * 60 * 60)));
-        totalHours += diffHours;
-        resolvedCount++;
-      } else {
-        totalHours += 22;
-        resolvedCount++;
+      const id = c.complaintId || c.id || '';
+      const resolvedAt = c.resolvedAt || resolutionLedgerTs[id];
+      const createdAt = c.createdAt;
+
+      if (resolvedAt && createdAt) {
+        const diffMs = new Date(resolvedAt).getTime() - new Date(createdAt).getTime();
+        if (Number.isFinite(diffMs) && diffMs > 0) {
+          totalHours += diffMs / (1000 * 60 * 60);
+          resolvedCount++;
+        }
       }
+      // Complaints without a measured resolution timestamp are excluded from
+      // the average rather than padded with fabricated values.
     });
 
-    const avgHours = resolvedCount > 0 ? (totalHours / resolvedCount).toFixed(1) : '18.5';
+    const avgHours =
+      resolvedCount > 0 ? (totalHours / resolvedCount).toFixed(1) : null;
     const resolutionRate = complaints.length > 0
       ? Math.round((resolvedItems.length / complaints.length) * 100)
       : 0;
@@ -211,7 +251,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       avgHours,
       resolutionRate,
     };
-  }, [complaints]);
+  }, [complaints, resolutionLedgerTs]);
 
   // 5. Total Counts by Status
   const statusStats = useMemo(() => {
@@ -400,25 +440,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       </div>
 
-      {/* Role Notice Banner */}
-      {activeRole === 'student' && (
-        <div className="mb-6 bg-amber-50 border-2 border-amber-600 p-4 shadow-[3px_3px_0px_0px_#d97706] flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <UserCheck className="w-5 h-5 text-amber-800 shrink-0" />
-            <div className="text-xs font-mono text-amber-950">
-              <strong>Viewing in Student Read-Only Mode:</strong> Switch to <strong>Department Admin</strong> or <strong>Head Admin</strong> to test disposition updates, resolution logs, and custom role claims.
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={openAuthModal}
-            className="px-4 py-1.5 bg-amber-800 text-white font-mono text-xs font-bold uppercase border border-amber-950 hover:bg-amber-900 cursor-pointer"
-          >
-            Elevate to Admin
-          </button>
-        </div>
-      )}
-
+      {/* Role Notice Banner — Admin-only console (students are gated upstream) */}
       {activeRole === 'head_admin' && (
         <div className="mb-6 bg-red-50 border-2 border-red-700 p-4 shadow-[3px_3px_0px_0px_#b91c1c] flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
@@ -476,8 +498,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               Avg Resolution Time
             </div>
             <div className="text-3xl sm:text-4xl font-mono font-black text-[#1C1C1C] mb-2 flex items-baseline gap-1.5">
-              <span>{resolutionStats.avgHours}</span>
-              <span className="text-sm font-sans font-bold text-[#1C1C1C]/60">hours</span>
+              <span>{resolutionStats.avgHours ?? '—'}</span>
+              {resolutionStats.avgHours && (
+                <span className="text-sm font-sans font-bold text-[#1C1C1C]/60">hours</span>
+              )}
             </div>
             <div className="flex items-center justify-between text-[11px] font-mono border-t border-[#1C1C1C]/15 pt-2 text-emerald-800">
               <span>Resolved: <strong>{resolutionStats.totalResolved}</strong></span>

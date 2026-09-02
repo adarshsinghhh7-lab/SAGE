@@ -9,7 +9,7 @@ import {
   where, 
   orderBy, 
   increment,
-  addDoc,
+  writeBatch,
   onSnapshot,
   Unsubscribe
 } from 'firebase/firestore';
@@ -638,36 +638,70 @@ export class ApiService {
   }
 
   /**
-   * Update complaint status (creates immutable record in statusUpdates collection)
+   * Update complaint status.
+   *
+   * Live Firestore path: reads the current complaint document to determine the
+   * TRUE `oldStatus`, then atomically updates the `complaints/{id}` document
+   * AND appends a NEW immutable document to the `statusUpdates` collection on
+   * every transition (via writeBatch). No-op transitions (same status) are
+   * skipped so the ledger only contains real changes.
    */
   static async updateStatus(
     complaintId: string,
     status: ComplaintStatus,
     resolutionNotes: string,
-    activeRole: UserRole = 'admin'
+    activeRole: UserRole = 'admin',
+    adminId?: string
   ): Promise<Complaint | null> {
     const normStatus = status.toLowerCase().replace(' ', '_') as ComplaintStatus;
     const nowIso = new Date().toISOString();
+    const updatedById = adminId || activeRole;
 
     // 1. Live Firestore
     if (isFirebaseConfigured && firestoreDb) {
       try {
-        const isNewlyResolved = normStatus === 'resolved';
-        const updatePayload: any = { status: normStatus };
-        if (resolutionNotes) updatePayload.resolutionNotes = resolutionNotes;
-        if (isNewlyResolved) updatePayload.resolvedAt = nowIso;
+        const complaintRef = doc(firestoreDb, 'complaints', complaintId);
+        const currentSnap = await getDoc(complaintRef);
 
-        await updateDoc(doc(firestoreDb, 'complaints', complaintId), updatePayload);
+        if (currentSnap.exists()) {
+          const currentRaw = currentSnap.data() as any;
+          const oldStatus = (currentRaw.status || 'submitted').toLowerCase().replace(' ', '_');
 
-        // Add to statusUpdates collection
-        await addDoc(collection(firestoreDb, 'statusUpdates'), {
-          updateId: `UPD_${Date.now()}`,
-          complaintId,
-          updatedBy: activeRole,
-          oldStatus: 'unknown',
-          newStatus: normStatus,
-          timestamp: nowIso,
-        } as StatusUpdateDoc);
+          const isStatusChange = oldStatus !== normStatus;
+          const isNewlyResolved = normStatus === 'resolved' && oldStatus !== 'resolved';
+
+          const updatePayload: any = {};
+          if (isStatusChange) updatePayload.status = normStatus;
+          if (resolutionNotes) updatePayload.resolutionNotes = resolutionNotes;
+          if (isNewlyResolved) updatePayload.resolvedAt = nowIso;
+
+          // Pure no-op (same status, no new notes): nothing to commit, and no
+          // statusUpdates row is created so the ledger only records real changes.
+          if (Object.keys(updatePayload).length === 0) {
+            return normalizeComplaintData({ ...currentRaw, complaintId });
+          }
+
+          const updateId = `STATUS_UPD_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+          const statusUpdateDoc: StatusUpdateDoc = {
+            updateId,
+            complaintId,
+            updatedBy: updatedById,
+            oldStatus,
+            newStatus: normStatus,
+            timestamp: nowIso,
+          };
+
+          // Atomically commit the complaint change; a status transition also
+          // appends an immutable ledger entry in the same writeBatch.
+          const batch = writeBatch(firestoreDb);
+          batch.update(complaintRef, updatePayload);
+          if (isStatusChange) {
+            batch.set(doc(firestoreDb, 'statusUpdates', updateId), statusUpdateDoc);
+          }
+          await batch.commit();
+
+          return normalizeComplaintData({ ...currentRaw, ...updatePayload, complaintId }, false);
+        }
       } catch (err) {
         console.warn('[Firestore updateStatus]', err);
       }

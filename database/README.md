@@ -59,7 +59,15 @@ Audited emergency identity reveal records accessible exclusively to Head Admin.
 
 1. **Strict Identity Decoupling**: The rules reject any complaint document containing `studentName`, `studentEmail`, `studentId`, or plain `userId`.
 2. **Access Hierarchy**:
-   - `student`: Can lodge complaints, view public ledger, and upvote. Cannot access `revealLogs` or decrypted identities.
-   - `admin`: Can update grievance status (`under_review`, `resolved`) and create `statusUpdates`. Cannot access reveal functions.
-   - `head_admin`: Can trigger identity decryption and view `revealLogs`.
+   - `student`: Can lodge complaints, view public ledger, and upvote. **Cannot** open the Admin Dashboard (blocked at the router) and cannot perform any disposition write in Firestore.
+   - `admin`: Can open the Admin Dashboard, update grievance status (`under_review`, `resolved`), and create `statusUpdates`. Cannot access reveal functions.
+   - `head_admin`: Everything an `admin` can do, plus identity decryption triggers and `revealLogs` access.
 3. **Immutable Audits**: `revealLogs`, `statusUpdates`, and `upvotes` have `allow update, delete: if false;` preventing tampering or deletion.
+4. **Admin Dashboard Enforcement (dual-layer)**:
+   - **UI routing**: The `admin` view only renders the dashboard for `admin` / `head_admin` roles. Students attempting to open it are redirected to an access-denied screen with no admin data and no identity-reveal action.
+   - **Firestore rules**:
+     - Complaints `update` Case B (`status` / `resolutionNotes` / `resolvedAt` / `urgencyScore`) requires `isAdmin()` and can only affect those allowed keys; identity fields are permanently rejected by the rules.
+     - `statusUpdates` `create` requires `isAdmin()` and validates the full ledger payload (allowed transitions, `updatedBy` admin UID, ISO `timestamp`).
+     - `settings` (auto-escalation engine) is readable/writable only by admin roles.
+     - `revealLogs` remains Head-Admin-only and immutable.
+   - The Admin Dashboard displays **no student identity information** and exposes **no reveal/decrypt button** in the UI.

@@ -69,12 +69,25 @@ service cloud.firestore {
                     && !('userId' in request.resource.data);
 
       // Updating complaint
+      // Case A: Community upvoting (increments upvoteCount only)
+      // Case B: Admin / Head Admin updating grievance disposition (status,
+      //         resolutionNotes, resolvedAt, urgencyScore). Enforces that the
+      //         Admin Dashboard's status transitions are server-restricted to
+      //         admin personnel and that NO student identity field can ever be
+      //         introduced into the document.
       allow update: if (
-        // Case A: Community upvoting (increments upvoteCount only)
+        // Case A
         (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['upvoteCount', 'upvotes']))
         ||
-        // Case B: Admin / Head Admin updating status & resolution notes
-        (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasAny(['status', 'resolutionNotes', 'resolvedAt', 'urgencyScore']))
+        // Case B
+        (isAdmin()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'resolutionNotes', 'resolvedAt', 'urgencyScore'])
+          && request.resource.data.status in ['submitted', 'under_review', 'resolved']
+          && !('studentEmail' in request.resource.data)
+          && !('studentName' in request.resource.data)
+          && !('studentId' in request.resource.data)
+          && !('userId' in request.resource.data)
+          && !('plainIdentity' in request.resource.data))
       );
 
       // Deleting complaint (Head Admin only)
@@ -104,7 +117,12 @@ service cloud.firestore {
     // -------------------------------------------------------------------------
     match /statusUpdates/{updateId} {
       allow read: if true;
-      allow create: if isAdmin() && request.resource.data.keys().hasAll(['updateId', 'complaintId', 'updatedBy', 'oldStatus', 'newStatus', 'timestamp']);
+      allow create: if isAdmin()
+                    && request.resource.data.keys().hasAll(['updateId', 'complaintId', 'updatedBy', 'oldStatus', 'newStatus', 'timestamp'])
+                    && request.resource.data.oldStatus in ['submitted', 'under_review', 'resolved']
+                    && request.resource.data.newStatus in ['submitted', 'under_review', 'resolved']
+                    && request.resource.data.updatedBy is string
+                    && request.resource.data.timestamp is string;
       allow update, delete: if false; // Immutable status update ledger
     }
 
@@ -121,6 +139,21 @@ service cloud.firestore {
                     && request.resource.data.reason.size() >= 10;
       allow update: if false; // STRICT IMMUTABILITY: Never editable
       allow delete: if false; // STRICT IMMUTABILITY: Never deletable
+    }
+
+    // -------------------------------------------------------------------------
+    // 6. settings Collection (Auto-Escalation Engine)
+    // - Threshold tuning (escalationSettings) is an Admin Dashboard control.
+    // - Restricted to Admin / Head Admin: students cannot read or modify the
+    //   auto-escalation engine configuration.
+    // -------------------------------------------------------------------------
+    match /settings/{settingsId} {
+      allow read, update: if isAdmin();
+      allow create: if isAdmin()
+                    && request.resource.data.keys().hasAll(['settingsId', 'threshold', 'defaultThreshold', 'updatedBy', 'updatedAt'])
+                    && request.resource.data.threshold is int
+                    && request.resource.data.updatedBy is string;
+      allow delete: if false; // Escalation config is never removed
     }
 
   }

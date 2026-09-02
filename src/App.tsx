@@ -14,9 +14,12 @@ import { ConnectionBanner } from './components/ConnectionBanner';
 import { AuthModal } from './components/AuthModal';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ApiService, normalizeComplaintData } from './services/api';
+import { isFirebaseConfigured } from './firebase/config';
+import { AdminAccessDenied } from './components/AdminAccessDenied';
 
 function MainApp() {
-  const { activeRole } = useAuth();
+  const { activeRole, user } = useAuth();
+  const isAdminRole = activeRole === 'admin' || activeRole === 'head_admin';
   const [complaints, setComplaints] = useState<Complaint[]>(() => INITIAL_COMPLAINTS.map((c) => normalizeComplaintData(c)));
   const [currentView, setCurrentView] = useState<PageView>('landing');
   const [latestComplaint, setLatestComplaint] = useState<Complaint | null>(null);
@@ -34,17 +37,31 @@ function MainApp() {
     title: '',
   });
 
-  // Fetch complaints from live Firestore / Express API on mount
+  // Live complaints reads from the Firestore `complaints` collection.
+  // When Firestore is configured we subscribe for real-time updates (public
+  // ledger + admin dashboard both render from live data). Otherwise we fall
+  // back to the Express API / locally cached ledger (sandbox mode).
   useEffect(() => {
-    async function loadData() {
-      try {
-        const data = await ApiService.getComplaints({}, activeRole);
-        setComplaints(data);
-      } catch {
-        setComplaints(INITIAL_COMPLAINTS.map((c) => normalizeComplaintData(c)));
-      }
+    let unsubscribe: (() => void) | undefined;
+
+    if (isFirebaseConfigured) {
+      unsubscribe = ApiService.subscribeToComplaints(
+        (list) => setComplaints(list),
+        undefined,
+        activeRole
+      );
+    } else {
+      (async () => {
+        try {
+          const data = await ApiService.getComplaints({}, activeRole);
+          if (data.length > 0) setComplaints(data);
+        } catch {
+          setComplaints(INITIAL_COMPLAINTS.map((c) => normalizeComplaintData(c)));
+        }
+      })();
     }
-    loadData();
+
+    return () => unsubscribe?.();
   }, [activeRole]);
 
   // Hash-based routing for public complaint pages: #/complaint/:id
@@ -144,7 +161,7 @@ function MainApp() {
     );
 
     try {
-      await ApiService.updateStatus(id, norm, resolutionNotes, activeRole);
+      await ApiService.updateStatus(id, norm, resolutionNotes, activeRole, user?.uid);
     } catch {
       // ignore
     }
@@ -273,11 +290,15 @@ function MainApp() {
         )}
 
         {currentView === 'admin' && (
-          <AdminDashboard
-            complaints={complaints}
-            onUpdateComplaint={handleAdminUpdateComplaint}
-            onOpenImage={handleOpenImage}
-          />
+          isAdminRole ? (
+            <AdminDashboard
+              complaints={complaints}
+              onUpdateComplaint={handleAdminUpdateComplaint}
+              onOpenImage={handleOpenImage}
+            />
+          ) : (
+            <AdminAccessDenied />
+          )
         )}
 
         {currentView === 'detail' && !activeComplaint && (
