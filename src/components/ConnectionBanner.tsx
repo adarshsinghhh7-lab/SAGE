@@ -38,7 +38,7 @@ export const ConnectionBanner: React.FC = () => {
   const isFirestoreLive = healthData?.firebase?.connected;
 
   return (
-    <div className="bg-[#1C1C1C] text-[#FAF9F6] border-b-2 border-[#1C1C1C] text-xs font-mono">
+    <div className="bg-slate-900 text-white border-b border-slate-200 text-xs font-mono">
       <div className="max-w-7xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-3">
         {/* Left: System Status Chips */}
         <div className="flex items-center gap-3 sm:gap-5 flex-wrap">
@@ -48,8 +48,8 @@ export const ConnectionBanner: React.FC = () => {
           </div>
 
           {/* Backend Status */}
-          <div className="flex items-center gap-1.5 text-stone-300">
-            <Server className="w-3.5 h-3.5 text-stone-400" />
+          <div className="flex items-center gap-1.5 text-slate-300">
+            <Server className="w-3.5 h-3.5 text-slate-400" />
             <span>Backend:</span>
             {isBackendConnected ? (
               <span className="text-emerald-400 font-bold flex items-center gap-1">
@@ -64,8 +64,8 @@ export const ConnectionBanner: React.FC = () => {
           </div>
 
           {/* Firestore Status */}
-          <div className="flex items-center gap-1.5 text-stone-300">
-            <Database className="w-3.5 h-3.5 text-stone-400" />
+          <div className="flex items-center gap-1.5 text-slate-300">
+            <Database className="w-3.5 h-3.5 text-slate-400" />
             <span>Database:</span>
             {isFirestoreLive ? (
               <span className="text-emerald-400 font-bold flex items-center gap-1">
@@ -81,8 +81,8 @@ export const ConnectionBanner: React.FC = () => {
           </div>
 
           {/* ML Urgency Classifier Status */}
-          <div className="hidden md:flex items-center gap-1.5 text-stone-300">
-            <Cpu className="w-3.5 h-3.5 text-stone-400" />
+          <div className="hidden md:flex items-center gap-1.5 text-slate-300">
+            <Cpu className="w-3.5 h-3.5 text-slate-400" />
             <span>ML Classifier:</span>
             <span className="text-emerald-400 font-bold">
               TF-IDF + Logistic Regression (Active)
@@ -94,14 +94,14 @@ export const ConnectionBanner: React.FC = () => {
         <div className="flex items-center gap-3 ml-auto">
           <div 
             onClick={openAuthModal}
-            className="flex items-center gap-1.5 bg-stone-800 hover:bg-stone-700 px-2.5 py-1 border border-stone-600 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 px-2.5 py-1 border border-slate-600 transition-colors cursor-pointer"
             title="Click to change Firebase Auth Role"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-stone-300 text-[10px] uppercase">Active Role:</span>
+            <span className="text-slate-300 text-[10px] uppercase">Active Role:</span>
             <span className={`font-bold uppercase text-[10px] px-1.5 py-0.2 ${
               activeRole === 'head_admin'
-                ? 'bg-red-700 text-white'
+                ? 'bg-indigo-600 text-white'
                 : activeRole === 'admin'
                 ? 'bg-amber-600 text-white'
                 : 'bg-emerald-800 text-white'
@@ -114,7 +114,7 @@ export const ConnectionBanner: React.FC = () => {
             type="button"
             onClick={checkConnection}
             disabled={isChecking}
-            className="p-1 text-stone-400 hover:text-white transition-colors cursor-pointer"
+            className="p-1 text-slate-400 hover:text-white transition-colors cursor-pointer"
             title="Refresh Connection Status"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isChecking ? 'animate-spin' : ''}`} />

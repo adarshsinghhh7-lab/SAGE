@@ -59,31 +59,31 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   ];
 
   return (
-    <div className="bg-[#FAF9F6] text-[#1C1C1C]">
+    <div className="bg-slate-50 text-slate-900">
       {/* ========================================================================= */}
       {/* 1. HERO SECTION */}
       {/* ========================================================================= */}
-      <section className="border-b-2 border-[#1C1C1C] py-12 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <section className="border-b border-slate-200 py-12 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Subtle background security grid indicator */}
-        <div className="absolute top-0 right-0 -z-0 opacity-5 pointer-events-none text-right pr-4 pt-4 font-mono text-[120px] font-black select-none leading-none">
+        <div className="absolute top-0 right-0 -z-0 opacity-5 pointer-events-none text-right pr-4 pt-4 font-mono text-[120px] font-bold select-none leading-none">
           SAGE
         </div>
 
         <div className="max-w-5xl mx-auto text-center relative z-10">
           {/* Trust Pill */}
-          <div className="inline-flex items-center gap-2 bg-[#1C1C1C] text-[#FAF9F6] px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider mb-6 shadow-[3px_3px_0px_0px_rgba(220,38,38,1)]">
+          <div className="inline-flex items-center gap-2 bg-slate-900 text-white px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider mb-6 shadow-md">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
             <span>Anonymous Campus Grievance & Escalation Protocol</span>
           </div>
 
           {/* Main Title */}
-          <h1 className="font-serif-editorial text-4xl sm:text-6xl lg:text-7xl font-black text-[#1C1C1C] tracking-tight leading-[1.08] mb-6">
+          <h1 className="font-sans text-4xl sm:text-6xl lg:text-7xl font-bold text-slate-900 tracking-tight leading-[1.08] mb-6">
             Fearless campus accountability.<br className="hidden sm:inline" />
-            <span className="italic font-serif font-normal text-red-700"> Without fear of retaliation.</span>
+            <span className="italic font-sans font-normal text-indigo-600"> Without fear of retaliation.</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="font-serif text-lg sm:text-xl text-[#1C1C1C]/85 max-w-3xl mx-auto leading-relaxed mb-10">
+          <p className="font-sans text-lg sm:text-xl text-slate-900/85 max-w-3xl mx-auto leading-relaxed mb-10">
             S.A.G.E. is a secure, anonymous reporting platform that empowers students to voice hostel, mess, hygiene, and safety concerns. Your identity remains protected, while community upvoting ensures urgent issues get the immediate administrative attention they deserve.
           </p>
 
@@ -93,7 +93,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               id="hero-submit-cta"
               type="button"
               onClick={() => onNavigate('submit')}
-              className="w-full sm:w-auto px-7 py-4 bg-[#1C1C1C] text-[#FAF9F6] hover:bg-red-700 text-sm font-mono font-bold uppercase tracking-wider border-2 border-[#1C1C1C] transition-all flex items-center justify-center gap-2.5 shadow-[4px_4px_0px_0px_#1C1C1C] hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer"
+              className="w-full sm:w-auto px-7 py-4 bg-slate-900 text-white hover:bg-indigo-600 text-sm font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg transition-all flex items-center justify-center gap-2.5 shadow-md hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Submit a Complaint</span>
@@ -103,28 +103,28 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               id="hero-browse-cta"
               type="button"
               onClick={() => onNavigate('feed')}
-              className="w-full sm:w-auto px-7 py-4 bg-[#FAF9F6] text-[#1C1C1C] hover:bg-stone-200 text-sm font-mono font-bold uppercase tracking-wider border-2 border-[#1C1C1C] transition-all flex items-center justify-center gap-2.5 shadow-[4px_4px_0px_0px_#1C1C1C] hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer"
+              className="w-full sm:w-auto px-7 py-4 bg-slate-50 text-slate-900 hover:bg-slate-200 text-sm font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg transition-all flex items-center justify-center gap-2.5 shadow-md hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer"
             >
               <LayoutList className="w-4 h-4" />
               <span>Browse Complaints</span>
-              <span className="text-xs bg-red-700 text-white px-2 py-0.5 font-mono font-bold">
+              <span className="text-xs bg-indigo-600 text-white px-2 py-0.5 font-mono font-bold">
                 {totalComplaintsCount}
               </span>
             </button>
           </div>
 
           {/* 3 Quick Confidence Highlights */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-[#1C1C1C]/15 text-xs font-mono text-[#1C1C1C]/80">
-            <div className="flex items-center justify-center gap-2 p-2 bg-stone-100/70 border border-[#1C1C1C]/20">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-slate-900/15 text-xs font-mono text-slate-900/80">
+            <div className="flex items-center justify-center gap-2 p-2 bg-slate-100/70 border border-slate-900/20">
               <EyeOff className="w-4 h-4 text-emerald-800 shrink-0" />
               <span>No Account or Sign-in Required</span>
             </div>
-            <div className="flex items-center justify-center gap-2 p-2 bg-stone-100/70 border border-[#1C1C1C]/20">
-              <Lock className="w-4 h-4 text-red-700 shrink-0" />
+            <div className="flex items-center justify-center gap-2 p-2 bg-slate-100/70 border border-slate-900/20">
+              <Lock className="w-4 h-4 text-indigo-600 shrink-0" />
               <span>Cryptographically Decoupled</span>
             </div>
-            <div className="flex items-center justify-center gap-2 p-2 bg-stone-100/70 border border-[#1C1C1C]/20">
-              <Activity className="w-4 h-4 text-[#1C1C1C] shrink-0" />
+            <div className="flex items-center justify-center gap-2 p-2 bg-slate-100/70 border border-slate-900/20">
+              <Activity className="w-4 h-4 text-slate-900 shrink-0" />
               <span>Real-Time Status Tracking</span>
             </div>
           </div>
@@ -134,74 +134,74 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       {/* 2. HOW ANONYMITY WORKS (CALM, TRUSTWORTHY PRIVACY PILLAR) */}
       {/* ========================================================================= */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b-2 border-[#1C1C1C] bg-white">
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-slate-200 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-14">
-            <div className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-red-700 mb-2">
+            <div className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-indigo-600 mb-2">
               <Lock className="w-4 h-4" />
               <span>Privacy & Security Architecture</span>
             </div>
-            <h2 className="font-serif-editorial text-3xl sm:text-5xl font-black text-[#1C1C1C] tracking-tight">
+            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-slate-900 tracking-tight">
               How Anonymity Works on S.A.G.E.
             </h2>
-            <p className="font-serif italic text-base sm:text-lg text-[#1C1C1C]/75 mt-3">
+            <p className="font-sans text-base sm:text-lg text-slate-900/75 mt-3">
               We built S.A.G.E. with a strict “safety-by-design” principle so that no student ever hesitates to report legitimate hazards or harassment.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Card 1: Default Zero-Knowledge */}
-            <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-6 shadow-[5px_5px_0px_0px_#1C1C1C] flex flex-col justify-between">
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-lg flex flex-col justify-between">
               <div>
-                <div className="w-10 h-10 bg-[#1C1C1C] text-white flex items-center justify-center font-mono font-bold text-sm mb-4 border border-[#1C1C1C]">
+                <div className="w-10 h-10 bg-slate-900 text-white flex items-center justify-center font-mono font-bold text-sm mb-4 border border-slate-300">
                   01
                 </div>
-                <h3 className="font-serif-editorial text-xl font-bold text-[#1C1C1C] mb-2">
+                <h3 className="font-sans text-xl font-bold text-slate-900 mb-2">
                   Encrypted & Hidden by Default
                 </h3>
-                <p className="text-xs sm:text-sm font-serif text-[#1C1C1C]/80 leading-relaxed">
+                <p className="text-xs sm:text-sm font-sans text-slate-900/80 leading-relaxed">
                   Your identity is never attached to your grievance record. You do not log in with university credentials, and our servers do not store your IP address or browser fingerprints with your report.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-[#1C1C1C]/15 flex items-center gap-2 text-xs font-mono font-bold text-emerald-800">
+              <div className="mt-6 pt-4 border-t border-slate-900/15 flex items-center gap-2 text-xs font-mono font-bold text-emerald-800">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Zero Identity Tracking</span>
               </div>
             </div>
 
             {/* Card 2: Controlled Safety Safeguard */}
-            <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-6 shadow-[5px_5px_0px_0px_#1C1C1C] flex flex-col justify-between">
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-lg flex flex-col justify-between">
               <div>
-                <div className="w-10 h-10 bg-red-700 text-white flex items-center justify-center font-mono font-bold text-sm mb-4 border border-[#1C1C1C]">
+                <div className="w-10 h-10 bg-indigo-600 text-white flex items-center justify-center font-mono font-bold text-sm mb-4 border border-slate-300">
                   02
                 </div>
-                <h3 className="font-serif-editorial text-xl font-bold text-[#1C1C1C] mb-2">
+                <h3 className="font-sans text-xl font-bold text-slate-900 mb-2">
                   Audited Misuse Safeguards
                 </h3>
-                <p className="text-xs sm:text-sm font-serif text-[#1C1C1C]/80 leading-relaxed">
+                <p className="text-xs sm:text-sm font-sans text-slate-900/80 leading-relaxed">
                   To prevent abuse, a reveal option exists strictly for verified extreme criminal offenses (e.g. violent threats or extortion). This requires formal dual-authorization from proctorial and legal boards.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-[#1C1C1C]/15 flex items-center gap-2 text-xs font-mono font-bold text-red-700">
+              <div className="mt-6 pt-4 border-t border-slate-900/15 flex items-center gap-2 text-xs font-mono font-bold text-indigo-600">
                 <Shield className="w-4 h-4" />
                 <span>Every Query Publicly Audited</span>
               </div>
             </div>
 
             {/* Card 3: Transparent Escalation */}
-            <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-6 shadow-[5px_5px_0px_0px_#1C1C1C] flex flex-col justify-between">
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-lg flex flex-col justify-between">
               <div>
-                <div className="w-10 h-10 bg-[#1C1C1C] text-white flex items-center justify-center font-mono font-bold text-sm mb-4 border border-[#1C1C1C]">
+                <div className="w-10 h-10 bg-slate-900 text-white flex items-center justify-center font-mono font-bold text-sm mb-4 border border-slate-300">
                   03
                 </div>
-                <h3 className="font-serif-editorial text-xl font-bold text-[#1C1C1C] mb-2">
+                <h3 className="font-sans text-xl font-bold text-slate-900 mb-2">
                   Anti-Retaliation Immunity
                 </h3>
-                <p className="text-xs sm:text-sm font-serif text-[#1C1C1C]/80 leading-relaxed">
+                <p className="text-xs sm:text-sm font-sans text-slate-900/80 leading-relaxed">
                   Because wardens, maintenance contractors, and faculty cannot access identifying details, you are shielded from academic penalties, hostel harassment, or disciplinary retribution.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-[#1C1C1C]/15 flex items-center gap-2 text-xs font-mono font-bold text-[#1C1C1C]">
+              <div className="mt-6 pt-4 border-t border-slate-900/15 flex items-center gap-2 text-xs font-mono font-bold text-slate-900">
                 <CheckCircle2 className="w-4 h-4 text-emerald-800" />
                 <span>Protected Student Expression</span>
               </div>
@@ -213,62 +213,62 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       {/* 3. 3-STEP ESCALATION LIFECYCLE */}
       {/* ========================================================================= */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b-2 border-[#1C1C1C] bg-[#FAF9F6]">
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-slate-200 bg-slate-50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-red-700 block mb-2">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-indigo-600 block mb-2">
               Simple 3-Step Lifecycle
             </span>
-            <h2 className="font-serif-editorial text-3xl sm:text-5xl font-black text-[#1C1C1C] tracking-tight">
+            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-slate-900 tracking-tight">
               From Grievance to Remediation
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
             {/* Step 1 */}
-            <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-6 shadow-[4px_4px_0px_0px_#1C1C1C]">
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-md">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-mono font-bold text-xs bg-[#1C1C1C] text-white px-2 py-0.5">
+                <span className="font-mono font-bold text-xs bg-slate-900 text-white px-2 py-0.5">
                   STEP 01
                 </span>
-                <FileText className="w-5 h-5 text-red-700" />
+                <FileText className="w-5 h-5 text-indigo-600" />
               </div>
-              <h3 className="font-serif-editorial text-lg font-bold text-[#1C1C1C] mb-2">
+              <h3 className="font-sans text-lg font-bold text-slate-900 mb-2">
                 1. Submit Anonymously
               </h3>
-              <p className="text-xs font-serif text-[#1C1C1C]/80 leading-relaxed">
+              <p className="text-xs font-sans text-slate-900/80 leading-relaxed">
                 Draft your complaint, select the category (Hostel, Mess, Safety, WiFi, Hygiene), specify location, and optionally attach photographic evidence.
               </p>
             </div>
 
             {/* Step 2 */}
-            <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-6 shadow-[4px_4px_0px_0px_#1C1C1C]">
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-md">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-mono font-bold text-xs bg-[#1C1C1C] text-white px-2 py-0.5">
+                <span className="font-mono font-bold text-xs bg-slate-900 text-white px-2 py-0.5">
                   STEP 02
                 </span>
                 <Vote className="w-5 h-5 text-emerald-800" />
               </div>
-              <h3 className="font-serif-editorial text-lg font-bold text-[#1C1C1C] mb-2">
+              <h3 className="font-sans text-lg font-bold text-slate-900 mb-2">
                 2. Community Upvotes
               </h3>
-              <p className="text-xs font-serif text-[#1C1C1C]/80 leading-relaxed">
+              <p className="text-xs font-sans text-slate-900/80 leading-relaxed">
                 Your report appears on the public ledger. Fellow residents endorse the issue to elevate urgency on administrative dashboards.
               </p>
             </div>
 
             {/* Step 3 */}
-            <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-6 shadow-[4px_4px_0px_0px_#1C1C1C]">
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-md">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-mono font-bold text-xs bg-[#1C1C1C] text-white px-2 py-0.5">
+                <span className="font-mono font-bold text-xs bg-slate-900 text-white px-2 py-0.5">
                   STEP 03
                 </span>
-                <CheckCircle2 className="w-5 h-5 text-red-700" />
+                <CheckCircle2 className="w-5 h-5 text-indigo-600" />
               </div>
-              <h3 className="font-serif-editorial text-lg font-bold text-[#1C1C1C] mb-2">
+              <h3 className="font-sans text-lg font-bold text-slate-900 mb-2">
                 3. Action & Public Notes
               </h3>
-              <p className="text-xs font-serif text-[#1C1C1C]/80 leading-relaxed">
+              <p className="text-xs font-sans text-slate-900/80 leading-relaxed">
                 Departments review, dispatch technicians, and log official resolution remarks with timestamps visible to the entire campus.
               </p>
             </div>
@@ -279,16 +279,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       {/* 4. FREQUENTLY ASKED QUESTIONS (FAQ SECTION) */}
       {/* ========================================================================= */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b-2 border-[#1C1C1C] bg-white">
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-slate-200 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-red-700 block mb-2">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-indigo-600 block mb-2">
               Clear Answers
             </span>
-            <h2 className="font-serif-editorial text-3xl sm:text-5xl font-black text-[#1C1C1C] tracking-tight">
+            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-slate-900 tracking-tight">
               Frequently Asked Questions
             </h2>
-            <p className="font-serif italic text-sm sm:text-base text-[#1C1C1C]/75 mt-2">
+            <p className="font-sans text-sm sm:text-base text-slate-900/75 mt-2">
               Everything you need to know about your rights, privacy, and how S.A.G.E. protects you.
             </p>
           </div>
@@ -299,27 +299,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               return (
                 <div
                   key={idx}
-                  className="border-2 border-[#1C1C1C] bg-white shadow-[3px_3px_0px_0px_#1C1C1C] overflow-hidden"
+                  className="border border-slate-200 rounded-lg bg-white shadow-md overflow-hidden"
                 >
                   <button
                     type="button"
                     onClick={() => toggleFaq(idx)}
-                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-mono font-bold text-xs sm:text-sm text-[#1C1C1C] hover:bg-stone-50 transition-colors cursor-pointer"
+                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-mono font-bold text-xs sm:text-sm text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer"
                     aria-expanded={isOpen}
                   >
                     <span className="flex items-center gap-3">
-                      <span className="text-red-700 font-mono text-sm">Q{idx + 1}.</span>
+                      <span className="text-indigo-600 font-mono text-sm">Q{idx + 1}.</span>
                       <span>{faq.question}</span>
                     </span>
                     {isOpen ? (
-                      <ChevronUp className="w-4 h-4 text-red-700 shrink-0" />
+                      <ChevronUp className="w-4 h-4 text-indigo-600 shrink-0" />
                     ) : (
-                      <ChevronDown className="w-4 h-4 text-[#1C1C1C]/60 shrink-0" />
+                      <ChevronDown className="w-4 h-4 text-slate-900/60 shrink-0" />
                     )}
                   </button>
 
                   {isOpen && (
-                    <div className="px-5 pb-5 pt-1 border-t border-[#1C1C1C]/15 font-serif text-xs sm:text-sm text-[#1C1C1C]/85 leading-relaxed bg-[#FAF9F6]/50">
+                    <div className="px-5 pb-5 pt-1 border-t border-slate-900/15 font-sans text-xs sm:text-sm text-slate-900/85 leading-relaxed bg-slate-50/50">
                       <p>{faq.answer}</p>
                     </div>
                   )}
@@ -333,15 +333,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       {/* 6. BOTTOM CALL TO ACTION BANNER */}
       {/* ========================================================================= */}
-      <section className="py-14 sm:py-18 px-4 sm:px-6 lg:px-8 bg-[#1C1C1C] text-[#FAF9F6]">
+      <section className="py-14 sm:py-18 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white">
         <div className="max-w-4xl mx-auto text-center space-y-6">
-          <span className="text-[11px] font-mono font-bold uppercase tracking-widest bg-red-700 text-white px-3 py-1">
+          <span className="text-[11px] font-mono font-bold uppercase tracking-widest bg-indigo-600 text-white px-3 py-1">
             PROTECT YOUR CAMPUS COMMUNITY
           </span>
-          <h2 className="font-serif-editorial text-3xl sm:text-5xl font-black tracking-tight text-[#FAF9F6]">
+          <h2 className="font-sans text-3xl sm:text-5xl font-bold tracking-tight text-white">
             Have an issue that needs addressing?
           </h2>
-          <p className="font-serif italic text-sm sm:text-base text-[#FAF9F6]/80 max-w-2xl mx-auto">
+          <p className="font-sans text-sm sm:text-base text-white/80 max-w-2xl mx-auto">
             Take 60 seconds to file a secure grievance or check the public ledger to see what issues are currently under active investigation.
           </p>
 
@@ -349,7 +349,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('submit')}
-              className="w-full sm:w-auto px-8 py-4 bg-white text-[#1C1C1C] hover:bg-red-600 hover:text-white text-xs font-mono font-bold uppercase tracking-wider border-2 border-white transition-all flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)] cursor-pointer"
+              className="w-full sm:w-auto px-8 py-4 bg-white text-slate-900 hover:bg-indigo-600 hover:text-white text-xs font-mono font-bold uppercase tracking-wider border border-white/30 transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Submit a Complaint</span>
@@ -358,7 +358,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('feed')}
-              className="w-full sm:w-auto px-8 py-4 bg-transparent text-[#FAF9F6] hover:bg-stone-800 text-xs font-mono font-bold uppercase tracking-wider border-2 border-[#FAF9F6] transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto px-8 py-4 bg-transparent text-white hover:bg-slate-800 text-xs font-mono font-bold uppercase tracking-wider border border-white/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <LayoutList className="w-4 h-4" />
               <span>Browse Public Ledger</span>

@@ -6,6 +6,8 @@ const router = Router();
 
 // Public Anonymous Routes
 router.get('/', ComplaintController.list);
+// Head-Admin-exclusive immutable reveal audit ledger (must precede /:id).
+router.get('/reveal-logs', requireHeadAdmin, ComplaintController.listRevealLogs);
 router.get('/:id', ComplaintController.getById);
 router.post('/', ComplaintController.create);
 router.post('/:id/upvote', ComplaintController.upvote);

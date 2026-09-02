@@ -23,9 +23,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   const { activeRole, openAuthModal } = useAuth();
 
   return (
-    <header className="border-b-2 border-[#1C1C1C] bg-[#FAF9F6] sticky top-0 z-30 shadow-xs">
+    <header className="border-b border-slate-200 bg-slate-50 sticky top-0 z-30 shadow-xs">
       {/* Top micro-bar */}
-      <div className="bg-[#1C1C1C] text-[#FAF9F6] text-[10px] font-mono uppercase tracking-widest py-1 px-4 text-center">
+      <div className="bg-slate-900 text-white text-[10px] font-mono uppercase tracking-widest py-1 px-4 text-center">
         <span>CAMPUS INTEGRITY & ANONYMOUS ESCALATION LEDGER · PROTECTED BY S.A.G.E. PROTOCOL</span>
       </div>
 
@@ -36,19 +36,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => onNavigate('landing')}
           title="Return to S.A.G.E. Overview"
         >
-          <div className="w-10 h-10 bg-[#1C1C1C] text-[#FAF9F6] font-serif font-black text-xl flex items-center justify-center rounded-none border border-[#1C1C1C] group-hover:bg-red-700 transition-colors">
+          <div className="w-10 h-10 bg-slate-900 text-white font-sans font-bold text-xl flex items-center justify-center rounded-lg border border-slate-300 group-hover:bg-indigo-600 transition-colors">
             S
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-serif-editorial text-2xl font-black tracking-tight text-[#1C1C1C]">
+              <span className="font-sans text-2xl font-bold tracking-tight text-slate-900">
                 S.A.G.E.
               </span>
-              <span className="text-[10px] font-mono uppercase bg-stone-200/80 text-[#1C1C1C] px-1.5 py-0.5 border border-[#1C1C1C]/30">
+              <span className="text-[10px] font-mono uppercase bg-slate-200/80 text-slate-900 px-1.5 py-0.5 border border-slate-900/30">
                 OFFICIAL
               </span>
             </div>
-            <p className="text-[10px] font-mono tracking-wider text-[#1C1C1C]/70 uppercase">
+            <p className="text-[10px] font-mono tracking-wider text-slate-900/70 uppercase">
               Student Anonymous Grievance & Escalation
             </p>
           </div>
@@ -60,10 +60,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             id="nav-landing-btn"
             type="button"
             onClick={() => onNavigate('landing')}
-            className={`px-3 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-all border-2 border-[#1C1C1C] cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-all border border-slate-200 rounded-lg cursor-pointer flex items-center gap-1.5 ${
               currentView === 'landing'
-                ? 'bg-[#1C1C1C] text-[#FAF9F6] shadow-[2px_2px_0px_0px_#1C1C1C]'
-                : 'bg-[#FAF9F6] text-[#1C1C1C] hover:bg-stone-200/60'
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'bg-slate-50 text-slate-900 hover:bg-slate-200/60'
             }`}
           >
             <Info className="w-3.5 h-3.5" />
@@ -74,10 +74,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             id="nav-submit-btn"
             type="button"
             onClick={() => onNavigate('submit')}
-            className={`px-3.5 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-all border-2 border-[#1C1C1C] cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3.5 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-all border border-slate-200 rounded-lg cursor-pointer flex items-center gap-1.5 ${
               currentView === 'submit' || currentView === 'confirmation'
-                ? 'bg-[#1C1C1C] text-[#FAF9F6] shadow-[2px_2px_0px_0px_#1C1C1C]'
-                : 'bg-[#FAF9F6] text-[#1C1C1C] hover:bg-stone-200/60'
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'bg-slate-50 text-slate-900 hover:bg-slate-200/60'
             }`}
           >
             <PlusCircle className="w-3.5 h-3.5" />
@@ -88,15 +88,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             id="nav-feed-btn"
             type="button"
             onClick={() => onNavigate('feed')}
-            className={`px-3.5 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-all border-2 border-[#1C1C1C] cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3.5 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-all border border-slate-200 rounded-lg cursor-pointer flex items-center gap-1.5 ${
               currentView === 'feed' || currentView === 'detail'
-                ? 'bg-[#1C1C1C] text-[#FAF9F6] shadow-[2px_2px_0px_0px_#1C1C1C]'
-                : 'bg-[#FAF9F6] text-[#1C1C1C] hover:bg-stone-200/60'
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'bg-slate-50 text-slate-900 hover:bg-slate-200/60'
             }`}
           >
             <LayoutList className="w-3.5 h-3.5" />
             <span>Public Ledger</span>
-            <span className="ml-0.5 text-[10px] bg-red-700 text-white px-1.5 py-0.2 rounded-none font-mono">
+            <span className="ml-0.5 text-[10px] bg-indigo-600 text-white px-1.5 py-0.2 rounded-lg font-mono">
               {totalComplaintsCount}
             </span>
           </button>
@@ -105,10 +105,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             id="nav-admin-btn"
             type="button"
             onClick={() => onNavigate('admin')}
-            className={`px-3.5 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-all border-2 border-[#1C1C1C] cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3.5 py-2 text-xs font-mono font-bold uppercase tracking-wider transition-all border border-slate-200 rounded-lg cursor-pointer flex items-center gap-1.5 ${
               currentView === 'admin'
-                ? 'bg-red-700 text-[#FAF9F6] border-red-800 shadow-[2px_2px_0px_0px_#1C1C1C]'
-                : 'bg-white text-[#1C1C1C] hover:bg-red-50 hover:text-red-800 border-[#1C1C1C]'
+                ? 'bg-indigo-600 text-white border-indigo-300 shadow-sm'
+                : 'bg-white text-slate-900 hover:bg-indigo-50 hover:text-indigo-700 border-slate-300'
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5" />
@@ -119,12 +119,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             id="nav-role-switcher-btn"
             type="button"
             onClick={openAuthModal}
-            className="px-2.5 py-2 text-[11px] font-mono font-bold uppercase border-2 border-[#1C1C1C] bg-stone-100 hover:bg-stone-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="px-2.5 py-2 text-[11px] font-mono font-bold uppercase border border-slate-200 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
             title="Switch Firebase Auth Role Claim (Student / Admin / Head Admin)"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-800" />
             <span className="hidden md:inline">Role:</span>
-            <span className="font-bold text-red-700">{activeRole.replace('_', ' ')}</span>
+            <span className="font-bold text-indigo-600">{activeRole.replace('_', ' ')}</span>
           </button>
         </nav>
       </div>

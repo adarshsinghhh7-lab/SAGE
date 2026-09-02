@@ -15,22 +15,22 @@ export const AdminAccessDenied: React.FC = () => {
   const { activeRole, openAuthModal } = useAuth();
 
   return (
-    <div className="max-w-3xl mx-auto py-16 sm:py-24 px-4 text-[#1C1C1C]">
-      <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-8 sm:p-10 shadow-[6px_6px_0px_0px_#1C1C1C] text-center">
-        <div className="w-14 h-14 mx-auto mb-5 bg-red-700 text-white flex items-center justify-center">
+    <div className="max-w-3xl mx-auto py-16 sm:py-24 px-4 text-slate-900">
+      <div className="bg-slate-50 border border-slate-200 rounded-lg p-8 sm:p-10 shadow-lg text-center">
+        <div className="w-14 h-14 mx-auto mb-5 bg-indigo-600 text-white flex items-center justify-center">
           <ShieldAlert className="w-7 h-7" />
         </div>
 
-        <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest bg-[#1C1C1C] text-[#FAF9F6] px-2.5 py-1 mb-4">
+        <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest bg-slate-900 text-white px-2.5 py-1 mb-4">
           <Lock className="w-3 h-3" />
           Administrative Access Control
         </div>
 
-        <h1 className="font-serif-editorial text-3xl sm:text-4xl font-black tracking-tight mb-3">
+        <h1 className="font-sans text-3xl sm:text-4xl font-bold tracking-tight mb-3">
           Administrative Portal Requires an Admin Role
         </h1>
 
-        <p className="font-serif italic text-sm sm:text-base text-[#1C1C1C]/80 max-w-xl mx-auto mb-6">
+        <p className="font-sans text-sm sm:text-base text-slate-900/80 max-w-xl mx-auto mb-6">
           The Grievance Operations &amp; Analytics Dashboard is restricted to
           Department Admins and the Head Admin. Status dispositions, resolution
           notes, escalation sweep controls, and operational analytics are
@@ -39,12 +39,12 @@ export const AdminAccessDenied: React.FC = () => {
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-3 mb-6 text-xs font-mono">
-          <span className="inline-flex items-center gap-1.5 border-2 border-[#1C1C1C] px-3 py-1.5">
+          <span className="inline-flex items-center gap-1.5 border border-slate-200 rounded-lg px-3 py-1.5">
             <UserCheck className="w-3.5 h-3.5 text-amber-700" />
             Current Role: <strong className="uppercase">{activeRole.replace('_', ' ')}</strong>
           </span>
-          <span className="inline-flex items-center gap-1.5 border-2 border-[#1C1C1C] px-3 py-1.5">
-            <Crown className="w-3.5 h-3.5 text-red-700" />
+          <span className="inline-flex items-center gap-1.5 border border-slate-200 rounded-lg px-3 py-1.5">
+            <Crown className="w-3.5 h-3.5 text-indigo-600" />
             Required: <strong className="uppercase">admin / head_admin</strong>
           </span>
         </div>
@@ -52,7 +52,7 @@ export const AdminAccessDenied: React.FC = () => {
         <button
           type="button"
           onClick={openAuthModal}
-          className="px-6 py-3 bg-[#1C1C1C] text-[#FAF9F6] text-xs font-mono font-bold uppercase border-2 border-[#1C1C1C] hover:bg-red-700 transition-colors cursor-pointer shadow-[3px_3px_0px_0px_#1C1C1C]"
+          className="px-6 py-3 bg-slate-900 text-white text-xs font-mono font-bold uppercase border border-slate-200 rounded-lg hover:bg-indigo-600 transition-colors cursor-pointer shadow-md"
         >
           Switch to Admin / Head Admin
         </button>

@@ -530,6 +530,39 @@ export class FirestoreService {
   }
 
   /**
+   * Retrieve the full immutable reveal audit ledger (`revealLogs` collection).
+   * Strictly Head-Admin-only (enforced by the `requireHeadAdmin` route and by
+   * Firestore security rules). Returns records newest-first.
+   */
+  static async getRevealLogs(): Promise<RevealLogDoc[]> {
+    const logs = new Map<string, RevealLogDoc>();
+
+    if (isFirebaseLive && db) {
+      try {
+        const snapshot = await db
+          .collection(this.collections.revealLogs)
+          .orderBy('timestamp', 'desc')
+          .get();
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data() as RevealLogDoc;
+          if (data && data.logId) logs.set(data.logId, data);
+        });
+      } catch (err: any) {
+        console.warn(`[Firestore getRevealLogs] ${err?.message}`);
+      }
+    }
+
+    // Merge in any in-memory (sandbox) records not yet mirrored to Firestore.
+    for (const log of inMemoryRevealLogs) {
+      if (log && log.logId) logs.set(log.logId, log);
+    }
+
+    return Array.from(logs.values()).sort(
+      (a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime()
+    );
+  }
+
+  /**
    * Delete complaint (Head Admin only)
    */
   static async deleteComplaint(complaintId: string): Promise<boolean> {

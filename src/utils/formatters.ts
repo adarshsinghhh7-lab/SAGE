@@ -63,10 +63,10 @@ export function getCategoryBadgeStyle(category: string): {
   switch (norm) {
     case 'infrastructure':
       return {
-        bg: 'bg-stone-100',
-        text: 'text-[#1C1C1C]',
-        border: 'border-[#1C1C1C]/30',
-        indicator: 'bg-[#1C1C1C]',
+        bg: 'bg-slate-100',
+        text: 'text-slate-900',
+        border: 'border-slate-900/30',
+        indicator: 'bg-slate-900',
       };
     case 'mess':
     case 'mess_food':
@@ -78,18 +78,18 @@ export function getCategoryBadgeStyle(category: string): {
       };
     case 'harassment':
       return {
-        bg: 'bg-red-50',
-        text: 'text-red-900',
-        border: 'border-red-800/40',
-        indicator: 'bg-red-700',
+        bg: 'bg-indigo-50',
+        text: 'text-indigo-800',
+        border: 'border-indigo-300/40',
+        indicator: 'bg-indigo-600',
       };
     case 'wifi':
     case 'wifi_internet':
       return {
-        bg: 'bg-stone-100',
-        text: 'text-stone-900',
-        border: 'border-[#1C1C1C]/30',
-        indicator: 'bg-stone-700',
+        bg: 'bg-slate-100',
+        text: 'text-slate-900',
+        border: 'border-slate-900/30',
+        indicator: 'bg-slate-700',
       };
     case 'hygiene':
       return {
@@ -101,10 +101,10 @@ export function getCategoryBadgeStyle(category: string): {
     case 'other':
     default:
       return {
-        bg: 'bg-stone-50',
-        text: 'text-stone-800',
-        border: 'border-stone-400',
-        indicator: 'bg-stone-600',
+        bg: 'bg-slate-50',
+        text: 'text-slate-800',
+        border: 'border-slate-400',
+        indicator: 'bg-slate-600',
       };
   }
 }
@@ -130,10 +130,10 @@ export function getStatusBadgeStyle(status: string, urgency?: string): {
   switch (normStatus) {
     case 'submitted':
       return {
-        bg: 'bg-stone-100',
-        text: 'text-stone-800',
-        border: 'border-stone-300',
-        dot: 'bg-stone-600',
+        bg: 'bg-slate-100',
+        text: 'text-slate-800',
+        border: 'border-slate-300',
+        dot: 'bg-slate-600',
       };
     case 'under_review':
       return {
@@ -151,10 +151,10 @@ export function getStatusBadgeStyle(status: string, urgency?: string): {
       };
     default:
       return {
-        bg: 'bg-stone-100',
-        text: 'text-stone-800',
-        border: 'border-stone-300',
-        dot: 'bg-stone-600',
+        bg: 'bg-slate-100',
+        text: 'text-slate-800',
+        border: 'border-slate-300',
+        dot: 'bg-slate-600',
       };
   }
 }

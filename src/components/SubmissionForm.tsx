@@ -179,45 +179,45 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
   return (
     <div className="max-w-3xl mx-auto py-8 sm:py-12 px-4 sm:px-6">
       {/* Editorial Confidentiality Warning Banner */}
-      <div className="mb-6 bg-stone-100 border-2 border-[#1C1C1C] p-4 sm:p-5 shadow-[3px_3px_0px_0px_#1C1C1C] flex items-start gap-4">
-        <div className="p-2 bg-[#1C1C1C] text-[#FAF9F6] shrink-0 mt-0.5">
+      <div className="mb-6 bg-slate-100 border border-slate-200 rounded-lg p-4 sm:p-5 shadow-md flex items-start gap-4">
+        <div className="p-2 bg-slate-900 text-white shrink-0 mt-0.5">
           <Lock className="w-4 h-4" />
         </div>
         <div className="text-xs">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-mono font-bold uppercase tracking-wider text-[#1C1C1C]">
+            <h3 className="font-mono font-bold uppercase tracking-wider text-slate-900">
               Strict Anonymity Guarantee
             </h3>
-            <span className="bg-red-700 text-white text-[9px] font-mono uppercase px-1.5 py-0.2 font-bold">
+            <span className="bg-indigo-600 text-white text-[9px] font-mono uppercase px-1.5 py-0.2 font-bold">
               Protected
             </span>
           </div>
-          <p className="text-[#1C1C1C]/80 leading-relaxed font-serif text-sm">
-            Student names, emails, and device identifiers are stripped at point of ingress. You will receive an untraceable public ledger ID (<span className="font-mono font-bold text-red-700">SAGE-XXXX</span>) upon deposition.
+          <p className="text-slate-900/80 leading-relaxed font-sans text-sm">
+            Student names, emails, and device identifiers are stripped at point of ingress. You will receive an untraceable public ledger ID (<span className="font-mono font-bold text-indigo-600">SAGE-XXXX</span>) upon deposition.
           </p>
         </div>
       </div>
 
       {/* Main Submission Form Card */}
-      <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-6 sm:p-10 shadow-[6px_6px_0px_0px_#1C1C1C] relative">
+      <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 sm:p-10 shadow-lg relative">
         {/* Header */}
-        <div className="mb-8 border-b-2 border-[#1C1C1C] pb-5">
-          <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest text-[#1C1C1C]/60 mb-1">
+        <div className="mb-8 border-b border-slate-200 pb-5">
+          <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest text-slate-900/60 mb-1">
             <FileText className="w-3.5 h-3.5" />
             <span>Form Reference · SAGE-ENTRY</span>
           </div>
-          <h1 className="font-serif-editorial text-3xl sm:text-4xl font-bold text-[#1C1C1C] tracking-tight">
+          <h1 className="font-sans text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
             Lodge Student Grievance
           </h1>
-          <p className="font-serif text-sm text-[#1C1C1C]/70 mt-1 italic">
+          <p className="font-sans text-sm text-slate-900/70 mt-1 italic">
             Complete the deposition fields below to escalate campus concerns to public oversight.
           </p>
         </div>
 
         {/* Error Alert */}
         {errorMsg && (
-          <div className="mb-6 p-4 bg-red-50 border-2 border-red-800 text-red-950 text-xs font-mono flex items-start gap-3">
-            <AlertCircle className="w-4 h-4 shrink-0 text-red-700 mt-0.5" />
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-900 text-xs font-mono flex items-start gap-3 rounded-lg">
+            <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
             <div>
               <p className="font-bold uppercase tracking-wider">Validation Error</p>
               <p className="mt-0.5">{errorMsg}</p>
@@ -229,10 +229,10 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
           {/* Field 1: Category Dropdown */}
           <div id="field-category" className="space-y-2">
             <div className="flex items-center justify-between">
-              <label htmlFor="category-select" className="block text-xs font-mono font-bold uppercase tracking-wider text-[#1C1C1C]">
-                1. Grievance Category <span className="text-red-700">*</span>
+              <label htmlFor="category-select" className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
+                1. Grievance Category <span className="text-indigo-600">*</span>
               </label>
-              <span className="text-[10px] font-mono text-[#1C1C1C]/50 uppercase">Mandatory</span>
+              <span className="text-[10px] font-mono text-slate-900/50 uppercase">Mandatory</span>
             </div>
 
             <div className="relative">
@@ -240,7 +240,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                 id="category-select"
                 value={category}
                 onChange={(e) => setCategory(e.target.value as ComplaintCategory)}
-                className="w-full bg-white border-2 border-[#1C1C1C] p-3 text-sm text-[#1C1C1C] font-mono focus:outline-none focus:bg-stone-50 cursor-pointer shadow-[2px_2px_0px_0px_#1C1C1C]"
+                className="w-full bg-white border border-slate-200 rounded-lg p-3 text-sm text-slate-900 font-mono focus:outline-none focus:bg-slate-50 cursor-pointer shadow-sm"
                 required
               >
                 {CATEGORIES.map((cat) => (
@@ -260,8 +260,8 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                   onClick={() => setCategory(cat)}
                   className={`text-[11px] font-mono uppercase px-2.5 py-1 border transition-all cursor-pointer ${
                     category === cat
-                      ? 'bg-[#1C1C1C] text-[#FAF9F6] border-[#1C1C1C] font-bold'
-                      : 'bg-stone-100 text-[#1C1C1C] border-[#1C1C1C]/30 hover:bg-stone-200'
+                      ? 'bg-slate-900 text-white border-slate-300 font-bold'
+                      : 'bg-slate-100 text-slate-900 border-slate-900/30 hover:bg-slate-200'
                   }`}
                 >
                   {cat}
@@ -273,16 +273,16 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
           {/* Field 2: Description Textarea (Min 20, Max 1000, Live Count) */}
           <div id="field-description" className="space-y-2">
             <div className="flex items-center justify-between">
-              <label htmlFor="description-textarea" className="block text-xs font-mono font-bold uppercase tracking-wider text-[#1C1C1C]">
-                2. Statement & Evidence Description <span className="text-red-700">*</span>
+              <label htmlFor="description-textarea" className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
+                2. Statement & Evidence Description <span className="text-indigo-600">*</span>
               </label>
               <div className="flex items-center gap-2">
                 <span className={`text-xs font-mono font-bold ${
                   charCount < 20
                     ? 'text-amber-800'
                     : charCount > 1000
-                    ? 'text-red-700'
-                    : 'text-[#1C1C1C]'
+                    ? 'text-indigo-600'
+                    : 'text-slate-900'
                 }`}>
                   {charCount} / 1000 CHARS
                 </span>
@@ -301,10 +301,10 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                 onBlur={() => setTouched((prev) => ({ ...prev, description: true }))}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="State the grievance clearly (minimum 20 characters). Specify details, timelines, repeated offenses, or required remedy. Do NOT include personal identifying information..."
-                className={`w-full bg-white border-2 p-3.5 text-sm text-[#1C1C1C] font-serif leading-relaxed placeholder:font-sans placeholder:text-[#1C1C1C]/40 focus:outline-none shadow-[2px_2px_0px_0px_#1C1C1C] ${
+                className={`w-full bg-white border p-3.5 text-sm text-slate-900 font-sans leading-relaxed placeholder:font-sans placeholder:text-slate-900/40 focus:outline-none shadow-sm ${
                   touched.description && charCount < 20
                     ? 'border-amber-700 focus:bg-amber-50/20'
-                    : 'border-[#1C1C1C] focus:bg-stone-50'
+                    : 'border-slate-300 focus:bg-slate-50'
                 }`}
                 required
               />
@@ -325,14 +325,14 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                   </span>
                 )}
               </div>
-              <div className="w-28 bg-stone-200 h-1.5 border border-[#1C1C1C]/40 overflow-hidden">
+              <div className="w-28 bg-slate-200 h-1.5 border border-slate-900/40 overflow-hidden">
                 <div 
                   className={`h-full ${
                     charCount < 20
                       ? 'bg-amber-600'
                       : charCount > 900
-                      ? 'bg-red-700'
-                      : 'bg-[#1C1C1C]'
+                      ? 'bg-indigo-600'
+                      : 'bg-slate-900'
                   }`}
                   style={{ width: `${Math.min(100, (charCount / 1000) * 100)}%` }}
                 />
@@ -343,10 +343,10 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
           {/* Field 3: Hostel / Location Dropdown or Text Input */}
           <div id="field-location" className="space-y-2">
             <div className="flex items-center justify-between">
-              <label htmlFor="location-select" className="block text-xs font-mono font-bold uppercase tracking-wider text-[#1C1C1C]">
-                3. Hostel / Campus Location <span className="text-red-700">*</span>
+              <label htmlFor="location-select" className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
+                3. Hostel / Campus Location <span className="text-indigo-600">*</span>
               </label>
-              <span className="text-[10px] font-mono text-[#1C1C1C]/50 uppercase">Where Located</span>
+              <span className="text-[10px] font-mono text-slate-900/50 uppercase">Where Located</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -356,7 +356,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                   id="location-select"
                   value={locationPreset}
                   onChange={(e) => setLocationPreset(e.target.value)}
-                  className="w-full bg-white border-2 border-[#1C1C1C] p-3 text-xs font-mono text-[#1C1C1C] focus:outline-none focus:bg-stone-50 cursor-pointer shadow-[2px_2px_0px_0px_#1C1C1C]"
+                  className="w-full bg-white border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-900 focus:outline-none focus:bg-slate-50 cursor-pointer shadow-sm"
                 >
                   {PRESET_LOCATIONS.map((loc) => (
                     <option key={loc} value={loc}>
@@ -377,14 +377,14 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                       ? 'e.g. Mechanical Lab 3, Library 2nd Floor'
                       : 'Wing, floor, or room (e.g. Room 302, 2nd Floor)'
                   }
-                  className="w-full bg-white border-2 border-[#1C1C1C] p-3 text-xs font-mono text-[#1C1C1C] placeholder:text-[#1C1C1C]/40 focus:outline-none focus:bg-stone-50 shadow-[2px_2px_0px_0px_#1C1C1C]"
+                  className="w-full bg-white border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-900 placeholder:text-slate-900/40 focus:outline-none focus:bg-slate-50 shadow-sm"
                 />
               </div>
             </div>
 
             {/* Quick selector buttons */}
             <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              <span className="text-[10px] font-mono uppercase text-[#1C1C1C]/50 mr-1">Quick Select:</span>
+              <span className="text-[10px] font-mono uppercase text-slate-900/50 mr-1">Quick Select:</span>
               {['Hostel Block A', 'Hostel Block B', 'Girls Hostel 1', 'Central Mess Hall', 'Central Library'].map((loc) => (
                 <button
                   key={loc}
@@ -392,8 +392,8 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                   onClick={() => setLocationPreset(loc)}
                   className={`text-[10px] font-mono uppercase px-2 py-0.5 border transition-all cursor-pointer ${
                     locationPreset === loc
-                      ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                      : 'bg-stone-100 text-[#1C1C1C] border-[#1C1C1C]/30 hover:bg-stone-200'
+                      ? 'bg-slate-900 text-white border-slate-300'
+                      : 'bg-slate-100 text-slate-900 border-slate-900/30 hover:bg-slate-200'
                   }`}
                 >
                   {loc}
@@ -405,14 +405,14 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
           {/* Field 4: Optional Photo Upload (Max 5MB, JPG/PNG only) */}
           <div id="field-photo" className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#1C1C1C]">
-                4. Photographic Evidence <span className="text-[10px] font-normal text-[#1C1C1C]/60">(Optional · Max 5MB, JPG/PNG)</span>
+              <label className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
+                4. Photographic Evidence <span className="text-[10px] font-normal text-slate-900/60">(Optional · Max 5MB, JPG/PNG)</span>
               </label>
               {photoDataUrl && (
                 <button
                   type="button"
                   onClick={removePhoto}
-                  className="text-xs font-mono font-bold text-red-700 hover:underline cursor-pointer"
+                  className="text-xs font-mono font-bold text-indigo-600 hover:underline cursor-pointer"
                 >
                   [Remove Attachment]
                 </button>
@@ -439,40 +439,40 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed border-[#1C1C1C] p-6 text-center cursor-pointer transition-all ${
-                  isDragging ? 'bg-stone-200' : 'bg-stone-50 hover:bg-stone-100'
+                className={`border border-dashed border-slate-300 p-6 text-center cursor-pointer transition-all ${
+                  isDragging ? 'bg-slate-200' : 'bg-slate-50 hover:bg-slate-100'
                 }`}
               >
-                <div className="w-8 h-8 bg-[#1C1C1C] text-[#FAF9F6] flex items-center justify-center mx-auto mb-2">
+                <div className="w-8 h-8 bg-slate-900 text-white flex items-center justify-center mx-auto mb-2">
                   <Upload className="w-4 h-4" />
                 </div>
-                <p className="text-xs font-mono font-bold text-[#1C1C1C] uppercase tracking-wider">
+                <p className="text-xs font-mono font-bold text-slate-900 uppercase tracking-wider">
                   Select or Drop Photo Attachment
                 </p>
-                <p className="text-[10px] font-mono text-[#1C1C1C]/60 mt-0.5">
+                <p className="text-[10px] font-mono text-slate-900/60 mt-0.5">
                   JPG or PNG format · Maximum size 5MB · EXIF headers stripped
                 </p>
               </div>
             ) : (
-              <div className="border-2 border-[#1C1C1C] bg-stone-100 p-3 flex items-center gap-4 shadow-[2px_2px_0px_0px_#1C1C1C]">
+              <div className="border border-slate-200 rounded-lg bg-slate-100 p-3 flex items-center gap-4 shadow-sm">
                 <img
                   src={photoDataUrl}
                   alt="Upload preview"
-                  className="w-14 h-14 object-cover border border-[#1C1C1C] shrink-0 bg-white"
+                  className="w-14 h-14 object-cover border border-slate-300 shrink-0 bg-white"
                 />
                 <div className="flex-1 min-w-0 font-mono text-xs">
-                  <div className="flex items-center gap-1.5 font-bold text-[#1C1C1C] truncate">
-                    <ImageIcon className="w-3.5 h-3.5 text-[#1C1C1C]" />
+                  <div className="flex items-center gap-1.5 font-bold text-slate-900 truncate">
+                    <ImageIcon className="w-3.5 h-3.5 text-slate-900" />
                     <span className="truncate">{photoName || 'attachment.jpg'}</span>
                   </div>
-                  <p className="text-[10px] text-[#1C1C1C]/60 mt-0.5">
+                  <p className="text-[10px] text-slate-900/60 mt-0.5">
                     {photoSizeMb} · <span className="text-emerald-800 font-bold">READY TO SUBMIT</span>
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={removePhoto}
-                  className="p-1 text-[#1C1C1C] hover:text-red-700 cursor-pointer"
+                  className="p-1 text-slate-900 hover:text-indigo-600 cursor-pointer"
                   title="Remove attachment"
                 >
                   <X className="w-4 h-4" />
@@ -482,12 +482,12 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="pt-6 border-t-2 border-[#1C1C1C] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
             <button
               id="cancel-btn"
               type="button"
               onClick={onCancelToFeed}
-              className="w-full sm:w-auto px-5 py-3 text-xs font-mono font-bold uppercase tracking-wider text-[#1C1C1C] border-2 border-[#1C1C1C] bg-[#FAF9F6] hover:bg-stone-200 transition-colors cursor-pointer text-center"
+              className="w-full sm:w-auto px-5 py-3 text-xs font-mono font-bold uppercase tracking-wider text-slate-900 border border-slate-200 rounded-lg bg-slate-50 hover:bg-slate-200 transition-colors cursor-pointer text-center"
             >
               ← Back to Ledger
             </button>
@@ -496,11 +496,11 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
               id="submit-complaint-btn"
               type="submit"
               disabled={isSubmitting || charCount < 20 || charCount > 1000 || !isLocationValid}
-              className="w-full sm:w-auto px-8 py-3.5 bg-[#1C1C1C] hover:bg-red-700 disabled:bg-stone-300 disabled:text-stone-500 disabled:border-stone-400 disabled:cursor-not-allowed text-[#FAF9F6] text-xs font-mono font-bold uppercase tracking-widest border-2 border-[#1C1C1C] transition-all shadow-[4px_4px_0px_0px_#1C1C1C] hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 bg-slate-900 hover:bg-indigo-600 disabled:bg-slate-300 disabled:text-slate-500 disabled:border-slate-400 disabled:cursor-not-allowed text-white text-xs font-mono font-bold uppercase tracking-widest border border-slate-200 rounded-lg transition-all shadow-md hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  <div className="w-3.5 h-3.5 border border-white/30/40 border-t-white rounded-full animate-spin" />
                   <span>Deposing to Ledger...</span>
                 </>
               ) : (

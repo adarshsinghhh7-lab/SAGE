@@ -305,6 +305,26 @@ export class ComplaintController {
   }
 
   /**
+   * GET /api/complaints/reveal-logs
+   * Head Admin exclusive read of the immutable reveal audit ledger.
+   */
+  static async listRevealLogs(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const logs = await FirestoreService.getRevealLogs();
+      res.status(200).json({
+        success: true,
+        data: logs,
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        error: 'Failed to retrieve reveal audit log',
+        details: error?.message,
+      });
+    }
+  }
+
+  /**
    * DELETE /api/complaints/:id
    * Head Admin deletion
    */

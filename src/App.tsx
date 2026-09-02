@@ -7,6 +7,7 @@ import { ConfirmationScreen } from './components/ConfirmationScreen';
 import { PublicFeed } from './components/PublicFeed';
 import { ComplaintDetail } from './components/ComplaintDetail';
 import { AdminDashboard } from './components/AdminDashboard';
+import { HeadAdminDashboard } from './components/HeadAdminDashboard';
 import { LandingPage } from './components/LandingPage';
 import { PublicComplaintPage } from './components/PublicComplaintPage';
 import { ImageModal } from './components/ImageModal';
@@ -201,7 +202,7 @@ function MainApp() {
   }, [complaints, selectedComplaintId]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-[#1C1C1C]">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       {/* Top Connection & Health Status Banner */}
       <ConnectionBanner />
 
@@ -291,11 +292,19 @@ function MainApp() {
 
         {currentView === 'admin' && (
           isAdminRole ? (
-            <AdminDashboard
-              complaints={complaints}
-              onUpdateComplaint={handleAdminUpdateComplaint}
-              onOpenImage={handleOpenImage}
-            />
+            activeRole === 'head_admin' ? (
+              <HeadAdminDashboard
+                complaints={complaints}
+                onUpdateComplaint={handleAdminUpdateComplaint}
+                onOpenImage={handleOpenImage}
+              />
+            ) : (
+              <AdminDashboard
+                complaints={complaints}
+                onUpdateComplaint={handleAdminUpdateComplaint}
+                onOpenImage={handleOpenImage}
+              />
+            )
           ) : (
             <AdminAccessDenied />
           )
@@ -303,16 +312,16 @@ function MainApp() {
 
         {currentView === 'detail' && !activeComplaint && (
           <div className="max-w-md mx-auto py-16 px-4 text-center">
-            <h2 className="font-serif-editorial text-2xl font-bold text-[#1C1C1C] mb-2">
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">
               Deposition Not Found
             </h2>
-            <p className="text-xs font-mono text-[#1C1C1C]/70 mb-6">
+            <p className="text-xs font-mono text-slate-500 mb-6">
               The requested complaint record could not be retrieved from the ledger.
             </p>
             <button
               type="button"
               onClick={() => setCurrentView('feed')}
-              className="px-4 py-2 bg-[#1C1C1C] text-[#FAF9F6] text-xs font-mono font-bold uppercase border-2 border-[#1C1C1C] cursor-pointer shadow-[2px_2px_0px_0px_#1C1C1C]"
+              className="px-4 py-2 bg-slate-900 text-slate-50 text-xs font-mono font-bold uppercase rounded-lg border border-slate-900 cursor-pointer shadow-sm hover:bg-slate-800 transition-colors"
             >
               Return to Public Ledger
             </button>
@@ -320,20 +329,20 @@ function MainApp() {
         )}
       </main>
 
-      {/* Editorial Colophon / Footer */}
-      <footer className="border-t-2 border-[#1C1C1C] bg-[#FAF9F6] py-8 px-4 text-center text-xs text-[#1C1C1C]">
+      {/* Footer */}
+      <footer className="border-t border-slate-200 bg-slate-50 py-8 px-4 text-center text-xs text-slate-900">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="font-serif italic text-sm text-[#1C1C1C]/80">
+          <p className="text-sm text-slate-600">
             <strong>S.A.G.E.</strong> — Student Anonymous Grievance & Escalation System
           </p>
-          <div className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest text-[#1C1C1C]/60 flex-wrap justify-center">
+          <div className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest text-slate-500 flex-wrap justify-center">
             <button
               type="button"
               onClick={() => {
                 setCurrentView('landing');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="hover:text-red-700 underline cursor-pointer"
+              className="hover:text-indigo-600 underline cursor-pointer"
             >
               How It Works & FAQ
             </button>
@@ -344,7 +353,7 @@ function MainApp() {
                 setCurrentView('admin');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="hover:text-red-700 underline cursor-pointer"
+              className="hover:text-indigo-600 underline cursor-pointer"
             >
               Administrative Portal
             </button>
@@ -352,12 +361,12 @@ function MainApp() {
             <button
               type="button"
               onClick={handleResetToDefaultSeed}
-              className="hover:text-red-700 underline cursor-pointer"
+              className="hover:text-indigo-600 underline cursor-pointer"
             >
               Reset Seed Ledger
             </button>
             <span>·</span>
-            <span className="text-red-700 font-bold">100% Cryptographic Anonymity</span>
+            <span className="text-indigo-600 font-bold">100% Cryptographic Anonymity</span>
           </div>
         </div>
       </footer>

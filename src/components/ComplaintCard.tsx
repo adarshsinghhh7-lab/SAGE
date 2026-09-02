@@ -62,14 +62,14 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
     <article
       id={`complaint-card-${compId}`}
       onClick={handleCardClick}
-      className="group bg-[#FAF9F6] border-2 border-[#1C1C1C] p-5 sm:p-6 transition-all duration-150 shadow-[4px_4px_0px_0px_#1C1C1C] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_#1C1C1C] cursor-pointer flex flex-col justify-between"
+      className="group bg-slate-50 border border-slate-200 rounded-lg p-5 sm:p-6 transition-all duration-150 shadow-md hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-lg cursor-pointer flex flex-col justify-between"
     >
       <div>
         {/* Top Header Row: ID, Category Tag, Status Badge */}
         <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3">
           <div className="flex items-center gap-2 flex-wrap">
             {/* Complaint ID */}
-            <span className="font-mono font-bold text-xs bg-[#1C1C1C] text-[#FAF9F6] px-2.5 py-0.5 tracking-wider">
+            <span className="font-mono font-bold text-xs bg-slate-900 text-white px-2.5 py-0.5 tracking-wider">
               {compId}
             </span>
 
@@ -83,7 +83,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           {/* Color-Coded Status Badge: Yellow = Under Review, Green = Resolved, Red = High Priority */}
           <div className="flex items-center gap-1.5">
             {isHighPriority ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-mono font-bold uppercase border-2 bg-red-100 text-red-950 border-red-600 shadow-[1px_1px_0px_0px_#991b1b]">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-mono font-bold uppercase border bg-red-100 text-red-950 border-red-600 shadow-md">
                 <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
                 <span>High Priority</span>
               </span>
@@ -97,29 +97,29 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
         </div>
 
         {/* Location & Time Info */}
-        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-mono text-[#1C1C1C]/70 mb-3">
-          <div className="flex items-center gap-1 font-bold text-[#1C1C1C]">
-            <MapPin className="w-3.5 h-3.5 text-red-700 shrink-0" />
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs font-mono text-slate-900/70 mb-3">
+          <div className="flex items-center gap-1 font-bold text-slate-900">
+            <MapPin className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
             <span className="truncate max-w-[240px]">{location}</span>
           </div>
 
-          <div className="flex items-center gap-1 text-[#1C1C1C]/50">
+          <div className="flex items-center gap-1 text-slate-900/50">
             <span>·</span>
             <Clock className="w-3 h-3 shrink-0" />
             <span>{formatTimeAgo(complaint.createdAt)}</span>
           </div>
 
           {complaint.photoUrl && (
-            <div className="flex items-center gap-1 text-[#1C1C1C]/60 ml-auto sm:ml-0">
+            <div className="flex items-center gap-1 text-slate-900/60 ml-auto sm:ml-0">
               <span>·</span>
-              <ImageIcon className="w-3 h-3 text-red-700 shrink-0" />
+              <ImageIcon className="w-3 h-3 text-indigo-600 shrink-0" />
               <span className="text-[10px] uppercase font-bold">Photo Attached</span>
             </div>
           )}
         </div>
 
         {/* Short Description Preview */}
-        <div className="text-sm font-serif text-[#1C1C1C] leading-relaxed mb-4">
+        <div className="text-sm font-sans text-slate-900 leading-relaxed mb-4">
           <p className="line-clamp-3 group-hover:text-black transition-colors">
             {descriptionPreview}
           </p>
@@ -127,17 +127,17 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
       </div>
 
       {/* Card Footer: Upvote Button & Detail Callout */}
-      <div className="pt-3 border-t-2 border-[#1C1C1C]/15 flex items-center justify-between gap-3 mt-1">
+      <div className="pt-3 border-t border-slate-200/15 flex items-center justify-between gap-3 mt-1">
         {/* Upvote Button: Toggles to "Upvoted" and disables itself once clicked */}
         <button
           id={`upvote-btn-${compId}`}
           type="button"
           disabled={complaint.hasUpvoted}
           onClick={handleUpvoteClick}
-          className={`inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider border-2 border-[#1C1C1C] transition-all cursor-pointer ${
+          className={`inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg transition-all cursor-pointer ${
             complaint.hasUpvoted
               ? 'bg-emerald-800 text-white border-emerald-900 opacity-95 cursor-default shadow-none'
-              : 'bg-white text-[#1C1C1C] hover:bg-stone-200 active:translate-y-[1px] shadow-[2px_2px_0px_0px_#1C1C1C]'
+              : 'bg-white text-slate-900 hover:bg-slate-200 active:translate-y-[1px] shadow-sm'
           }`}
           title={complaint.hasUpvoted ? 'You have upvoted this grievance' : 'Click to upvote this grievance'}
         >
@@ -161,10 +161,10 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           <button
             type="button"
             onClick={handleCopyLink}
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider border-2 border-[#1C1C1C] transition-all cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg transition-all cursor-pointer ${
               linkCopied
                 ? 'bg-emerald-800 text-white border-emerald-900 shadow-none'
-                : 'bg-white text-[#1C1C1C] hover:bg-stone-200 shadow-[2px_2px_0px_0px_#1C1C1C]'
+                : 'bg-white text-slate-900 hover:bg-slate-200 shadow-sm'
             }`}
             title="Copy public tracking link"
           >
@@ -173,7 +173,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           </button>
 
           {/* Link / Read Detail Hint */}
-          <div className="inline-flex items-center gap-1 text-[11px] font-mono font-bold uppercase text-[#1C1C1C]/70 group-hover:text-red-700 transition-colors">
+          <div className="inline-flex items-center gap-1 text-[11px] font-mono font-bold uppercase text-slate-900/70 group-hover:text-indigo-600 transition-colors">
             <span>View Deposition</span>
             <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
           </div>

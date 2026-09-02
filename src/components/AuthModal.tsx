@@ -24,13 +24,13 @@ export const AuthModal: React.FC = () => {
       onClick={closeAuthModal}
     >
       <div 
-        className="bg-[#FAF9F6] border-3 border-[#1C1C1C] max-w-lg w-full shadow-[8px_8px_0px_0px_#1C1C1C] my-8 overflow-hidden text-[#1C1C1C]"
+        className="bg-slate-50 border border-slate-200 rounded-xl max-w-lg w-full shadow-xl my-8 overflow-hidden text-slate-900"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
       >
         {/* Header */}
-        <div className="bg-[#1C1C1C] text-[#FAF9F6] px-5 py-4 flex items-center justify-between border-b-2 border-[#1C1C1C]">
+        <div className="bg-slate-900 text-white px-5 py-4 flex items-center justify-between border-b border-slate-200">
           <div className="flex items-center gap-2.5">
             <ShieldCheck className="w-5 h-5 text-emerald-400" />
             <span className="font-mono font-bold text-sm uppercase tracking-wider">
@@ -41,7 +41,7 @@ export const AuthModal: React.FC = () => {
           <button
             type="button"
             onClick={closeAuthModal}
-            className="text-stone-300 hover:text-white p-1 hover:bg-stone-800 transition-colors cursor-pointer"
+            className="text-slate-300 hover:text-white p-1 hover:bg-slate-800 transition-colors cursor-pointer"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -51,10 +51,10 @@ export const AuthModal: React.FC = () => {
         {/* Content */}
         <div className="p-6 space-y-6">
           <div>
-            <h3 className="font-serif-editorial text-xl font-bold text-[#1C1C1C] mb-1">
+            <h3 className="font-sans text-xl font-bold text-slate-900 mb-1">
               Select Your Access Level
             </h3>
-            <p className="font-serif italic text-xs text-[#1C1C1C]/75">
+            <p className="font-sans text-xs text-slate-900/75">
               Switch roles to test the different permission gates, admin dashboards, and anonymous student submission protocols.
             </p>
           </div>
@@ -63,10 +63,10 @@ export const AuthModal: React.FC = () => {
             {/* Role 1: Student */}
             <div
               onClick={() => handleSelectRole('student')}
-              className={`p-4 border-2 transition-all cursor-pointer flex items-start gap-3.5 ${
+              className={`p-4 border transition-all cursor-pointer flex items-start gap-3.5 ${
                 activeRole === 'student'
-                  ? 'bg-stone-100 border-[#1C1C1C] shadow-[3px_3px_0px_0px_#1C1C1C]'
-                  : 'bg-white border-[#1C1C1C]/30 hover:border-[#1C1C1C] hover:bg-stone-50'
+                  ? 'bg-slate-100 border-slate-300 shadow-md'
+                  : 'bg-white border-slate-900/30 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
               <div className="w-9 h-9 bg-emerald-100 border border-emerald-800 text-emerald-900 flex items-center justify-center shrink-0">
@@ -74,7 +74,7 @@ export const AuthModal: React.FC = () => {
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <div className="font-mono text-xs font-bold uppercase text-[#1C1C1C]">
+                  <div className="font-mono text-xs font-bold uppercase text-slate-900">
                     Student (Default Anonymous)
                   </div>
                   {activeRole === 'student' && (
@@ -83,7 +83,7 @@ export const AuthModal: React.FC = () => {
                     </span>
                   )}
                 </div>
-                <p className="text-xs font-serif text-[#1C1C1C]/70 mt-1">
+                <p className="text-xs font-sans text-slate-900/70 mt-1">
                   100% anonymous submission, public ledger browsing, and community upvoting. Zero identity tracked.
                 </p>
               </div>
@@ -92,10 +92,10 @@ export const AuthModal: React.FC = () => {
             {/* Role 2: Department Admin */}
             <div
               onClick={() => handleSelectRole('admin')}
-              className={`p-4 border-2 transition-all cursor-pointer flex items-start gap-3.5 ${
+              className={`p-4 border transition-all cursor-pointer flex items-start gap-3.5 ${
                 activeRole === 'admin'
-                  ? 'bg-amber-50 border-amber-900 shadow-[3px_3px_0px_0px_#78350f]'
-                  : 'bg-white border-[#1C1C1C]/30 hover:border-[#1C1C1C] hover:bg-stone-50'
+                  ? 'bg-amber-50 border-amber-900 shadow-md'
+                  : 'bg-white border-slate-900/30 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
               <div className="w-9 h-9 bg-amber-100 border border-amber-800 text-amber-900 flex items-center justify-center shrink-0">
@@ -103,7 +103,7 @@ export const AuthModal: React.FC = () => {
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <div className="font-mono text-xs font-bold uppercase text-[#1C1C1C]">
+                  <div className="font-mono text-xs font-bold uppercase text-slate-900">
                     Department Admin / Warden
                   </div>
                   {activeRole === 'admin' && (
@@ -112,7 +112,7 @@ export const AuthModal: React.FC = () => {
                     </span>
                   )}
                 </div>
-                <p className="text-xs font-serif text-[#1C1C1C]/70 mt-1">
+                <p className="text-xs font-sans text-slate-900/70 mt-1">
                   Access to the Admin Dashboard, grievance status transitions (Under Review / Resolved), and resolution notes.
                 </p>
               </div>
@@ -121,38 +121,38 @@ export const AuthModal: React.FC = () => {
             {/* Role 3: Head Admin (Proctor / Chief) */}
             <div
               onClick={() => handleSelectRole('head_admin')}
-              className={`p-4 border-2 transition-all cursor-pointer flex items-start gap-3.5 ${
+              className={`p-4 border transition-all cursor-pointer flex items-start gap-3.5 ${
                 activeRole === 'head_admin'
-                  ? 'bg-red-50 border-red-900 shadow-[3px_3px_0px_0px_#991b1b]'
-                  : 'bg-white border-[#1C1C1C]/30 hover:border-[#1C1C1C] hover:bg-stone-50'
+                  ? 'bg-indigo-50 border-indigo-200 shadow-md'
+                  : 'bg-white border-slate-900/30 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
-              <div className="w-9 h-9 bg-red-100 border border-red-800 text-red-900 flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 bg-indigo-100 border border-indigo-200 text-indigo-800 flex items-center justify-center shrink-0 rounded-lg">
                 <Crown className="w-5 h-5" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <div className="font-mono text-xs font-bold uppercase text-[#1C1C1C]">
+                  <div className="font-mono text-xs font-bold uppercase text-slate-900">
                     Head Admin (Chief Proctor)
                   </div>
                   {activeRole === 'head_admin' && (
-                    <span className="text-[10px] font-mono font-bold uppercase bg-red-700 text-white px-2 py-0.5">
+                    <span className="text-[10px] font-mono font-bold uppercase bg-indigo-600 text-white px-2 py-0.5">
                       Active
                     </span>
                   )}
                 </div>
-                <p className="text-xs font-serif text-[#1C1C1C]/70 mt-1">
+                <p className="text-xs font-sans text-slate-900/70 mt-1">
                   Full superuser access: manage custom claims, view audit logs, expunge verified duplicates, and oversee campus-wide analytics.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="pt-2 border-t border-[#1C1C1C]/15 flex items-center justify-between">
+          <div className="pt-2 border-t border-slate-900/15 flex items-center justify-between">
             <button
               type="button"
               onClick={signOut}
-              className="text-xs font-mono text-[#1C1C1C]/60 hover:text-red-700 underline cursor-pointer"
+              className="text-xs font-mono text-slate-900/60 hover:text-indigo-600 underline cursor-pointer"
             >
               Reset Session
             </button>
@@ -160,7 +160,7 @@ export const AuthModal: React.FC = () => {
             <button
               type="button"
               onClick={closeAuthModal}
-              className="px-5 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-[#1C1C1C] text-white hover:bg-red-700 border-2 border-[#1C1C1C] cursor-pointer shadow-[2px_2px_0px_0px_#1C1C1C]"
+              className="px-5 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-slate-900 text-white hover:bg-indigo-600 border border-slate-200 rounded-lg cursor-pointer shadow-sm"
             >
               Done
             </button>

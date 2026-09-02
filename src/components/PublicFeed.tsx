@@ -130,23 +130,23 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 sm:py-10 px-4 sm:px-6 lg:px-8 text-[#1C1C1C]">
+    <div className="max-w-7xl mx-auto py-8 sm:py-10 px-4 sm:px-6 lg:px-8 text-slate-900">
       {/* Header Banner */}
-      <div className="mb-8 border-b-2 border-[#1C1C1C] pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="mb-8 border-b border-slate-200 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-[#1C1C1C] text-[#FAF9F6] px-2 py-0.5">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-slate-900 text-white px-2 py-0.5">
               Live Public Ledger (Firestore)
             </span>
-            <span className="text-[10px] font-mono text-[#1C1C1C]/70 uppercase tracking-wider flex items-center gap-1">
-              <Lock className="w-3 h-3 text-red-700" />
+            <span className="text-[10px] font-mono text-slate-900/70 uppercase tracking-wider flex items-center gap-1">
+              <Lock className="w-3 h-3 text-indigo-600" />
               Cryptographically Blinded · SHA-256 Voter Registry
             </span>
           </div>
-          <h1 className="font-serif-editorial text-3xl sm:text-4xl lg:text-5xl font-black text-[#1C1C1C] tracking-tight">
+          <h1 className="font-sans text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight">
             Campus Grievance Ledger
           </h1>
-          <p className="font-serif italic text-sm sm:text-base text-[#1C1C1C]/80 mt-1 max-w-2xl">
+          <p className="font-sans text-sm sm:text-base text-slate-900/80 mt-1 max-w-2xl">
             Community-prioritized grievances across student housing, academic facilities, and campus infrastructure.
           </p>
         </div>
@@ -155,7 +155,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           id="feed-lodge-grievance-btn"
           type="button"
           onClick={onGoToSubmit}
-          className="px-5 py-3 bg-[#1C1C1C] hover:bg-red-700 text-[#FAF9F6] text-xs font-mono font-bold uppercase tracking-wider border-2 border-[#1C1C1C] transition-all shadow-[4px_4px_0px_0px_#1C1C1C] hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer flex items-center justify-center gap-2 self-start md:self-auto shrink-0"
+          className="px-5 py-3 bg-slate-900 hover:bg-indigo-600 text-white text-xs font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg transition-all shadow-md hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer flex items-center justify-center gap-2 self-start md:self-auto shrink-0"
         >
           <PlusCircle className="w-4 h-4" />
           <span>Lodge Grievance</span>
@@ -164,58 +164,58 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
 
       {/* Top Status & Summary Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-        <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-3.5 shadow-[3px_3px_0px_0px_#1C1C1C]">
-          <div className="text-[10px] font-mono font-bold uppercase text-[#1C1C1C]/60">Total Depositions</div>
-          <div className="text-2xl font-mono font-bold text-[#1C1C1C] mt-0.5">{stats.total}</div>
+        <div className="bg-slate-50 border border-slate-200 rounded-lg p-3.5 shadow-md">
+          <div className="text-[10px] font-mono font-bold uppercase text-slate-900/60">Total Depositions</div>
+          <div className="text-2xl font-mono font-bold text-slate-900 mt-0.5">{stats.total}</div>
         </div>
 
-        <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-3.5 shadow-[3px_3px_0px_0px_#1C1C1C]">
+        <div className="bg-slate-50 border border-slate-200 rounded-lg p-3.5 shadow-md">
           <div className="text-[10px] font-mono font-bold uppercase text-amber-900">Under Review</div>
           <div className="text-2xl font-mono font-bold text-amber-800 mt-0.5">{stats.underReview}</div>
         </div>
 
-        <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-3.5 shadow-[3px_3px_0px_0px_#1C1C1C]">
+        <div className="bg-slate-50 border border-slate-200 rounded-lg p-3.5 shadow-md">
           <div className="text-[10px] font-mono font-bold uppercase text-emerald-900">Resolved</div>
           <div className="text-2xl font-mono font-bold text-emerald-800 mt-0.5">{stats.resolved}</div>
         </div>
 
-        <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-3.5 shadow-[3px_3px_0px_0px_#1C1C1C]">
-          <div className="text-[10px] font-mono font-bold uppercase text-red-900">High Priority</div>
-          <div className="text-2xl font-mono font-bold text-red-700 mt-0.5">{stats.highPriority}</div>
+        <div className="bg-slate-50 border border-slate-200 rounded-lg p-3.5 shadow-md">
+          <div className="text-[10px] font-mono font-bold uppercase text-indigo-800">High Priority</div>
+          <div className="text-2xl font-mono font-bold text-indigo-600 mt-0.5">{stats.highPriority}</div>
         </div>
       </div>
 
       {/* Filter & Search Controls */}
-      <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-5 sm:p-6 mb-8 shadow-[5px_5px_0px_0px_#1C1C1C]">
+      <div className="bg-slate-50 border border-slate-200 rounded-lg p-5 sm:p-6 mb-8 shadow-lg">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Search Box */}
           <div className="relative">
-            <label htmlFor="feed-search-input" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#1C1C1C]/70 mb-1">
+            <label htmlFor="feed-search-input" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-900/70 mb-1">
               Search Grievances
             </label>
             <div className="relative">
-              <Search className="w-4 h-4 text-[#1C1C1C]/50 absolute left-3 top-2.5 pointer-events-none" />
+              <Search className="w-4 h-4 text-slate-900/50 absolute left-3 top-2.5 pointer-events-none" />
               <input
                 id="feed-search-input"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search ID, issue, or keyword..."
-                className="w-full bg-white border-2 border-[#1C1C1C] pl-9 pr-3 py-2 text-xs font-mono text-[#1C1C1C] placeholder:text-[#1C1C1C]/40 focus:outline-none focus:bg-stone-50"
+                className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-3 py-2 text-xs font-mono text-slate-900 placeholder:text-slate-900/40 focus:outline-none focus:bg-slate-50"
               />
             </div>
           </div>
 
           {/* Category Filter */}
           <div>
-            <label htmlFor="feed-cat-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#1C1C1C]/70 mb-1">
+            <label htmlFor="feed-cat-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-900/70 mb-1">
               Category
             </label>
             <select
               id="feed-cat-select"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full bg-white border-2 border-[#1C1C1C] p-2 text-xs font-mono text-[#1C1C1C] focus:outline-none cursor-pointer"
+              className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-mono text-slate-900 focus:outline-none cursor-pointer"
             >
               <option value="All">All Categories</option>
               {CATEGORIES.map((cat) => (
@@ -228,14 +228,14 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
 
           {/* Status Filter */}
           <div>
-            <label htmlFor="feed-status-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#1C1C1C]/70 mb-1">
+            <label htmlFor="feed-status-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-900/70 mb-1">
               Status
             </label>
             <select
               id="feed-status-select"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full bg-white border-2 border-[#1C1C1C] p-2 text-xs font-mono text-[#1C1C1C] focus:outline-none cursor-pointer"
+              className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-mono text-slate-900 focus:outline-none cursor-pointer"
             >
               <option value="All">All Statuses</option>
               <option value="under_review">Under Review</option>
@@ -247,14 +247,14 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
 
           {/* Hostel / Location Filter */}
           <div>
-            <label htmlFor="feed-loc-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#1C1C1C]/70 mb-1">
+            <label htmlFor="feed-loc-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-slate-900/70 mb-1">
               Hostel / Location
             </label>
             <select
               id="feed-loc-select"
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="w-full bg-white border-2 border-[#1C1C1C] p-2 text-xs font-mono text-[#1C1C1C] focus:outline-none cursor-pointer truncate"
+              className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-mono text-slate-900 focus:outline-none cursor-pointer truncate"
             >
               <option value="All">All Locations</option>
               {uniqueHostelLocations.map((loc) => (
@@ -267,8 +267,8 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
         </div>
 
         {/* Quick Category Chips */}
-        <div className="mt-4 pt-3 border-t border-[#1C1C1C]/15 flex flex-wrap items-center gap-1.5">
-          <span className="text-[10px] font-mono uppercase text-[#1C1C1C]/60 font-bold mr-1">
+        <div className="mt-4 pt-3 border-t border-slate-900/15 flex flex-wrap items-center gap-1.5">
+          <span className="text-[10px] font-mono uppercase text-slate-900/60 font-bold mr-1">
             Filter Chips:
           </span>
           <button
@@ -276,8 +276,8 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
             onClick={() => setSelectedCategory('All')}
             className={`text-[10px] font-mono uppercase px-2 py-0.5 border transition-all cursor-pointer ${
               selectedCategory === 'All'
-                ? 'bg-[#1C1C1C] text-white border-[#1C1C1C] font-bold'
-                : 'bg-stone-100 text-[#1C1C1C] border-[#1C1C1C]/30 hover:bg-stone-200'
+                ? 'bg-slate-900 text-white border-slate-300 font-bold'
+                : 'bg-slate-100 text-slate-900 border-slate-900/30 hover:bg-slate-200'
             }`}
           >
             All
@@ -289,8 +289,8 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
               onClick={() => setSelectedCategory(selectedCategory === cat ? 'All' : cat)}
               className={`text-[10px] font-mono uppercase px-2 py-0.5 border transition-all cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-[#1C1C1C] text-white border-[#1C1C1C] font-bold'
-                  : 'bg-stone-100 text-[#1C1C1C] border-[#1C1C1C]/30 hover:bg-stone-200'
+                  ? 'bg-slate-900 text-white border-slate-300 font-bold'
+                  : 'bg-slate-100 text-slate-900 border-slate-900/30 hover:bg-slate-200'
               }`}
             >
               {formatCategoryLabel(cat)}
@@ -299,9 +299,9 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
         </div>
 
         {/* Sort Controls & Reset Row */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3 border-t border-[#1C1C1C]/15 text-xs font-mono">
+        <div className="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-900/15 text-xs font-mono">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase font-bold text-[#1C1C1C]/60 flex items-center gap-1">
+            <span className="text-[10px] uppercase font-bold text-slate-900/60 flex items-center gap-1">
               <ArrowUpDown className="w-3 h-3" />
               Sort By:
             </span>
@@ -309,10 +309,10 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
               <button
                 type="button"
                 onClick={() => setSortBy('upvotes')}
-                className={`px-3 py-1 text-xs uppercase font-bold border-2 transition-colors cursor-pointer ${
+                className={`px-3 py-1 text-xs uppercase font-bold border transition-colors cursor-pointer ${
                   sortBy === 'upvotes'
-                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                    : 'bg-white text-[#1C1C1C] border-[#1C1C1C]/30 hover:bg-stone-100'
+                    ? 'bg-slate-900 text-white border-slate-300'
+                    : 'bg-white text-slate-900 border-slate-900/30 hover:bg-slate-100'
                 }`}
               >
                 Most Upvoted
@@ -320,10 +320,10 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
               <button
                 type="button"
                 onClick={() => setSortBy('newest')}
-                className={`px-3 py-1 text-xs uppercase font-bold border-2 transition-colors cursor-pointer ${
+                className={`px-3 py-1 text-xs uppercase font-bold border transition-colors cursor-pointer ${
                   sortBy === 'newest'
-                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                    : 'bg-white text-[#1C1C1C] border-[#1C1C1C]/30 hover:bg-stone-100'
+                    ? 'bg-slate-900 text-white border-slate-300'
+                    : 'bg-white text-slate-900 border-slate-900/30 hover:bg-slate-100'
                 }`}
               >
                 Most Recent
@@ -336,14 +336,14 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="font-bold text-red-700 hover:underline cursor-pointer flex items-center gap-1 text-xs"
+                className="font-bold text-indigo-600 hover:underline cursor-pointer flex items-center gap-1 text-xs"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>Reset Filters</span>
               </button>
             )}
 
-            <span className="text-[#1C1C1C]/60 text-[11px]">
+            <span className="text-slate-900/60 text-[11px]">
               Showing <strong>{filteredComplaints.length}</strong> of <strong>{complaints.length}</strong> complaints
             </span>
           </div>
@@ -365,28 +365,28 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
         </div>
       ) : (
         /* Empty State */
-        <div className="bg-[#FAF9F6] border-2 border-[#1C1C1C] p-12 text-center shadow-[4px_4px_0px_0px_#1C1C1C] max-w-xl mx-auto my-8">
-          <div className="w-12 h-12 bg-stone-100 border-2 border-[#1C1C1C] flex items-center justify-center mx-auto mb-4">
-            <Inbox className="w-6 h-6 text-[#1C1C1C]/60" />
+        <div className="bg-slate-50 border border-slate-200 rounded-lg p-12 text-center shadow-md max-w-xl mx-auto my-8">
+          <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <Inbox className="w-6 h-6 text-slate-900/60" />
           </div>
-          <h3 className="font-serif-editorial text-2xl font-bold text-[#1C1C1C] mb-2">
+          <h3 className="font-sans text-2xl font-bold text-slate-900 mb-2">
             No Matching Grievances Found
           </h3>
-          <p className="font-serif text-sm text-[#1C1C1C]/70 mb-6">
+          <p className="font-sans text-sm text-slate-900/70 mb-6">
             There are currently no reported issues matching your filter parameters. Try resetting your search or adjust the filters.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
               onClick={handleResetFilters}
-              className="px-4 py-2 bg-[#1C1C1C] text-[#FAF9F6] text-xs font-mono font-bold uppercase border-2 border-[#1C1C1C] cursor-pointer"
+              className="px-4 py-2 bg-slate-900 text-white text-xs font-mono font-bold uppercase border border-slate-200 rounded-lg cursor-pointer"
             >
               Reset Filters
             </button>
             <button
               type="button"
               onClick={onGoToSubmit}
-              className="px-4 py-2 bg-white text-[#1C1C1C] text-xs font-mono font-bold uppercase border-2 border-[#1C1C1C] hover:bg-stone-100 cursor-pointer"
+              className="px-4 py-2 bg-white text-slate-900 text-xs font-mono font-bold uppercase border border-slate-200 rounded-lg hover:bg-slate-100 cursor-pointer"
             >
               Lodge New Grievance
             </button>

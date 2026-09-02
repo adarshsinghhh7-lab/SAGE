@@ -748,7 +748,8 @@ export class ApiService {
   static async triggerIdentityReveal(
     complaintId: string,
     reason: string,
-    activeRole: UserRole = 'head_admin'
+    activeRole: UserRole = 'head_admin',
+    userId?: string
   ): Promise<{ decryptedIdentity: string; logId: string; timestamp: string }> {
     if (activeRole !== 'head_admin') {
       throw new Error('Unauthorized: Only Head Admin can trigger identity reveal.');
@@ -762,7 +763,8 @@ export class ApiService {
           method: 'POST',
           body: JSON.stringify({ reason }),
         },
-        activeRole
+        activeRole,
+        userId
       );
       if (response && response.data) {
         return {
@@ -788,7 +790,7 @@ export class ApiService {
         await setDoc(doc(firestoreDb, 'revealLogs', logId), {
           logId,
           complaintId,
-          revealedByAdminId: 'head_admin_client',
+          revealedByAdminId: userId || 'head_admin_client',
           reason,
           timestamp: nowIso,
         } as RevealLogDoc);
@@ -802,6 +804,51 @@ export class ApiService {
       logId,
       timestamp: nowIso,
     };
+  }
+
+  /**
+   * Fetch the immutable reveal audit ledger (`revealLogs` collection).
+   * Strictly Head-Admin-only — the backend route and Firestore security rules
+   * reject regular `admin` / `student` roles. Returns records newest-first.
+   */
+  static async getRevealLogs(
+    activeRole: UserRole = 'head_admin'
+  ): Promise<RevealLogDoc[]> {
+    if (activeRole !== 'head_admin') {
+      throw new Error('Unauthorized: Only Head Admin can read the reveal audit log.');
+    }
+
+    // 1. Live Firestore direct client read (enforced Head-Admin-only by rules)
+    if (isFirebaseConfigured && firestoreDb) {
+      try {
+        const logsRef = collection(firestoreDb, 'revealLogs');
+        const q = query(logsRef, orderBy('timestamp', 'desc'));
+        const snapshot = await getDocs(q);
+        if (!snapshot.empty) {
+          return snapshot.docs.map((docSnap) => docSnap.data() as RevealLogDoc);
+        }
+      } catch (err) {
+        console.warn('[Firestore getRevealLogs]', err);
+      }
+    }
+
+    // 2. Backend API sync attempt (requireHeadAdmin on the route)
+    try {
+      const response = await this.request<{ success: boolean; data: RevealLogDoc[] }>(
+        '/complaints/reveal-logs',
+        { method: 'GET' },
+        activeRole
+      );
+      if (response && Array.isArray(response.data)) {
+        return [...response.data].sort(
+          (a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime()
+        );
+      }
+    } catch {
+      // backend unavailable
+    }
+
+    return [];
   }
 
   /**
