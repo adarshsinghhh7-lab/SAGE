@@ -1,0 +1,127 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for Role-Based Access Control (RBAC)
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAnonymous() {
+      return request.auth != null && request.auth.token.firebase.sign_in_provider == 'anonymous';
+    }
+
+    function hasRole(role) {
+      return request.auth != null && request.auth.token.role == role;
+    }
+
+    function isAdmin() {
+      return hasRole('admin') || hasRole('head_admin');
+    }
+
+    function isHeadAdmin() {
+      return hasRole('head_admin');
+    }
+
+    // -------------------------------------------------------------------------
+    // 1. users Collection
+    // - Contains encryptedIdentity (AES encrypted), role, department, createdAt.
+    // - Plain student users can only read their own record (or head_admin).
+    // - Regular admins cannot access student encryptedIdentity.
+    // -------------------------------------------------------------------------
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isHeadAdmin());
+      allow create: if isAuthenticated() && request.resource.data.keys().hasAll(['userId', 'encryptedIdentity', 'role', 'department', 'createdAt'])
+                    && request.resource.data.role in ['student', 'admin', 'head_admin']
+                    && request.resource.data.encryptedIdentity is string
+                    && !('plainIdentity' in request.resource.data)
+                    && !('studentEmail' in request.resource.data)
+                    && !('studentName' in request.resource.data);
+      allow update, delete: if isHeadAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // 2. complaints Collection
+    // - Fields: complaintId, encryptedUserRef, category, description, hostelOrLocation, status, upvoteCount, urgencyScore, photoUrl, createdAt
+    // - Anyone can read complaints (public campus transparency).
+    // - Anyone can submit an anonymous complaint.
+    // - Strict rule: NO plain student identity (studentName, studentEmail, studentId) allowed in payload.
+    // - Status can only be changed by Admin or Head Admin.
+    // - Deletion is restricted to Head Admin only.
+    // -------------------------------------------------------------------------
+    match /complaints/{complaintId} {
+      allow read: if true;
+
+      // Creating a new anonymous complaint
+      allow create: if request.resource.data.keys().hasAll([
+                        'complaintId', 'encryptedUserRef', 'category', 'description', 
+                        'hostelOrLocation', 'status', 'upvoteCount', 'urgencyScore', 'createdAt'
+                      ])
+                    && request.resource.data.category in ['infrastructure', 'mess', 'harassment', 'wifi', 'hygiene', 'other', 'Infrastructure', 'Mess/Food', 'Harassment', 'WiFi/Internet', 'Hygiene', 'Other']
+                    && request.resource.data.status in ['submitted', 'under_review', 'resolved', 'Submitted', 'Under Review', 'Resolved']
+                    && request.resource.data.description is string
+                    && request.resource.data.description.size() >= 20
+                    && request.resource.data.description.size() <= 1000
+                    && request.resource.data.encryptedUserRef is string
+                    && !('studentEmail' in request.resource.data)
+                    && !('studentName' in request.resource.data)
+                    && !('studentId' in request.resource.data)
+                    && !('userId' in request.resource.data);
+
+      // Updating complaint
+      allow update: if (
+        // Case A: Community upvoting (increments upvoteCount only)
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['upvoteCount', 'upvotes']))
+        ||
+        // Case B: Admin / Head Admin updating status & resolution notes
+        (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasAny(['status', 'resolutionNotes', 'resolvedAt', 'urgencyScore']))
+      );
+
+      // Deleting complaint (Head Admin only)
+      allow delete: if isHeadAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // 3. upvotes Collection
+    // - Fields: upvoteId, complaintId, hashedVoterId, createdAt
+    // - Tracks anonymous SHA-256 voter hashes to prevent duplicate voting.
+    // - Append-only: updates and deletes are permanently forbidden.
+    // -------------------------------------------------------------------------
+    match /upvotes/{upvoteId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasAll(['upvoteId', 'complaintId', 'hashedVoterId', 'createdAt'])
+                    && request.resource.data.hashedVoterId is string
+                    && request.resource.data.hashedVoterId.size() == 64; // SHA-256 hex string length
+      allow update, delete: if false; // Immutable upvote record
+    }
+
+    // -------------------------------------------------------------------------
+    // 4. statusUpdates Collection
+    // - Fields: updateId, complaintId, updatedBy, oldStatus, newStatus, timestamp
+    // - Publicly visible log of status transitions.
+    // - Only Admin or Head Admin can create a status update.
+    // - Append-only: updates and deletes are permanently forbidden.
+    // -------------------------------------------------------------------------
+    match /statusUpdates/{updateId} {
+      allow read: if true;
+      allow create: if isAdmin() && request.resource.data.keys().hasAll(['updateId', 'complaintId', 'updatedBy', 'oldStatus', 'newStatus', 'timestamp']);
+      allow update, delete: if false; // Immutable status update ledger
+    }
+
+    // -------------------------------------------------------------------------
+    // 5. revealLogs Collection (IMMUTABLE AUDIT TRAIL)
+    // - Fields: logId, complaintId, revealedByAdminId, reason, timestamp
+    // - Strictly restricted to Head Admin. Regular Admins & Students CANNOT read or write.
+    // - Immutable: NO EDITS OR DELETES ALLOWED, EVER.
+    // -------------------------------------------------------------------------
+    match /revealLogs/{logId} {
+      allow read: if isHeadAdmin();
+      allow create: if isHeadAdmin() && request.resource.data.keys().hasAll(['logId', 'complaintId', 'revealedByAdminId', 'reason', 'timestamp'])
+                    && request.resource.data.reason is string
+                    && request.resource.data.reason.size() >= 10;
+      allow update: if false; // STRICT IMMUTABILITY: Never editable
+      allow delete: if false; // STRICT IMMUTABILITY: Never deletable
+    }
+
+  }
+}
