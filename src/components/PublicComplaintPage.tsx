@@ -37,7 +37,7 @@ export const PublicComplaintPage: React.FC<PublicComplaintPageProps> = ({
   onExit,
   onOpenImage,
 }) => {
-  const { activeRole } = useAuth();
+  const { activeRole, user } = useAuth();
   const [complaint, setComplaint] = useState<Complaint | null>(null);
   const [statusUpdates, setStatusUpdates] = useState<StatusUpdateDoc[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -115,7 +115,7 @@ export const PublicComplaintPage: React.FC<PublicComplaintPageProps> = ({
         : prev
     );
     try {
-      const result = await ApiService.upvoteComplaint(compId, activeRole);
+      const result = await ApiService.upvoteComplaint(compId, user?.uid, activeRole);
       setComplaint(normalizeComplaintData(result.complaint, true));
       setToast(
         result.alreadyUpvoted

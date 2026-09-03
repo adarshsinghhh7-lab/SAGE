@@ -14,12 +14,16 @@ import { ImageModal } from './components/ImageModal';
 import { ConnectionBanner } from './components/ConnectionBanner';
 import { AuthModal } from './components/AuthModal';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ToastProvider, useToast } from './context/ToastContext';
 import { ApiService, normalizeComplaintData } from './services/api';
 import { isFirebaseConfigured } from './firebase/config';
 import { AdminAccessDenied } from './components/AdminAccessDenied';
+import { NotFoundPage } from './components/NotFoundPage';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 function MainApp() {
   const { activeRole, user } = useAuth();
+  const { showToast } = useToast();
   const isAdminRole = activeRole === 'admin' || activeRole === 'head_admin';
   const [complaints, setComplaints] = useState<Complaint[]>(() => INITIAL_COMPLAINTS.map((c) => normalizeComplaintData(c)));
   const [currentView, setCurrentView] = useState<PageView>('landing');
@@ -66,14 +70,28 @@ function MainApp() {
   }, [activeRole]);
 
   // Hash-based routing for public complaint pages: #/complaint/:id
+  const [unknownHash, setUnknownHash] = useState<boolean>(false);
+
   useEffect(() => {
     const parseHash = () => {
       const hash = window.location.hash;
-      const match = hash.match(/^#\/complaint\/(.+)$/);
-      if (match && match[1]) {
-        const id = decodeURIComponent(match[1]);
+      if (!hash) {
+        setRouteComplaintId(null);
+        setUnknownHash(false);
+        return;
+      }
+
+      const complaintMatch = hash.match(/^#\/complaint\/(.+)$/);
+      if (complaintMatch && complaintMatch[1]) {
+        const id = decodeURIComponent(complaintMatch[1]);
         setRouteComplaintId(id);
         setCurrentView('public');
+        setUnknownHash(false);
+      } else {
+        // Unknown hash route — show 404
+        setUnknownHash(true);
+        setCurrentView('public');
+        setRouteComplaintId(null);
       }
     };
 
@@ -89,6 +107,7 @@ function MainApp() {
   const handleExitPublicPage = () => {
     window.location.hash = '';
     setRouteComplaintId(null);
+    setUnknownHash(false);
     setCurrentView('feed');
   };
 
@@ -102,6 +121,9 @@ function MainApp() {
 
   // Upvote: Toggles to upvoted, increments count, and records SHA-256 vote in upvotes collection
   const handleUpvote = async (id: string) => {
+    // Snapshot the previous state for rollback on failure
+    const prevComplaints = complaints;
+
     // Optimistic UI update
     setComplaints((prev) =>
       prev.map((c) => {
@@ -119,15 +141,18 @@ function MainApp() {
     );
 
     try {
-      await ApiService.upvoteComplaint(id, activeRole);
+      await ApiService.upvoteComplaint(id, user?.uid, activeRole);
     } catch {
-      // rollback handled gracefully
+      // Rollback optimistic UI on failure
+      setComplaints(prevComplaints);
+      showToast('Upvote failed. Please try again.', 'error');
     }
   };
 
   // Update status (e.g. from public detail view)
   const handleStatusChange = async (id: string, newStatus: ComplaintStatus) => {
     const norm = newStatus.toLowerCase().replace(' ', '_') as ComplaintStatus;
+    const prevComplaints = complaints;
     setComplaints((prev) =>
       prev.map((c) => (c.complaintId === id || c.id === id ? { ...c, status: norm } : c))
     );
@@ -135,7 +160,8 @@ function MainApp() {
     try {
       await ApiService.updateStatus(id, norm, '', activeRole);
     } catch {
-      // ignore
+      setComplaints(prevComplaints);
+      showToast('Status update failed. Please try again.', 'error');
     }
   };
 
@@ -146,6 +172,7 @@ function MainApp() {
     resolutionNotes: string
   ) => {
     const norm = newStatus.toLowerCase().replace(' ', '_') as ComplaintStatus;
+    const prevComplaints = complaints;
     setComplaints((prev) =>
       prev.map((c) => {
         if (c.complaintId === id || c.id === id) {
@@ -164,7 +191,8 @@ function MainApp() {
     try {
       await ApiService.updateStatus(id, norm, resolutionNotes, activeRole, user?.uid);
     } catch {
-      // ignore
+      setComplaints(prevComplaints);
+      showToast('Failed to save disposition. Please try again.', 'error');
     }
   };
 
@@ -214,9 +242,10 @@ function MainApp() {
             setSelectedComplaintId(null);
           }
           // Clear public complaint hash when navigating via navbar
-          if (window.location.hash.startsWith('#/complaint/')) {
+          if (window.location.hash.startsWith('#/complaint/') || unknownHash) {
             window.location.hash = '';
             setRouteComplaintId(null);
+            setUnknownHash(false);
           }
           setCurrentView(view);
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -287,6 +316,16 @@ function MainApp() {
             complaintId={routeComplaintId}
             onExit={handleExitPublicPage}
             onOpenImage={handleOpenImage}
+          />
+        )}
+
+        {currentView === 'public' && unknownHash && (
+          <NotFoundPage
+            onNavigate={(view) => {
+              setUnknownHash(false);
+              window.location.hash = '';
+              setCurrentView(view);
+            }}
           />
         )}
 
@@ -388,8 +427,12 @@ function MainApp() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <MainApp />
-    </AuthProvider>
+    <ErrorBoundary>
+      <ToastProvider>
+        <AuthProvider>
+          <MainApp />
+        </AuthProvider>
+      </ToastProvider>
+    </ErrorBoundary>
   );
 }
