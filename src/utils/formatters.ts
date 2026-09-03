@@ -109,6 +109,43 @@ export function getCategoryBadgeStyle(category: string): {
   }
 }
 
+/**
+ * Badge style for the AI-Flagged Urgent indicator.
+ * Distinct purple/violet palette so it is visually separate from the
+ * red "High Priority" (upvote-based) badge.
+ */
+export function getAiFlaggedBadgeStyle(): {
+  bg: string;
+  text: string;
+  border: string;
+  indicator: string;
+} {
+  return {
+    bg: 'bg-violet-100',
+    text: 'text-violet-950',
+    border: 'border-violet-600',
+    indicator: 'bg-violet-600 animate-pulse',
+  };
+}
+
+/**
+ * Badge style for the upvote-based High Priority indicator.
+ * Red palette — visually distinct from the purple AI-Flagged badge.
+ */
+export function getHighPriorityBadgeStyle(): {
+  bg: string;
+  text: string;
+  border: string;
+  indicator: string;
+} {
+  return {
+    bg: 'bg-red-100',
+    text: 'text-red-950',
+    border: 'border-red-600',
+    indicator: 'bg-red-600 animate-pulse',
+  };
+}
+
 export function getStatusBadgeStyle(status: string, urgency?: string): {
   bg: string;
   text: string;

@@ -41,6 +41,7 @@ export interface Complaint {
   status: ComplaintStatus;
   upvoteCount: number; // default 0
   urgencyScore: number; // default 0, evaluated by ML microservice (0.0 to 1.0)
+  highPriority?: boolean; // set to true by the auto-escalation engine (upvote-based)
   photoUrl?: string; // optional
   createdAt: string; // ISO date timestamp string
   resolutionNotes?: string;
