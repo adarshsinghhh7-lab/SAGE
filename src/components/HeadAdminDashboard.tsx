@@ -17,6 +17,8 @@ import { ApiService } from '../services/api';
 import {
   getCategoryBadgeStyle,
   getStatusBadgeStyle,
+  getAiFlaggedBadgeStyle,
+  getHighPriorityBadgeStyle,
   formatCategoryLabel,
   formatStatusLabel,
   formatTimeAgo,
@@ -368,8 +370,17 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                     const upvoteCount = complaint.upvoteCount !== undefined ? complaint.upvoteCount : complaint.upvotes || 0;
                     const urgencyScore = complaint.urgencyScore !== undefined ? complaint.urgencyScore : 0;
                     const catStyle = getCategoryBadgeStyle(complaint.category);
-                    const statusStyle = getStatusBadgeStyle(complaint.status, urgencyScore >= 0.75 ? 'Urgent' : complaint.urgency);
-                    const isUrgent = (urgencyScore >= 0.75 || complaint.urgency === 'Urgent') && (complaint.status || '').toLowerCase() !== 'resolved';
+                    const statusStyle = getStatusBadgeStyle(complaint.status);
+                    const isResolved = (complaint.status || '').toLowerCase() === 'resolved';
+
+                    // AI-Flagged: ML urgency_score > 0.7 (separate from upvotes)
+                    const isAiFlagged = urgencyScore > 0.7 && !isResolved;
+                    // High Priority: upvote-based auto-escalation flag
+                    const isHighPriority = !!complaint.highPriority && !isResolved;
+
+                    const aiBadge = getAiFlaggedBadgeStyle();
+                    const hpBadge = getHighPriorityBadgeStyle();
+
                     const formattedDate = new Date(complaint.createdAt).toLocaleDateString('en-US', {
                       month: 'short', day: 'numeric', year: 'numeric',
                     });
@@ -392,16 +403,29 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                           </span>
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap">
-                          {isUrgent ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold uppercase border bg-red-100 text-red-950 border-red-600 shadow-md">
-                              <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" /> Urgent
-                            </span>
-                          ) : (
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {/* Always show the normal status badge */}
                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold uppercase border ${statusStyle.bg} ${statusStyle.text} ${statusStyle.border}`}>
                               <span className={`w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
                               {formatStatusLabel(complaint.status)}
                             </span>
-                          )}
+
+                            {/* AI-Flagged Urgent badge (purple) — urgency_score > 0.7 */}
+                            {isAiFlagged && (
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase border shadow-sm ${aiBadge.bg} ${aiBadge.text} ${aiBadge.border}`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${aiBadge.indicator}`} />
+                                AI-Flagged Urgent
+                              </span>
+                            )}
+
+                            {/* High Priority badge (red) — upvote-based escalation */}
+                            {isHighPriority && (
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase border shadow-sm ${hpBadge.bg} ${hpBadge.text} ${hpBadge.border}`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${hpBadge.indicator}`} />
+                                High Priority
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         <td className="py-3.5 px-4 text-center whitespace-nowrap font-bold">

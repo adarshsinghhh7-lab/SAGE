@@ -32,7 +32,7 @@ import {
 } from 'lucide-react';
 import { Complaint, ComplaintStatus, EscalationSettingsDoc } from '../types';
 import { ApiService } from '../services/api';
-import { getCategoryBadgeStyle, getStatusBadgeStyle, formatCategoryLabel, formatStatusLabel, formatTimeAgo } from '../utils/formatters';
+import { getCategoryBadgeStyle, getStatusBadgeStyle, getAiFlaggedBadgeStyle, getHighPriorityBadgeStyle, formatCategoryLabel, formatStatusLabel, formatTimeAgo } from '../utils/formatters';
 import { AdminComplaintModal } from './AdminComplaintModal';
 import { useAuth } from '../context/AuthContext';
 
@@ -84,7 +84,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
   const [selectedLocation, setSelectedLocation] = useState<string>('All');
-  const [sortBy, setSortBy] = useState<'date-desc' | 'date-asc' | 'upvotes-desc' | 'id-asc'>('date-desc');
+  const [sortBy, setSortBy] = useState<'date-desc' | 'date-asc' | 'upvotes-desc' | 'urgency-desc' | 'id-asc'>('date-desc');
   
   // Selected complaint for modal editing
   const [modalComplaint, setModalComplaint] = useState<Complaint | null>(null);
@@ -259,9 +259,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const submitted = complaints.filter((c) => (c.status || '').toLowerCase() === 'submitted').length;
     const underReview = complaints.filter((c) => (c.status || '').toLowerCase() === 'under_review').length;
     const resolved = complaints.filter((c) => (c.status || '').toLowerCase() === 'resolved').length;
-    const urgent = complaints.filter((c) => (c.urgencyScore >= 0.75 || c.urgency === 'Urgent') && (c.status || '').toLowerCase() !== 'resolved').length;
+    // AI-Flagged: urgency_score > 0.7 (ML microservice assessment)
+    const aiFlagged = complaints.filter((c) => c.urgencyScore > 0.7 && (c.status || '').toLowerCase() !== 'resolved').length;
+    // High Priority: upvote-based auto-escalation flag
+    const highPriority = complaints.filter((c) => c.highPriority && (c.status || '').toLowerCase() !== 'resolved').length;
 
-    return { total, submitted, underReview, resolved, urgent };
+    return { total, submitted, underReview, resolved, aiFlagged, highPriority };
   }, [complaints]);
 
   // 6. Filter & Search Table Records
@@ -328,6 +331,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         }
         if (sortBy === 'upvotes-desc') {
           return votesB - votesA;
+        }
+        if (sortBy === 'urgency-desc') {
+          return (b.urgencyScore || 0) - (a.urgencyScore || 0);
         }
         if (sortBy === 'id-asc') {
           return idA.localeCompare(idB);
@@ -524,21 +530,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           </div>
 
-          {/* Card 4: Urgent Priority */}
+          {/* Card 4: Urgent Priority — AI-Flagged + Upvote High Priority */}
           <div className="bg-red-50/60 border border-red-200 rounded-lg p-5 shadow-md">
             <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-red-600 mb-1 flex items-center gap-1.5">
               <AlertTriangle className="w-3.5 h-3.5 text-red-600" />
               Urgent Priority
             </div>
             <div className="text-3xl sm:text-4xl font-mono font-bold text-red-600 mb-2 flex items-baseline gap-2">
-              <span>{statusStats.urgent}</span>
-              {statusStats.urgent > 0 && (
+              <span>{statusStats.aiFlagged + statusStats.highPriority}</span>
+              {(statusStats.aiFlagged + statusStats.highPriority) > 0 && (
                 <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
               )}
             </div>
-            <div className="flex items-center justify-between text-[11px] font-mono border-t border-red-200/70 pt-2 text-red-700">
-              <span>Immediate Attention</span>
-              <span className="font-bold">Urgent ML Flag</span>
+            <div className="flex flex-col gap-1 text-[11px] font-mono border-t border-red-200/70 pt-2 text-red-700">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-violet-600" />
+                  AI-Flagged Urgent
+                </span>
+                <span className="font-bold">{statusStats.aiFlagged}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-red-600" />
+                  Upvote High Priority
+                </span>
+                <span className="font-bold">{statusStats.highPriority}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -950,6 +968,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </button>
                 <button
                   type="button"
+                  onClick={() => setSortBy('urgency-desc')}
+                  className={`px-2.5 py-1 text-[11px] uppercase font-bold border transition-colors cursor-pointer ${
+                    sortBy === 'urgency-desc'
+                      ? 'bg-violet-700 text-white border-violet-500'
+                      : 'bg-white text-slate-900 border-slate-900/30 hover:bg-slate-100'
+                  }`}
+                >
+                  AI Urgency
+                </button>
+                <button
+                  type="button"
                   onClick={() => setSortBy('id-asc')}
                   className={`px-2.5 py-1 text-[11px] uppercase font-bold border transition-colors cursor-pointer ${
                     sortBy === 'id-asc'
@@ -1012,8 +1041,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   const urgencyScore = complaint.urgencyScore !== undefined ? complaint.urgencyScore : 0;
 
                   const catStyle = getCategoryBadgeStyle(complaint.category);
-                  const statusStyle = getStatusBadgeStyle(complaint.status, urgencyScore >= 0.75 ? 'Urgent' : complaint.urgency);
-                  const isUrgent = (urgencyScore >= 0.75 || complaint.urgency === 'Urgent') && (complaint.status || '').toLowerCase() !== 'resolved';
+                  const statusStyle = getStatusBadgeStyle(complaint.status);
+                  const isResolved = (complaint.status || '').toLowerCase() === 'resolved';
+
+                  // AI-Flagged: ML urgency_score > 0.7 (separate from upvotes)
+                  const isAiFlagged = urgencyScore > 0.7 && !isResolved;
+                  // High Priority: upvote-based auto-escalation flag
+                  const isHighPriority = !!complaint.highPriority && !isResolved;
+
+                  const aiBadge = getAiFlaggedBadgeStyle();
+                  const hpBadge = getHighPriorityBadgeStyle();
+
                   const formattedDate = new Date(complaint.createdAt).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
@@ -1042,19 +1080,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         </span>
                       </td>
 
-                      {/* Column 3: Status */}
+                      {/* Column 3: Status + Priority Badges */}
                       <td className="py-3.5 px-4 whitespace-nowrap">
-                        {isUrgent ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold uppercase border bg-red-100 text-red-950 border-red-600 shadow-md">
-                            <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
-                            <span>Urgent Priority</span>
-                          </span>
-                        ) : (
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {/* Always show the normal status badge */}
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold uppercase border ${statusStyle.bg} ${statusStyle.text} ${statusStyle.border}`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
                             <span>{formatStatusLabel(complaint.status)}</span>
                           </span>
-                        )}
+
+                          {/* AI-Flagged Urgent badge (purple) — urgency_score > 0.7 */}
+                          {isAiFlagged && (
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase border shadow-sm ${aiBadge.bg} ${aiBadge.text} ${aiBadge.border}`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${aiBadge.indicator}`} />
+                              AI-Flagged Urgent
+                            </span>
+                          )}
+
+                          {/* High Priority badge (red) — upvote-based escalation */}
+                          {isHighPriority && (
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase border shadow-sm ${hpBadge.bg} ${hpBadge.text} ${hpBadge.border}`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${hpBadge.indicator}`} />
+                              High Priority
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       {/* Column 4: Upvotes */}
