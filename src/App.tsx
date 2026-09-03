@@ -11,7 +11,6 @@ import { HeadAdminDashboard } from './components/HeadAdminDashboard';
 import { LandingPage } from './components/LandingPage';
 import { PublicComplaintPage } from './components/PublicComplaintPage';
 import { ImageModal } from './components/ImageModal';
-import { ConnectionBanner } from './components/ConnectionBanner';
 import { AuthModal } from './components/AuthModal';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider, useToast } from './context/ToastContext';
@@ -231,9 +230,6 @@ function MainApp() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-      {/* Top Connection & Health Status Banner */}
-      <ConnectionBanner />
-
       {/* Header / Navbar */}
       <Navbar
         currentView={currentView}
