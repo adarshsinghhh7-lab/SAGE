@@ -13,6 +13,7 @@ import {
   ChevronDown, 
   CheckCircle2, 
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Complaint, ComplaintStatus } from '../types';
 import { getCategoryBadgeStyle, getStatusBadgeStyle, formatCategoryLabel, formatStatusLabel, formatTimeAgo } from '../utils/formatters';
 import { useAuth } from '../context/AuthContext';
@@ -77,7 +78,12 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
   });
 
   return (
-    <div className="max-w-4xl mx-auto py-8 sm:py-12 px-4 sm:px-6 text-slate-900">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="max-w-4xl mx-auto py-8 sm:py-12 px-4 sm:px-6 text-slate-900"
+    >
       {/* Navigation Breadcrumb */}
       <div className="mb-6 flex items-center justify-between gap-4">
         <button
@@ -346,6 +352,6 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

@@ -9,10 +9,10 @@ import {
   FileText,
   Vote,
   ChevronDown,
-  ChevronUp,
   Shield,
   Activity
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { PageView } from '../types';
 
 interface LandingPageProps {
@@ -71,63 +71,96 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
         <div className="max-w-5xl mx-auto text-center relative z-10">
           {/* Trust Pill */}
-          <div className="inline-flex items-center gap-2 bg-slate-900 text-white px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider mb-6 shadow-md">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="inline-flex items-center gap-2 bg-slate-900 text-white px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider mb-6 shadow-md"
+          >
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
             <span>Anonymous Campus Grievance & Escalation Protocol</span>
-          </div>
+          </motion.div>
 
           {/* Main Title */}
-          <h1 className="font-sans text-4xl sm:text-6xl lg:text-7xl font-bold text-slate-900 tracking-tight leading-[1.08] mb-6">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="font-sans text-4xl sm:text-6xl lg:text-7xl font-bold text-slate-900 tracking-tight leading-[1.08] mb-6"
+          >
             Fearless campus accountability.<br className="hidden sm:inline" />
             <span className="italic font-sans font-normal text-indigo-600"> Without fear of retaliation.</span>
-          </h1>
+          </motion.h1>
 
           {/* Subtitle */}
-          <p className="font-sans text-lg sm:text-xl text-slate-900/85 max-w-3xl mx-auto leading-relaxed mb-10">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.35 }}
+            className="font-sans text-lg sm:text-xl text-slate-900/85 max-w-3xl mx-auto leading-relaxed mb-10"
+          >
             S.A.G.E. is a secure, anonymous reporting platform that empowers students to voice hostel, mess, hygiene, and safety concerns. Your identity remains protected, while community upvoting ensures urgent issues get the immediate administrative attention they deserve.
-          </p>
+          </motion.p>
 
           {/* Primary Dual Call-to-Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto mb-12">
-            <button
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto mb-12"
+          >
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               id="hero-submit-cta"
               type="button"
               onClick={() => onNavigate('submit')}
-              className="w-full sm:w-auto px-7 py-4 bg-slate-900 text-white hover:bg-indigo-600 text-sm font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg transition-all flex items-center justify-center gap-2.5 shadow-md hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer"
+              className="w-full sm:w-auto px-7 py-4 bg-slate-900 text-white hover:bg-indigo-600 text-sm font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg transition-colors flex items-center justify-center gap-2.5 shadow-md cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Submit a Complaint</span>
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               id="hero-browse-cta"
               type="button"
               onClick={() => onNavigate('feed')}
-              className="w-full sm:w-auto px-7 py-4 bg-slate-50 text-slate-900 hover:bg-slate-200 text-sm font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg transition-all flex items-center justify-center gap-2.5 shadow-md hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer"
+              className="w-full sm:w-auto px-7 py-4 bg-slate-50 text-slate-900 hover:bg-slate-200 text-sm font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg transition-colors flex items-center justify-center gap-2.5 shadow-md cursor-pointer"
             >
               <LayoutList className="w-4 h-4" />
               <span>Browse Complaints</span>
               <span className="text-xs bg-indigo-600 text-white px-2 py-0.5 font-mono font-bold">
                 {totalComplaintsCount}
               </span>
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
 
           {/* 3 Quick Confidence Highlights */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-slate-900/15 text-xs font-mono text-slate-900/80">
-            <div className="flex items-center justify-center gap-2 p-2 bg-slate-100/70 border border-slate-900/20">
-              <EyeOff className="w-4 h-4 text-emerald-800 shrink-0" />
-              <span>No Account or Sign-in Required</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 p-2 bg-slate-100/70 border border-slate-900/20">
-              <Lock className="w-4 h-4 text-indigo-600 shrink-0" />
-              <span>Cryptographically Decoupled</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 p-2 bg-slate-100/70 border border-slate-900/20">
-              <Activity className="w-4 h-4 text-slate-900 shrink-0" />
-              <span>Real-Time Status Tracking</span>
-            </div>
-          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.65 }}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-slate-900/15 text-xs font-mono text-slate-900/80"
+          >
+            {[
+              { icon: <EyeOff className="w-4 h-4 text-emerald-800 shrink-0" />, text: 'No Account or Sign-in Required' },
+              { icon: <Lock className="w-4 h-4 text-indigo-600 shrink-0" />, text: 'Cryptographically Decoupled' },
+              { icon: <Activity className="w-4 h-4 text-slate-900 shrink-0" />, text: 'Real-Time Status Tracking' },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.7 + i * 0.1 }}
+                className="flex items-center justify-center gap-2 p-2 bg-slate-100/70 border border-slate-900/20"
+              >
+                {item.icon}
+                <span>{item.text}</span>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
@@ -151,7 +184,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Card 1: Default Zero-Knowledge */}
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-lg flex flex-col justify-between">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.5, delay: 0 }}
+              whileHover={{ y: -4 }}
+              className="bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-lg flex flex-col justify-between"
+            >
               <div>
                 <div className="w-10 h-10 bg-slate-900 text-white flex items-center justify-center font-mono font-bold text-sm mb-4 border border-slate-300">
                   01
@@ -167,10 +207,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Zero Identity Tracking</span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 2: Controlled Safety Safeguard */}
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-lg flex flex-col justify-between">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+              whileHover={{ y: -4 }}
+              className="bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-lg flex flex-col justify-between"
+            >
               <div>
                 <div className="w-10 h-10 bg-indigo-600 text-white flex items-center justify-center font-mono font-bold text-sm mb-4 border border-slate-300">
                   02
@@ -186,10 +233,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <Shield className="w-4 h-4" />
                 <span>Every Query Publicly Audited</span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 3: Transparent Escalation */}
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-lg flex flex-col justify-between">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              whileHover={{ y: -4 }}
+              className="bg-slate-50 border border-slate-200 rounded-lg p-6 shadow-lg flex flex-col justify-between"
+            >
               <div>
                 <div className="w-10 h-10 bg-slate-900 text-white flex items-center justify-center font-mono font-bold text-sm mb-4 border border-slate-300">
                   03
@@ -205,7 +259,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <CheckCircle2 className="w-4 h-4 text-emerald-800" />
                 <span>Protected Student Expression</span>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -297,8 +351,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             {faqs.map((faq, idx) => {
               const isOpen = openFaqIndex === idx;
               return (
-                <div
+                <motion.div
                   key={idx}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-30px' }}
+                  transition={{ duration: 0.4, delay: idx * 0.08 }}
                   className="border border-slate-200 rounded-lg bg-white shadow-md overflow-hidden"
                 >
                   <button
@@ -311,19 +369,32 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                       <span className="text-indigo-600 font-mono text-sm">Q{idx + 1}.</span>
                       <span>{faq.question}</span>
                     </span>
-                    {isOpen ? (
-                      <ChevronUp className="w-4 h-4 text-indigo-600 shrink-0" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-slate-900/60 shrink-0" />
-                    )}
+                    <motion.span
+                      animate={{ rotate: isOpen ? 180 : 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="shrink-0"
+                    >
+                      <ChevronDown className="w-4 h-4 text-indigo-600" />
+                    </motion.span>
                   </button>
 
-                  {isOpen && (
-                    <div className="px-5 pb-5 pt-1 border-t border-slate-900/15 font-sans text-xs sm:text-sm text-slate-900/85 leading-relaxed bg-slate-50/50">
-                      <p>{faq.answer}</p>
-                    </div>
-                  )}
-                </div>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        key="content"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-5 pb-5 pt-1 border-t border-slate-900/15 font-sans text-xs sm:text-sm text-slate-900/85 leading-relaxed bg-slate-50/50">
+                          <p>{faq.answer}</p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               );
             })}
           </div>

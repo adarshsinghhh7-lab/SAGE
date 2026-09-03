@@ -6,6 +6,7 @@ import {
   Info,
   ShieldCheck
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { PageView } from '../types';
 import { useAuth } from '../context/AuthContext';
 
@@ -23,7 +24,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   const { activeRole, openAuthModal } = useAuth();
 
   return (
-    <header className="border-b border-slate-200 bg-slate-50 sticky top-0 z-30 shadow-xs">
+    <motion.header
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      className="border-b border-slate-200 bg-slate-50 sticky top-0 z-30 shadow-xs"
+    >
       {/* Top micro-bar */}
       <div className="bg-slate-900 text-white text-[10px] font-mono uppercase tracking-widest py-1 px-4 text-center">
         <span>CAMPUS INTEGRITY & ANONYMOUS ESCALATION LEDGER · PROTECTED BY S.A.G.E. PROTOCOL</span>
@@ -128,6 +134,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </nav>
       </div>
-    </header>
+    </motion.header>
   );
 };

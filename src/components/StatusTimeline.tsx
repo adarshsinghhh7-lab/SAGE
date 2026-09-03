@@ -1,5 +1,6 @@
 import React from 'react';
 import { Check, CircleDot, Clock, FileText, Search, CheckCircle2 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { ComplaintStatus, StatusUpdateDoc } from '../types';
 import { formatTimeAgo } from '../utils/formatters';
 
@@ -160,8 +161,11 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({
                 : 'text-slate-900/45';
 
             return (
-              <li
+              <motion.li
                 key={stage.key}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: idx * 0.15 }}
                 className={`relative flex-1 sm:px-2 flex flex-col items-start sm:items-center text-left sm:text-center ${
                   isPending ? 'opacity-80' : ''
                 }`}
@@ -205,7 +209,7 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({
                     Current Stage
                   </span>
                 )}
-              </li>
+              </motion.li>
             );
           })}
         </ol>

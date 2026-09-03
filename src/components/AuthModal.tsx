@@ -6,6 +6,7 @@ import {
   Crown, 
   GraduationCap
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
 import { UserRole } from '../types';
 
@@ -19,16 +20,25 @@ export const AuthModal: React.FC = () => {
   };
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-150"
-      onClick={closeAuthModal}
-    >
-      <div 
-        className="bg-slate-50 border border-slate-200 rounded-xl max-w-lg w-full shadow-xl my-8 overflow-hidden text-slate-900"
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
+    <AnimatePresence>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs overflow-y-auto"
+        onClick={closeAuthModal}
       >
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 10 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+          className="bg-slate-50 border border-slate-200 rounded-xl max-w-lg w-full shadow-xl my-8 overflow-hidden text-slate-900"
+          onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+        >
         {/* Header */}
         <div className="bg-slate-900 text-white px-5 py-4 flex items-center justify-between border-b border-slate-200">
           <div className="flex items-center gap-2.5">
@@ -166,7 +176,8 @@ export const AuthModal: React.FC = () => {
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
+    </AnimatePresence>
   );
 };

@@ -7,6 +7,7 @@ import {
   Inbox, 
   Lock 
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Complaint } from '../types';
 import { ComplaintCard } from './ComplaintCard';
 import { formatCategoryLabel } from '../utils/formatters';
@@ -352,7 +353,16 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
 
       {/* Grid of Complaints Cards */}
       {filteredComplaints.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            visible: {
+              transition: { staggerChildren: 0.06 }
+            }
+          }}
+        >
           {filteredComplaints.map((complaint) => (
             <ComplaintCard
               key={complaint.complaintId || complaint.id}
@@ -362,7 +372,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
               onOpenImage={onOpenImage}
             />
           ))}
-        </div>
+        </motion.div>
       ) : (
         /* Empty State */
         <div className="bg-slate-50 border border-slate-200 rounded-lg p-12 text-center shadow-md max-w-xl mx-auto my-8">

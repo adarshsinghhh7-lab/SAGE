@@ -8,6 +8,7 @@ import {
   ArrowRight,
   Link2
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Complaint } from '../types';
 import { getCategoryBadgeStyle, getStatusBadgeStyle, formatCategoryLabel, formatStatusLabel, formatTimeAgo } from '../utils/formatters';
 
@@ -59,10 +60,15 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
   };
 
   return (
-    <article
+    <motion.article
       id={`complaint-card-${compId}`}
       onClick={handleCardClick}
-      className="group bg-slate-50 border border-slate-200 rounded-lg p-5 sm:p-6 transition-all duration-150 shadow-md hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-lg cursor-pointer flex flex-col justify-between"
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -3, boxShadow: '0 8px 30px -8px rgba(0,0,0,0.15)' }}
+      transition={{ duration: 0.25 }}
+      className="group bg-slate-50 border border-slate-200 rounded-lg p-5 sm:p-6 shadow-md cursor-pointer flex flex-col justify-between"
     >
       <div>
         {/* Top Header Row: ID, Category Tag, Status Badge */}
@@ -179,6 +185,6 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           </div>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 };

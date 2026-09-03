@@ -13,6 +13,7 @@ import {
   FileCheck,
   Link2
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Complaint } from '../types';
 import { getCategoryBadgeStyle, getStatusBadgeStyle, formatCategoryLabel, formatStatusLabel, formatTimeAgo } from '../utils/formatters';
 
@@ -49,8 +50,18 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
   const statusStyle = getStatusBadgeStyle(complaint.status);
 
   return (
-    <div className="max-w-2xl mx-auto py-10 sm:py-14 px-4 sm:px-6 text-slate-900">
-      <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 sm:p-10 text-center shadow-lg relative">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="max-w-2xl mx-auto py-10 sm:py-14 px-4 sm:px-6 text-slate-900"
+    >
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.15 }}
+        className="bg-slate-50 border border-slate-200 rounded-lg p-6 sm:p-10 text-center shadow-lg relative"
+      >
         {/* Success Marker */}
         <div className="w-14 h-14 bg-slate-900 text-white border border-slate-200 rounded-lg flex items-center justify-center mx-auto mb-4">
           <FileCheck className="w-7 h-7" />
@@ -206,7 +217,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
             <span>Lodge Another Grievance</span>
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

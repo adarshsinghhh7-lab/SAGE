@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Complaint, ComplaintStatus, PageView } from './types';
 import { INITIAL_COMPLAINTS } from './data/initialComplaints';
 import { Navbar } from './components/Navbar';
@@ -251,6 +252,14 @@ function MainApp() {
 
       {/* Main Content View Switcher */}
       <main className="flex-1">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentView + (currentView === 'detail' ? (activeComplaint?.complaintId || activeComplaint?.id || '') : '')}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+          >
         {currentView === 'landing' && (
           <LandingPage
             onNavigate={(view) => {
@@ -362,6 +371,8 @@ function MainApp() {
             </button>
           </div>
         )}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Footer */}
