@@ -34,15 +34,15 @@ export const AuthModal: React.FC = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
-          className="bg-slate-50 border border-slate-200 rounded-xl max-w-lg w-full shadow-xl my-8 overflow-hidden text-slate-900"
+          className="bg-slate-50 border border-indigo-100/50 rounded-xl max-w-lg w-full shadow-xl my-8 overflow-hidden text-slate-900"
           onClick={(e) => e.stopPropagation()}
           role="dialog"
           aria-modal="true"
         >
         {/* Header */}
-        <div className="bg-slate-900 text-white px-5 py-4 flex items-center justify-between border-b border-slate-200">
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-4 flex items-center justify-between border-b border-indigo-100/50">
           <div className="flex items-center gap-2.5">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <ShieldCheck className="w-5 h-5 text-emerald-300" />
             <span className="font-mono font-bold text-sm uppercase tracking-wider">
               Firebase Auth & Role Selector
             </span>
@@ -170,7 +170,7 @@ export const AuthModal: React.FC = () => {
             <button
               type="button"
               onClick={closeAuthModal}
-              className="px-5 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-slate-900 text-white hover:bg-indigo-600 border border-slate-200 rounded-lg cursor-pointer shadow-sm"
+              className="px-5 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:opacity-90 border border-indigo-100/50 rounded-xl cursor-pointer shadow-sm"
             >
               Done
             </button>

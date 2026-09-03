@@ -60,14 +60,14 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 0.15 }}
-        className="bg-slate-50 border border-slate-200 rounded-lg p-6 sm:p-10 text-center shadow-lg relative"
+        className="bg-slate-50 border border-indigo-100/50 rounded-xl p-6 sm:p-10 text-center shadow-lg relative"
       >
         {/* Success Marker */}
-        <div className="w-14 h-14 bg-slate-900 text-white border border-slate-200 rounded-lg flex items-center justify-center mx-auto mb-4">
+        <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-200">
           <FileCheck className="w-7 h-7" />
         </div>
 
-        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-900/60 bg-slate-200/80 px-2.5 py-0.5 border border-slate-900/30 inline-block mb-2">
+        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2.5 py-0.5 border border-indigo-200/50 inline-block mb-2 rounded-lg">
           DEPOSITION RECORDED (complaints COLLECTION)
         </span>
         <h1 className="font-sans text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
@@ -75,15 +75,15 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
         </h1>
 
         {/* Required Anonymity Statement */}
-        <div className="bg-slate-100 border border-slate-200 rounded-lg p-4 my-6 text-left flex items-start gap-3 shadow-sm">
-          <ShieldCheck className="w-5 h-5 text-emerald-800 shrink-0 mt-0.5" />
+        <div className="bg-emerald-50/80 border border-emerald-200/50 rounded-xl p-4 my-6 text-left flex items-start gap-3 shadow-sm">
+          <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
           <p className="font-sans text-sm text-slate-900 leading-relaxed">
             Your identity is not visible to anyone during normal review. You can track this complaint using your ID.
           </p>
         </div>
 
         {/* Complaint Tracking ID Ticket */}
-        <div className="bg-white border border-slate-200 rounded-lg p-6 mb-7 text-left shadow-md">
+        <div className="bg-white border border-indigo-100/50 rounded-xl p-6 mb-7 text-left shadow-md">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-900/60 block mb-1">
@@ -177,10 +177,10 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
             id="copy-public-link-btn"
             type="button"
             onClick={copyPublicLink}
-            className={`w-full sm:w-auto px-6 py-3.5 font-mono font-bold text-xs uppercase tracking-wider border border-slate-200 rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
+            className={`w-full sm:w-auto px-6 py-3.5 font-mono font-bold text-xs uppercase tracking-wider border border-indigo-100/50 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
               linkCopied
-                ? 'bg-emerald-800 text-white border-emerald-900 shadow-none'
-                : 'bg-slate-900 hover:bg-slate-800 text-white shadow-md'
+                ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-emerald-500 shadow-none'
+                : 'bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 text-white shadow-md'
             }`}
           >
             {linkCopied ? (
@@ -200,7 +200,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
             id="view-in-feed-btn"
             type="button"
             onClick={onGoToFeed}
-            className="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-mono font-bold text-xs uppercase tracking-wider border border-slate-200 rounded-lg transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 text-white font-mono font-bold text-xs uppercase tracking-wider border border-indigo-100/50 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
           >
             <Eye className="w-4 h-4" />
             <span>View in Public Ledger</span>
@@ -211,7 +211,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
             id="submit-another-btn"
             type="button"
             onClick={onSubmitAnother}
-            className="w-full sm:w-auto px-6 py-3.5 bg-white hover:bg-slate-100 text-slate-900 font-mono font-bold text-xs uppercase tracking-wider border border-slate-200 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+            className="w-full sm:w-auto px-6 py-3.5 bg-white hover:bg-indigo-50 text-slate-900 font-mono font-bold text-xs uppercase tracking-wider border border-indigo-100/50 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
           >
             <PlusCircle className="w-4 h-4 text-indigo-600" />
             <span>Lodge Another Grievance</span>

@@ -63,48 +63,48 @@ export function getCategoryBadgeStyle(category: string): {
   switch (norm) {
     case 'infrastructure':
       return {
-        bg: 'bg-slate-100',
-        text: 'text-slate-900',
-        border: 'border-slate-900/30',
-        indicator: 'bg-slate-900',
+        bg: 'bg-sky-100',
+        text: 'text-sky-900',
+        border: 'border-sky-400/50',
+        indicator: 'bg-sky-500',
       };
     case 'mess':
     case 'mess_food':
       return {
-        bg: 'bg-amber-50/80',
-        text: 'text-amber-950',
-        border: 'border-amber-900/30',
-        indicator: 'bg-amber-800',
+        bg: 'bg-amber-100',
+        text: 'text-amber-900',
+        border: 'border-amber-400/50',
+        indicator: 'bg-amber-500',
       };
     case 'harassment':
       return {
-        bg: 'bg-indigo-50',
-        text: 'text-indigo-800',
-        border: 'border-indigo-300/40',
-        indicator: 'bg-indigo-600',
+        bg: 'bg-rose-100',
+        text: 'text-rose-900',
+        border: 'border-rose-400/50',
+        indicator: 'bg-rose-500',
       };
     case 'wifi':
     case 'wifi_internet':
       return {
-        bg: 'bg-slate-100',
-        text: 'text-slate-900',
-        border: 'border-slate-900/30',
-        indicator: 'bg-slate-700',
+        bg: 'bg-violet-100',
+        text: 'text-violet-900',
+        border: 'border-violet-400/50',
+        indicator: 'bg-violet-500',
       };
     case 'hygiene':
       return {
-        bg: 'bg-emerald-50/80',
-        text: 'text-emerald-950',
-        border: 'border-emerald-900/30',
-        indicator: 'bg-emerald-800',
+        bg: 'bg-emerald-100',
+        text: 'text-emerald-900',
+        border: 'border-emerald-400/50',
+        indicator: 'bg-emerald-500',
       };
     case 'other':
     default:
       return {
-        bg: 'bg-slate-50',
-        text: 'text-slate-800',
-        border: 'border-slate-400',
-        indicator: 'bg-slate-600',
+        bg: 'bg-slate-100',
+        text: 'text-slate-700',
+        border: 'border-slate-400/50',
+        indicator: 'bg-slate-500',
       };
   }
 }
@@ -157,41 +157,41 @@ export function getStatusBadgeStyle(status: string, urgency?: string): {
 
   if (isUrgent && normStatus !== 'resolved') {
     return {
-      bg: 'bg-red-100',
-      text: 'text-red-950',
-      border: 'border-red-500',
-      dot: 'bg-red-600 animate-pulse',
+      bg: 'bg-gradient-to-r from-red-50 to-rose-100',
+      text: 'text-red-900',
+      border: 'border-red-400',
+      dot: 'bg-red-500 animate-pulse',
     };
   }
 
   switch (normStatus) {
     case 'submitted':
       return {
-        bg: 'bg-slate-100',
+        bg: 'bg-gradient-to-r from-slate-50 to-blue-50',
         text: 'text-slate-800',
         border: 'border-slate-300',
-        dot: 'bg-slate-600',
+        dot: 'bg-slate-500',
       };
     case 'under_review':
       return {
-        bg: 'bg-amber-100',
-        text: 'text-amber-950',
+        bg: 'bg-gradient-to-r from-amber-50 to-orange-50',
+        text: 'text-amber-900',
         border: 'border-amber-400',
-        dot: 'bg-amber-600 animate-pulse',
+        dot: 'bg-amber-500 animate-pulse',
       };
     case 'resolved':
       return {
-        bg: 'bg-emerald-100',
-        text: 'text-emerald-950',
-        border: 'border-emerald-500',
-        dot: 'bg-emerald-700',
+        bg: 'bg-gradient-to-r from-emerald-50 to-green-50',
+        text: 'text-emerald-900',
+        border: 'border-emerald-400',
+        dot: 'bg-emerald-500',
       };
     default:
       return {
-        bg: 'bg-slate-100',
+        bg: 'bg-gradient-to-r from-slate-50 to-gray-100',
         text: 'text-slate-800',
         border: 'border-slate-300',
-        dot: 'bg-slate-600',
+        dot: 'bg-slate-500',
       };
   }
 }

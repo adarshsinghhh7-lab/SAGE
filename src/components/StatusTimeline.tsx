@@ -109,9 +109,9 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({
   const currentIndex = STAGES.findIndex((s) => s.key === currentStage);
 
   return (
-    <div className="bg-slate-50 border border-slate-200 rounded-lg p-5 sm:p-6 shadow-md">
+    <div className="glass-card p-5 sm:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-900/20">
+      <div className="flex items-center justify-between mb-5 pb-3 border-b border-indigo-100/50">
         <div className="flex items-center gap-2">
           <Clock className="w-4 h-4 text-indigo-600" />
           <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
@@ -144,13 +144,13 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({
               statusUpdates
             );
 
-            let dotClass = 'bg-slate-300 border-slate-400 text-slate-500';
+            let dotClass = 'bg-slate-200 border-slate-300 text-slate-500';
             let icon = <CircleDot className="w-5 h-5" />;
             if (isCompleted) {
-              dotClass = 'bg-emerald-600 border-emerald-800 text-white';
+              dotClass = 'bg-gradient-to-br from-emerald-500 to-emerald-600 border-emerald-600 text-white';
               icon = <Check className="w-5 h-5 stroke-[3]" />;
             } else if (isCurrent) {
-              dotClass = 'bg-slate-900 border-slate-300 text-white ring-4 ring-slate-900/20';
+              dotClass = 'bg-gradient-to-br from-indigo-500 to-purple-600 border-indigo-300 text-white ring-4 ring-indigo-200/50';
               icon = <CircleDot className="w-5 h-5" />;
             }
 
@@ -204,7 +204,7 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({
 
                 {/* Small status chip on current stage */}
                 {isCurrent && (
-                  <span className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-mono font-bold uppercase bg-slate-900 text-white">
+                  <span className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-mono font-bold uppercase bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg">
                     <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
                     Current Stage
                   </span>
@@ -216,7 +216,7 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({
       </div>
 
       {/* Ledger footnote */}
-      <div className="mt-5 pt-3 border-t border-slate-900/20 flex items-start gap-1.5 text-[10px] font-mono text-slate-900/50">
+      <div className="mt-5 pt-3 border-t border-indigo-100/50 flex items-start gap-1.5 text-[10px] font-mono text-slate-900/50">
         <Clock className="w-3 h-3 text-indigo-600 shrink-0 mt-0.5" />
         <span>
           Timestamps reflect immutable transitions recorded in the{' '}

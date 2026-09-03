@@ -68,14 +68,14 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -3, boxShadow: '0 8px 30px -8px rgba(0,0,0,0.15)' }}
       transition={{ duration: 0.25 }}
-      className="group bg-slate-50 border border-slate-200 rounded-lg p-5 sm:p-6 shadow-md cursor-pointer flex flex-col justify-between"
+      className="group glass-card p-5 sm:p-6 cursor-pointer flex flex-col justify-between"
     >
       <div>
         {/* Top Header Row: ID, Category Tag, Status Badge */}
         <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3">
           <div className="flex items-center gap-2 flex-wrap">
             {/* Complaint ID */}
-            <span className="font-mono font-bold text-xs bg-slate-900 text-white px-2.5 py-0.5 tracking-wider">
+            <span className="font-mono font-bold text-xs bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-2.5 py-0.5 tracking-wider rounded-lg">
               {compId}
             </span>
 
@@ -133,17 +133,17 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
       </div>
 
       {/* Card Footer: Upvote Button & Detail Callout */}
-      <div className="pt-3 border-t border-slate-200/15 flex items-center justify-between gap-3 mt-1">
+      <div className="pt-3 border-t border-indigo-100/30 flex items-center justify-between gap-3 mt-1">
         {/* Upvote Button: Toggles to "Upvoted" and disables itself once clicked */}
         <button
           id={`upvote-btn-${compId}`}
           type="button"
           disabled={complaint.hasUpvoted}
           onClick={handleUpvoteClick}
-          className={`inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg transition-all cursor-pointer ${
+          className={`inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider border border-indigo-100/50 rounded-xl transition-all cursor-pointer ${
             complaint.hasUpvoted
-              ? 'bg-emerald-800 text-white border-emerald-900 opacity-95 cursor-default shadow-none'
-              : 'bg-white text-slate-900 hover:bg-slate-200 active:translate-y-[1px] shadow-sm'
+              ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-emerald-500 opacity-95 cursor-default shadow-none shadow-emerald-200'
+              : 'bg-white text-slate-900 hover:bg-indigo-50 active:translate-y-[1px] shadow-sm'
           }`}
           title={complaint.hasUpvoted ? 'You have upvoted this grievance' : 'Click to upvote this grievance'}
         >
@@ -167,10 +167,10 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           <button
             type="button"
             onClick={handleCopyLink}
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg transition-all cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider border border-indigo-100/50 rounded-xl transition-all cursor-pointer ${
               linkCopied
-                ? 'bg-emerald-800 text-white border-emerald-900 shadow-none'
-                : 'bg-white text-slate-900 hover:bg-slate-200 shadow-sm'
+                ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-emerald-500 shadow-none'
+                : 'bg-white text-slate-900 hover:bg-indigo-50 shadow-sm'
             }`}
             title="Copy public tracking link"
           >

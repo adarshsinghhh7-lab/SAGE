@@ -230,7 +230,7 @@ function MainApp() {
   }, [complaints, selectedComplaintId]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex flex-col text-slate-900" style={{ background: 'linear-gradient(135deg, #f0f0ff 0%, #f5f0ff 50%, #f0f5ff 100%)' }}>
       {/* Header / Navbar */}
       <Navbar
         currentView={currentView}
@@ -376,10 +376,10 @@ function MainApp() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-slate-50 py-8 px-4 text-center text-xs text-slate-900">
+      <footer className="border-t border-indigo-100/50 glass-card-strong py-8 px-4 text-center text-xs text-slate-900">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-slate-600">
-            <strong>S.A.G.E.</strong> — Student Anonymous Grievance & Escalation System
+            <strong className="gradient-text">S.A.G.E.</strong> — Student Anonymous Grievance & Escalation System
           </p>
           <div className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest text-slate-500 flex-wrap justify-center">
             <button

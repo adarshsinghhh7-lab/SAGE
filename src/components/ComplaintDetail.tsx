@@ -90,7 +90,7 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
           id="back-to-feed-btn"
           type="button"
           onClick={onBackToFeed}
-          className="inline-flex items-center gap-2 px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider text-slate-900 border border-slate-200 rounded-lg bg-white hover:bg-slate-200 transition-colors cursor-pointer shadow-sm"
+          className="inline-flex items-center gap-2 px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider text-slate-900 border border-indigo-100/50 rounded-xl bg-white hover:bg-indigo-50 transition-colors cursor-pointer shadow-sm"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Public Ledger</span>
@@ -119,12 +119,12 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
       </div>
 
       {/* Main Deposition Detail Container */}
-      <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 sm:p-10 shadow-lg">
+      <div className="bg-white/60 backdrop-blur-md border border-indigo-100/50 rounded-xl p-6 sm:p-10 shadow-lg">
         {/* Header Metadata */}
         <div className="mb-6 border-b border-slate-200 pb-6">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2.5 flex-wrap">
-              <span className="font-mono font-bold text-sm bg-slate-900 text-white px-3 py-1 tracking-wider shadow-md">
+              <span className="font-mono font-bold text-sm bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-3 py-1 tracking-wider rounded-lg shadow-md shadow-indigo-200">
                 {compId}
               </span>
 
@@ -306,17 +306,17 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
         />
 
         {/* Upvote & Action Bar */}
-        <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="pt-6 border-t border-indigo-100/50 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <button
               id={`detail-upvote-btn-${compId}`}
               type="button"
               disabled={complaint.hasUpvoted}
               onClick={handleUpvote}
-              className={`w-full sm:w-auto px-6 py-3 text-xs font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg transition-all cursor-pointer flex items-center justify-center gap-2.5 ${
+              className={`w-full sm:w-auto px-6 py-3 text-xs font-mono font-bold uppercase tracking-wider border border-indigo-100/50 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2.5 ${
                 complaint.hasUpvoted
-                  ? 'bg-emerald-800 text-white border-emerald-900 opacity-95 cursor-default'
-                  : 'bg-slate-900 text-white hover:bg-slate-800 shadow-md'
+                  ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-emerald-500 opacity-95 cursor-default'
+                  : 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:opacity-90 shadow-md'
               }`}
             >
               {complaint.hasUpvoted ? (
@@ -337,7 +337,7 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
             <button
               type="button"
               onClick={onBackToFeed}
-              className="w-full sm:w-auto px-5 py-3 text-xs font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg bg-white hover:bg-slate-100 transition-colors text-center cursor-pointer shadow-sm"
+              className="w-full sm:w-auto px-5 py-3 text-xs font-mono font-bold uppercase tracking-wider border border-indigo-100/50 rounded-xl bg-white hover:bg-indigo-50 transition-colors text-center cursor-pointer shadow-sm"
             >
               Back to Ledger
             </button>
@@ -345,7 +345,7 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
             <button
               type="button"
               onClick={onGoToSubmit}
-              className="w-full sm:w-auto px-5 py-3 text-xs font-mono font-bold uppercase tracking-wider border border-slate-200 rounded-lg bg-white hover:bg-slate-100 transition-colors text-center cursor-pointer shadow-sm"
+              className="w-full sm:w-auto px-5 py-3 text-xs font-mono font-bold uppercase tracking-wider border border-indigo-100/50 rounded-xl bg-white hover:bg-indigo-50 transition-colors text-center cursor-pointer shadow-sm"
             >
               Lodge Another
             </button>

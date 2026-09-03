@@ -179,8 +179,8 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
   return (
     <div className="max-w-3xl mx-auto py-8 sm:py-12 px-4 sm:px-6">
       {/* Editorial Confidentiality Warning Banner */}
-      <div className="mb-6 bg-slate-100 border border-slate-200 rounded-lg p-4 sm:p-5 shadow-md flex items-start gap-4">
-        <div className="p-2 bg-slate-900 text-white shrink-0 mt-0.5">
+      <div className="mb-6 bg-white/60 backdrop-blur-md border border-indigo-100/50 rounded-xl p-4 sm:p-5 shadow-md flex items-start gap-4">
+        <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-500 text-white shrink-0 mt-0.5 rounded-lg shadow-md shadow-indigo-200">
           <Lock className="w-4 h-4" />
         </div>
         <div className="text-xs">
@@ -199,9 +199,9 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
       </div>
 
       {/* Main Submission Form Card */}
-      <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 sm:p-10 shadow-lg relative">
+      <div className="bg-white/60 backdrop-blur-md border border-indigo-100/50 rounded-xl p-6 sm:p-10 shadow-lg relative">
         {/* Header */}
-        <div className="mb-8 border-b border-slate-200 pb-5">
+        <div className="mb-8 border-b border-indigo-100/50 pb-5">
           <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest text-slate-900/60 mb-1">
             <FileText className="w-3.5 h-3.5" />
             <span>Form Reference · SAGE-ENTRY</span>
@@ -260,8 +260,8 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                   onClick={() => setCategory(cat)}
                   className={`text-[11px] font-mono uppercase px-2.5 py-1 border transition-all cursor-pointer ${
                     category === cat
-                      ? 'bg-slate-900 text-white border-slate-300 font-bold'
-                      : 'bg-slate-100 text-slate-900 border-slate-900/30 hover:bg-slate-200'
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-transparent font-bold'
+                      : 'bg-indigo-50/50 text-slate-900 border-indigo-100/50 hover:bg-indigo-100'
                   }`}
                 >
                   {cat}
@@ -487,7 +487,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
               id="cancel-btn"
               type="button"
               onClick={onCancelToFeed}
-              className="w-full sm:w-auto px-5 py-3 text-xs font-mono font-bold uppercase tracking-wider text-slate-900 border border-slate-200 rounded-lg bg-slate-50 hover:bg-slate-200 transition-colors cursor-pointer text-center"
+              className="w-full sm:w-auto px-5 py-3 text-xs font-mono font-bold uppercase tracking-wider text-slate-900 border border-indigo-100/50 rounded-xl bg-white hover:bg-indigo-50 transition-colors cursor-pointer text-center"
             >
               ← Back to Ledger
             </button>
@@ -496,7 +496,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
               id="submit-complaint-btn"
               type="submit"
               disabled={isSubmitting || charCount < 20 || charCount > 1000 || !isLocationValid}
-              className="w-full sm:w-auto px-8 py-3.5 bg-slate-900 hover:bg-indigo-600 disabled:bg-slate-300 disabled:text-slate-500 disabled:border-slate-400 disabled:cursor-not-allowed text-white text-xs font-mono font-bold uppercase tracking-widest border border-slate-200 rounded-lg transition-all shadow-md hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 disabled:bg-slate-300 disabled:text-slate-500 disabled:border-slate-400 disabled:cursor-not-allowed text-white text-xs font-mono font-bold uppercase tracking-widest border border-indigo-100/50 rounded-xl transition-all shadow-md shadow-indigo-200 hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
