@@ -1,5 +1,5 @@
-import React from 'react';
-import { Check, CircleDot, Clock, FileText, Search, CheckCircle2 } from 'lucide-react';
+﻿import React from 'react';
+import { Check, Clock, FileText, Search, CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ComplaintStatus, StatusUpdateDoc } from '../types';
 import { formatTimeAgo } from '../utils/formatters';
@@ -18,249 +18,120 @@ interface StageMeta {
   icon: React.ReactNode;
 }
 
-/**
- * Utility: normalize a status value to the internal slug used across the app
- * (e.g. 'Under Review' -> 'under_review').
- */
 function normalizeStatus(status: string): string {
   return (status || '').toLowerCase().replace(/[\s_]+/g, '_');
 }
 
-/**
- * Resolve the exact timestamp for a given stage from the immutable
- * `statusUpdates` ledger. The most recent transition *into* that stage wins,
- * with sensible fallbacks (submitted -> complaint.createdAt, resolved ->
- * complaint.resolvedAt).
- */
 function resolveStageTimestamp(
   stage: 'submitted' | 'under_review' | 'resolved',
   submittedAt: string,
   resolvedAt: string | undefined,
   statusUpdates: StatusUpdateDoc[]
 ): { timestamp: string; fromLedger: boolean } {
-  // Submitted always derives from the deposition timestamp.
-  if (stage === 'submitted') {
-    return { timestamp: submittedAt, fromLedger: false };
-  }
-
-  // Find the latest statusUpdate whose *newStatus* equals this stage.
+  if (stage === 'submitted') return { timestamp: submittedAt, fromLedger: false };
   const matching = statusUpdates
     .filter((u) => normalizeStatus(u.newStatus) === stage)
-    .sort(
-      (a, b) =>
-        new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime()
-    );
-
-  if (matching.length > 0 && matching[0].timestamp) {
-    return { timestamp: matching[0].timestamp, fromLedger: true };
-  }
-
-  // Fallbacks for under_review & resolved when the ledger is empty.
-  if (stage === 'resolved' && resolvedAt) {
-    return { timestamp: resolvedAt, fromLedger: false };
-  }
-
+    .sort((a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime());
+  if (matching.length > 0 && matching[0].timestamp) return { timestamp: matching[0].timestamp, fromLedger: true };
+  if (stage === 'resolved' && resolvedAt) return { timestamp: resolvedAt, fromLedger: false };
   return { timestamp: '', fromLedger: false };
 }
 
 function formatExactTimestamp(iso: string): string {
   if (!iso) return 'Pending';
   try {
-    return new Date(iso).toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   } catch {
     return 'Pending';
   }
 }
 
 const STAGES: StageMeta[] = [
-  {
-    key: 'submitted',
-    label: 'Submitted',
-    description: 'Deposition recorded in the ledger',
-    icon: <FileText className="w-4 h-4" />,
-  },
-  {
-    key: 'under_review',
-    label: 'Under Review',
-    description: 'Admin assigned & scrutinising',
-    icon: <Search className="w-4 h-4" />,
-  },
-  {
-    key: 'resolved',
-    label: 'Resolved',
-    description: 'Disposition & remedy concluded',
-    icon: <CheckCircle2 className="w-4 h-4" />,
-  },
+  { key: 'submitted', label: 'Submitted', description: 'Deposition recorded in the ledger', icon: <FileText className="w-4 h-4" /> },
+  { key: 'under_review', label: 'Under Review', description: 'Admin assigned & scrutinising', icon: <Search className="w-4 h-4" /> },
+  { key: 'resolved', label: 'Resolved', description: 'Disposition & remedy concluded', icon: <CheckCircle2 className="w-4 h-4" /> },
 ];
 
-export const StatusTimeline: React.FC<StatusTimelineProps> = ({
-  currentStatus,
-  submittedAt,
-  statusUpdates = [],
-  resolvedAt,
-}) => {
+export const StatusTimeline: React.FC<StatusTimelineProps> = ({ currentStatus, submittedAt, statusUpdates = [], resolvedAt }) => {
   const currentStage = normalizeStatus(currentStatus);
   const currentIndex = STAGES.findIndex((s) => s.key === currentStage);
-  // Fraction of the connector line that should be "filled" up to the current
-  // stage (0 = submitted, 0.5 = under review, 1 = resolved).
-  const progressFraction = STAGES.length > 1 ? currentIndex / (STAGES.length - 1) : 0;
+  const progressFraction = currentIndex === -1 ? 0 : currentIndex / (STAGES.length - 1);
 
   return (
-    <div className="glass-card p-5 sm:p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-5 pb-3 border-b border-indigo-100/50">
-        <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-indigo-600" />
-          <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
-            Status Timeline
-          </h2>
-        </div>
-        <span className="text-[10px] font-mono font-bold uppercase text-slate-900/50">
-          Submitted → Under Review → Resolved
-        </span>
+    <div className="bg-[#E8DFC8] border border-[#D9CEB5] p-5 paper-grain">
+      <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5B6472] mb-4">
+        Disposition Timeline
       </div>
 
-      {/* Timeline Nodes */}
       <div className="relative">
-        {/* Connecting rule (drawn behind the nodes) */}
-        <div
-          className="absolute left-[15px] right-[15px] top-5 bottom-5 border-t border-dashed border-slate-900/25 sm:left-1/2 sm:right-auto sm:w-0 sm:h-full sm:border-t-0 sm:border-l-2 sm:top-[15px] sm:bottom-[15px] sm:translate-x-[-50%]"
-          aria-hidden="true"
-        />
-
-        {/* Animated progress fill: visibly "fills up to" the current stage on
-            mount via a scaleX/scaleY transition. Origin-left (horizontal,
-            mobile) and origin-top (vertical, sm+) let it grow from the first
-            stage toward the current one rather than appearing pre-filled. */}
+        {/* Connector line (desaturated) */}
+        <div className="absolute top-5 left-6 right-6 h-0.5 bg-[#D9CEB5]" />
+        {/* Filled progress up to current stage */}
         <motion.div
-          className="absolute left-[15px] right-[15px] top-5 bottom-5 origin-left border-t-2 border-t-indigo-500 sm:left-1/2 sm:right-auto sm:w-0 sm:h-full sm:border-t-0 sm:border-l-2 sm:border-l-indigo-500 sm:origin-top sm:top-[15px] sm:bottom-[15px] sm:translate-x-[-50%]"
-          initial={{ scaleX: 0, scaleY: 0 }}
-          animate={{ scaleX: progressFraction, scaleY: progressFraction }}
-          transition={{ duration: 0.9, ease: 'easeInOut' }}
-          aria-hidden="true"
+          className="absolute top-5 left-6 h-0.5 bg-[#B08D3E]"
+          initial={{ width: '0%' }}
+          animate={{ width: `${progressFraction * 100}%` }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          style={{ maxWidth: 'calc(100% - 3rem)' }}
         />
 
-        <ol className="relative flex flex-col sm:flex-row gap-6 sm:gap-0">
+        <ol className="relative flex justify-between">
           {STAGES.map((stage, idx) => {
-            const isCompleted = currentIndex > idx;
-            const isCurrent = currentIndex === idx;
-            const isPending = currentIndex < idx;
+            const isCompleted = idx <= currentIndex || currentIndex === -1 && idx === 0;
+            const isCurrent = idx === currentIndex;
+            const resolved = resolveStageTimestamp(stage.key, submittedAt, resolvedAt, statusUpdates);
+            const timestamp = resolved.timestamp;
 
-            const { timestamp, fromLedger } = resolveStageTimestamp(
-              stage.key,
-              submittedAt,
-              resolvedAt,
-              statusUpdates
-            );
-
-            let dotClass = 'bg-slate-200 border-slate-300 text-slate-500';
-            let icon = <CircleDot className="w-5 h-5" />;
-            if (isCompleted) {
-              dotClass = 'bg-gradient-to-br from-emerald-500 to-emerald-600 border-emerald-600 text-white';
-              icon = <Check className="w-5 h-5 stroke-[3]" />;
-            } else if (isCurrent) {
-              dotClass = 'bg-gradient-to-br from-indigo-500 to-purple-600 border-indigo-300 text-white';
-              icon = <CircleDot className="w-5 h-5" />;
-            }
-
-            const labelClass = isCurrent
-              ? 'text-slate-900'
+            const dotClass = isCurrent
+              ? 'bg-[#B08D3E] border-[#B08D3E] text-[#14171F]'
               : isCompleted
-                ? 'text-emerald-900'
-                : 'text-slate-900/45';
+              ? 'bg-[#5B7D5B] border-[#5B7D5B] text-[#E8DFC8]'
+              : 'bg-[#E8DFC8] border-[#D9CEB5] text-[#5B6472]';
+            const labelClass = isCurrent
+              ? 'text-[#B08D3E]'
+              : isCompleted
+              ? 'text-[#5B7D5B]'
+              : 'text-[#5B6472]';
 
             return (
               <motion.li
                 key={stage.key}
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: idx * 0.15 }}
-                className={`relative flex-1 sm:px-2 flex flex-col items-start sm:items-center text-left sm:text-center ${
-                  isPending ? 'opacity-80' : ''
-                }`}
+                transition={{ duration: 0.25, delay: idx * 0.1, ease: 'easeOut' }}
+                className="relative z-10 flex-1 flex flex-col items-center text-center px-1"
               >
-                {/* Dot */}
-                <div className={`relative z-10 w-10 h-10 rounded-full border flex items-center justify-center mb-3 ${dotClass} ${
-                  isCurrent ? 'shadow-md' : ''
-                }`}>
-                  {/* Gentle looping pulsing ring behind the active stage dot — the
-                      one place a loop is appropriate since it signals "in progress". */}
-                  {isCurrent && (
-                    <motion.span
-                      className="absolute -inset-1.5 rounded-full border-2 border-indigo-400"
-                      initial={{ scale: 1, opacity: 0.6 }}
-                      animate={{ scale: [1, 1.6], opacity: [0.55, 0] }}
-                      transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
-                      aria-hidden="true"
-                    />
-                  )}
-
-                  {/* Completed markers get a quick scale-in checkmark when reached */}
-                  {isCompleted ? (
+                <div className={`relative z-10 w-10 h-10 rounded-full border flex items-center justify-center mb-3 ${dotClass}`}>
+                  {isCompleted && (
                     <motion.span
                       initial={{ scale: 0.6, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      transition={{ type: 'spring', stiffness: 300, damping: 16, delay: 0.4 + idx * 0.15 }}
+                      transition={{ duration: 0.25, ease: 'easeOut', delay: 0.3 + idx * 0.1 }}
                       className="flex items-center justify-center"
                     >
-                      {icon}
+                      {isCompleted && !isCurrent ? <Check className="w-4 h-4" /> : stage.icon}
                     </motion.span>
-                  ) : (
-                    icon
-                  )}
+                  ) || stage.icon}
                 </div>
 
-                {/* Label */}
-                <span
-                  className={`text-xs font-mono font-bold uppercase tracking-wider mb-1 ${labelClass}`}
-                >
-                  {stage.label}
-                </span>
-                <span className="hidden sm:block text-[10px] font-sans text-slate-900/50 mb-1">
-                  {stage.description}
-                </span>
-
-                {/* Timestamp */}
-                <span
-                  className={`text-[11px] font-mono ${
-                    timestamp ? (isCurrent ? 'text-indigo-600 font-bold' : 'text-slate-900/70') : 'text-slate-900/35 italic'
-                  }`}
-                  title={fromLedger ? 'Timestamp from statusUpdates ledger' : undefined}
-                >
+                <span className={`text-xs font-mono font-bold uppercase tracking-wider mb-1 ${labelClass}`}>{stage.label}</span>
+                <span className="hidden sm:block text-[10px] text-[#5B6472] mb-1">{stage.description}</span>
+                <span className={`text-[11px] font-mono ${timestamp ? (isCurrent ? 'text-[#B08D3E] font-bold' : 'text-[#5B6472]') : 'text-[#5B6472]/40 italic'}`}>
                   {timestamp ? formatExactTimestamp(timestamp) : 'Pending'}
                 </span>
-                <span className="text-[9px] font-mono text-slate-900/40 mt-0.5">
-                  {timestamp ? formatTimeAgo(timestamp) : '—'}
-                </span>
-
-                {/* Small status chip on current stage */}
-                {isCurrent && (
-                  <span className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-mono font-bold uppercase bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                    Current Stage
-                  </span>
-                )}
+                <span className="text-[9px] font-mono text-[#5B6472]/50 mt-0.5">{timestamp ? formatTimeAgo(timestamp) : '—'}</span>
               </motion.li>
             );
           })}
         </ol>
       </div>
 
-      {/* Ledger footnote */}
-      <div className="mt-5 pt-3 border-t border-indigo-100/50 flex items-start gap-1.5 text-[10px] font-mono text-slate-900/50">
-        <Clock className="w-3 h-3 text-indigo-600 shrink-0 mt-0.5" />
+      <div className="mt-5 pt-3 border-t border-[#D9CEB5] flex items-start gap-1.5 text-[10px] font-mono text-[#5B6472]">
+        <Clock className="w-3 h-3 shrink-0 mt-0.5" />
         <span>
-          Timestamps reflect immutable transitions recorded in the{' '}
-          <span className="font-bold text-slate-900/70">statusUpdates</span> collection.
+          Timestamps reflect immutable transitions recorded in the <span className="font-bold text-[#14171F]/70">statusUpdates</span> collection.
         </span>
       </div>
     </div>
   );
 };
-

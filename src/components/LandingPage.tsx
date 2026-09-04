@@ -59,11 +59,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   ];
 
   return (
-    <div className="text-slate-900">
+    <div className="text-[#E8DFC8]">
       {/* ========================================================================= */}
       {/* 1. HERO SECTION */}
       {/* ========================================================================= */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 40%, #06b6d4 100%)' }}>
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #14171F 0%, #1E2230 50%, #0B0C0F 100%)' }}>
         {/* Animated Floating Orbs */}
         <div className="orb orb-1" />
         <div className="orb orb-2" />
@@ -80,9 +80,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <motion.div
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-mono font-bold uppercase tracking-wider mb-6 shadow-lg rounded-full bg-white/15 text-white border border-white/20 backdrop-blur-sm"
+            className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-mono font-bold uppercase tracking-wider mb-6 shadow-lg rounded-full bg-[#1E2230] text-[#E8DFC8] border border-[#2A2F3E] backdrop-blur-sm"
           >
-            <ShieldCheck className="w-4 h-4 text-emerald-300" />
+            <ShieldCheck className="w-4 h-4 text-[#5B7D5B]" />
             <span>Anonymous Campus Grievance & Escalation Protocol</span>
           </motion.div>
 
@@ -90,7 +90,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <motion.h1
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="font-sans text-4xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.08] mb-6"
+            className="font-sans text-4xl sm:text-6xl lg:text-7xl font-bold text-[#E8DFC8] tracking-tight leading-[1.08] mb-6"
           >
             Fearless campus accountability.<br className="hidden sm:inline" />
             <span className="italic font-sans font-normal text-cyan-200"> Without fear of retaliation.</span>
@@ -100,7 +100,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <motion.p
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="font-sans text-lg sm:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed mb-10"
+            className="font-sans text-lg sm:text-xl text-[#E8DFC8]/90 max-w-3xl mx-auto leading-relaxed mb-10"
           >
             S.A.G.E. is a secure, anonymous reporting platform that empowers students to voice hostel, mess, hygiene, and safety concerns. Your identity remains protected, while community upvoting ensures urgent issues get the immediate administrative attention they deserve.
           </motion.p>
@@ -117,7 +117,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               id="hero-submit-cta"
               type="button"
               onClick={() => onNavigate('submit')}
-              className="w-full sm:w-auto px-7 py-4 bg-white text-indigo-600 hover:text-indigo-700 text-sm font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-black/15 cursor-pointer"
+              className="w-full sm:w-auto px-7 py-4 bg-white text-[#B08D3E] hover:text-[#14171F] text-sm font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-black/15 cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Submit a Complaint</span>
@@ -129,11 +129,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               id="hero-browse-cta"
               type="button"
               onClick={() => onNavigate('feed')}
-              className="w-full sm:w-auto px-7 py-4 bg-white/15 text-white hover:bg-white/25 text-sm font-mono font-bold uppercase tracking-wider border border-white/30 rounded-xl transition-all flex items-center justify-center gap-2.5 backdrop-blur-sm cursor-pointer"
+              className="w-full sm:w-auto px-7 py-4 bg-[#1E2230] text-[#E8DFC8] hover:bg-[#D9CEB5] text-sm font-mono font-bold uppercase tracking-wider border border-[#D9CEB5] rounded-xl transition-all flex items-center justify-center gap-2.5 backdrop-blur-sm cursor-pointer"
             >
               <LayoutList className="w-4 h-4" />
               <span>Browse Complaints</span>
-              <span className="text-xs bg-white/25 text-white px-2 py-0.5 font-mono font-bold rounded-lg">
+              <span className="text-xs bg-white/25 text-[#E8DFC8] px-2 py-0.5 font-mono font-bold rounded-lg">
                 {totalComplaintsCount}
               </span>
             </motion.button>
@@ -142,18 +142,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           {/* 3 Quick Confidence Highlights */}
           <motion.div
             variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-white/20 text-xs font-mono text-white/90"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-[#2A2F3E] text-xs font-mono text-[#E8DFC8]/90"
           >
             {[
-              { icon: <EyeOff className="w-4 h-4 text-emerald-300 shrink-0" />, text: 'No Account or Sign-in Required' },
-              { icon: <Lock className="w-4 h-4 text-cyan-300 shrink-0" />, text: 'Cryptographically Decoupled' },
-              { icon: <Activity className="w-4 h-4 text-amber-300 shrink-0" />, text: 'Real-Time Status Tracking' },
+              { icon: <EyeOff className="w-4 h-4 text-[#5B7D5B] shrink-0" />, text: 'No Account or Sign-in Required' },
+              { icon: <Lock className="w-4 h-4 text-[#B08D3E] shrink-0" />, text: 'Cryptographically Decoupled' },
+              { icon: <Activity className="w-4 h-4 text-[#B08D3E] shrink-0" />, text: 'Real-Time Status Tracking' },
             ].map((item, i) => (
               <motion.div
                 key={i}
                 variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
                 transition={{ duration: 0.4 }}
-                className="flex items-center justify-center gap-2 p-2.5 bg-white/10 border border-white/15 rounded-xl backdrop-blur-sm"
+                className="flex items-center justify-center gap-2 p-2.5 bg-[#1E2230] border border-[#2A2F3E] rounded-xl backdrop-blur-sm"
               >
                 {item.icon}
                 <span>{item.text}</span>
@@ -166,7 +166,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       {/* 2. HOW ANONYMITY WORKS (CALM, TRUSTWORTHY PRIVACY PILLAR) */}
       {/* ========================================================================= */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-indigo-100/50" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(240,240,255,0.5) 100%)' }}>
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-[#2A2F3E]" style={{ background: 'linear-gradient(180deg, #E8DFC8 0%, #D9CEB5 100%)' }}>
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -175,14 +175,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             transition={{ duration: 0.5 }}
             className="text-center max-w-3xl mx-auto mb-14"
           >
-            <div className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-indigo-600 mb-2">
+            <div className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-[#B08D3E] mb-2">
               <Lock className="w-4 h-4" />
               <span>Privacy & Security Architecture</span>
             </div>
-            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-slate-900 tracking-tight">
+            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-[#E8DFC8] tracking-tight">
               How Anonymity Works on S.A.G.E.
             </h2>
-            <p className="font-sans text-base sm:text-lg text-slate-600 mt-3">
+            <p className="font-sans text-base sm:text-lg text-[#5B6472] mt-3">
               We built S.A.G.E. with a strict “safety-by-design” principle so that no student ever hesitates to report legitimate hazards or harassment.
             </p>
           </motion.div>
@@ -198,17 +198,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               className="glass-card-strong p-6 flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center font-mono font-bold text-sm mb-4 rounded-xl shadow-md shadow-indigo-200">
+                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 text-[#E8DFC8] flex items-center justify-center font-mono font-bold text-sm mb-4 rounded-xl shadow-md shadow-[#B08D3E]/20">
                   01
                 </div>
-                <h3 className="font-sans text-xl font-bold text-slate-900 mb-2">
+                <h3 className="font-sans text-xl font-bold text-[#E8DFC8] mb-2">
                   Encrypted & Hidden by Default
                 </h3>
-                <p className="text-xs sm:text-sm font-sans text-slate-600 leading-relaxed">
+                <p className="text-xs sm:text-sm font-sans text-[#5B6472] leading-relaxed">
                   Your identity is never attached to your grievance record. You do not log in with university credentials, and our servers do not store your IP address or browser fingerprints with your report.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-indigo-100/50 flex items-center gap-2 text-xs font-mono font-bold text-emerald-600">
+              <div className="mt-6 pt-4 border-t border-[#2A2F3E] flex items-center gap-2 text-xs font-mono font-bold text-[#5B7D5B]">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Zero Identity Tracking</span>
               </div>
@@ -224,17 +224,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               className="glass-card-strong p-6 flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 text-white flex items-center justify-center font-mono font-bold text-sm mb-4 rounded-xl shadow-md shadow-violet-200">
+                <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 text-[#E8DFC8] flex items-center justify-center font-mono font-bold text-sm mb-4 rounded-xl shadow-md shadow-violet-200">
                   02
                 </div>
-                <h3 className="font-sans text-xl font-bold text-slate-900 mb-2">
+                <h3 className="font-sans text-xl font-bold text-[#E8DFC8] mb-2">
                   Audited Misuse Safeguards
                 </h3>
-                <p className="text-xs sm:text-sm font-sans text-slate-600 leading-relaxed">
+                <p className="text-xs sm:text-sm font-sans text-[#5B6472] leading-relaxed">
                   To prevent abuse, a reveal option exists strictly for verified extreme criminal offenses (e.g. violent threats or extortion). This requires formal dual-authorization from proctorial and legal boards.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-indigo-100/50 flex items-center gap-2 text-xs font-mono font-bold text-violet-600">
+              <div className="mt-6 pt-4 border-t border-[#2A2F3E] flex items-center gap-2 text-xs font-mono font-bold text-violet-600">
                 <Shield className="w-4 h-4" />
                 <span>Every Query Publicly Audited</span>
               </div>
@@ -250,18 +250,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               className="glass-card-strong p-6 flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 text-white flex items-center justify-center font-mono font-bold text-sm mb-4 rounded-xl shadow-md shadow-cyan-200">
+                <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 text-[#E8DFC8] flex items-center justify-center font-mono font-bold text-sm mb-4 rounded-xl shadow-md shadow-cyan-200">
                   03
                 </div>
-                <h3 className="font-sans text-xl font-bold text-slate-900 mb-2">
+                <h3 className="font-sans text-xl font-bold text-[#E8DFC8] mb-2">
                   Anti-Retaliation Immunity
                 </h3>
-                <p className="text-xs sm:text-sm font-sans text-slate-600 leading-relaxed">
+                <p className="text-xs sm:text-sm font-sans text-[#5B6472] leading-relaxed">
                   Because wardens, maintenance contractors, and faculty cannot access identifying details, you are shielded from academic penalties, hostel harassment, or disciplinary retribution.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-indigo-100/50 flex items-center gap-2 text-xs font-mono font-bold text-cyan-600">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <div className="mt-6 pt-4 border-t border-[#2A2F3E] flex items-center gap-2 text-xs font-mono font-bold text-cyan-600">
+                <CheckCircle2 className="w-4 h-4 text-[#5B7D5B]" />
                 <span>Protected Student Expression</span>
               </div>
             </motion.div>
@@ -272,13 +272,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       {/* 3. 3-STEP ESCALATION LIFECYCLE */}
       {/* ========================================================================= */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-indigo-100/50" style={{ background: 'linear-gradient(180deg, rgba(240,240,255,0.5) 0%, rgba(255,255,255,0.9) 100%)' }}>
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-[#2A2F3E]" style={{ background: 'linear-gradient(180deg, rgba(240,240,255,0.5) 0%, rgba(255,255,255,0.9) 100%)' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-indigo-600 block mb-2">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#B08D3E] block mb-2">
               Simple 3-Step Lifecycle
             </span>
-            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-slate-900 tracking-tight">
+            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-[#E8DFC8] tracking-tight">
               From Grievance to Remediation
             </h2>
           </div>
@@ -287,15 +287,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             {/* Step 1 */}
             <div className="glass-card p-6">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-mono font-bold text-xs bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-2.5 py-0.5 rounded-lg">
+                <span className="font-mono font-bold text-xs bg-gradient-to-r from-indigo-500 to-purple-500 text-[#E8DFC8] px-2.5 py-0.5 rounded-lg">
                   STEP 01
                 </span>
-                <FileText className="w-5 h-5 text-indigo-500" />
+                <FileText className="w-5 h-5 text-[#B08D3E]" />
               </div>
-              <h3 className="font-sans text-lg font-bold text-slate-900 mb-2">
+              <h3 className="font-sans text-lg font-bold text-[#E8DFC8] mb-2">
                 1. Submit Anonymously
               </h3>
-              <p className="text-xs font-sans text-slate-600 leading-relaxed">
+              <p className="text-xs font-sans text-[#5B6472] leading-relaxed">
                 Draft your complaint, select the category (Hostel, Mess, Safety, WiFi, Hygiene), specify location, and optionally attach photographic evidence.
               </p>
             </div>
@@ -303,15 +303,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             {/* Step 2 */}
             <div className="glass-card p-6">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-mono font-bold text-xs bg-gradient-to-r from-violet-500 to-purple-500 text-white px-2.5 py-0.5 rounded-lg">
+                <span className="font-mono font-bold text-xs bg-gradient-to-r from-violet-500 to-purple-500 text-[#E8DFC8] px-2.5 py-0.5 rounded-lg">
                   STEP 02
                 </span>
                 <Vote className="w-5 h-5 text-violet-500" />
               </div>
-              <h3 className="font-sans text-lg font-bold text-slate-900 mb-2">
+              <h3 className="font-sans text-lg font-bold text-[#E8DFC8] mb-2">
                 2. Community Upvotes
               </h3>
-              <p className="text-xs font-sans text-slate-600 leading-relaxed">
+              <p className="text-xs font-sans text-[#5B6472] leading-relaxed">
                 Your report appears on the public ledger. Fellow residents endorse the issue to elevate urgency on administrative dashboards.
               </p>
             </div>
@@ -319,15 +319,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             {/* Step 3 */}
             <div className="glass-card p-6">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-mono font-bold text-xs bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-2.5 py-0.5 rounded-lg">
+                <span className="font-mono font-bold text-xs bg-gradient-to-r from-cyan-500 to-blue-500 text-[#E8DFC8] px-2.5 py-0.5 rounded-lg">
                   STEP 03
                 </span>
                 <CheckCircle2 className="w-5 h-5 text-cyan-500" />
               </div>
-              <h3 className="font-sans text-lg font-bold text-slate-900 mb-2">
+              <h3 className="font-sans text-lg font-bold text-[#E8DFC8] mb-2">
                 3. Action & Public Notes
               </h3>
-              <p className="text-xs font-sans text-slate-600 leading-relaxed">
+              <p className="text-xs font-sans text-[#5B6472] leading-relaxed">
                 Departments review, dispatch technicians, and log official resolution remarks with timestamps visible to the entire campus.
               </p>
             </div>
@@ -338,16 +338,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       {/* 4. FREQUENTLY ASKED QUESTIONS (FAQ SECTION) */}
       {/* ========================================================================= */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-indigo-100/50 bg-white/60">
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-[#2A2F3E] bg-white/60">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <span className="text-xs font-mono font-bold uppercase tracking-widest text-indigo-600 block mb-2">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#B08D3E] block mb-2">
               Clear Answers
             </span>
-            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-slate-900 tracking-tight">
+            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-[#E8DFC8] tracking-tight">
               Frequently Asked Questions
             </h2>
-            <p className="font-sans text-sm sm:text-base text-slate-600 mt-2">
+            <p className="font-sans text-sm sm:text-base text-[#5B6472] mt-2">
               Everything you need to know about your rights, privacy, and how S.A.G.E. protects you.
             </p>
           </div>
@@ -367,11 +367,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   <button
                     type="button"
                     onClick={() => toggleFaq(idx)}
-                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-mono font-bold text-xs sm:text-sm text-slate-900 hover:bg-indigo-50/50 transition-colors cursor-pointer"
+                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-mono font-bold text-xs sm:text-sm text-[#E8DFC8] hover:bg-[#B08D3E]/10/50 transition-colors cursor-pointer"
                     aria-expanded={isOpen}
                   >
                     <span className="flex items-center gap-3">
-                      <span className="text-indigo-600 font-mono text-sm">Q{idx + 1}.</span>
+                      <span className="text-[#B08D3E] font-mono text-sm">Q{idx + 1}.</span>
                       <span>{faq.question}</span>
                     </span>
                     <motion.span
@@ -379,7 +379,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                       transition={{ duration: 0.3 }}
                       className="shrink-0"
                     >
-                      <ChevronDown className="w-4 h-4 text-indigo-600" />
+                      <ChevronDown className="w-4 h-4 text-[#B08D3E]" />
                     </motion.span>
                   </button>
 
@@ -393,7 +393,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                         transition={{ duration: 0.3, ease: 'easeInOut' }}
                         className="overflow-hidden"
                       >
-                        <div className="px-5 pb-5 pt-1 border-t border-indigo-100/50 font-sans text-xs sm:text-sm text-slate-600 leading-relaxed bg-indigo-50/30">
+                        <div className="px-5 pb-5 pt-1 border-t border-[#2A2F3E] font-sans text-xs sm:text-sm text-[#5B6472] leading-relaxed bg-[#B08D3E]/10">
                           <p>{faq.answer}</p>
                         </div>
                       </motion.div>
@@ -409,15 +409,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       {/* 6. BOTTOM CALL TO ACTION BANNER */}
       {/* ========================================================================= */}
-      <section className="py-14 sm:py-18 px-4 sm:px-6 lg:px-8" style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 40%, #06b6d4 100%)' }}>
+      <section className="py-14 sm:py-18 px-4 sm:px-6 lg:px-8" style={{ background: 'linear-gradient(135deg, #14171F 0%, #1E2230 50%, #0B0C0F 100%)' }}>
         <div className="max-w-4xl mx-auto text-center space-y-6">
-          <span className="text-[11px] font-mono font-bold uppercase tracking-widest bg-white/15 text-white px-3 py-1 rounded-full border border-white/20">
+          <span className="text-[11px] font-mono font-bold uppercase tracking-widest bg-[#1E2230] text-[#E8DFC8] px-3 py-1 rounded-full border border-[#2A2F3E]">
             PROTECT YOUR CAMPUS COMMUNITY
           </span>
-          <h2 className="font-sans text-3xl sm:text-5xl font-bold tracking-tight text-white">
+          <h2 className="font-sans text-3xl sm:text-5xl font-bold tracking-tight text-[#E8DFC8]">
             Have an issue that needs addressing?
           </h2>
-          <p className="font-sans text-sm sm:text-base text-white/80 max-w-2xl mx-auto">
+          <p className="font-sans text-sm sm:text-base text-[#E8DFC8]/80 max-w-2xl mx-auto">
             Take 60 seconds to file a secure grievance or check the public ledger to see what issues are currently under active investigation.
           </p>
 
@@ -427,7 +427,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               onClick={() => onNavigate('submit')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full sm:w-auto px-8 py-4 bg-white text-indigo-600 hover:text-indigo-700 text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+              className="w-full sm:w-auto px-8 py-4 bg-white text-[#B08D3E] hover:text-[#14171F] text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Submit a Complaint</span>
@@ -438,7 +438,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               onClick={() => onNavigate('feed')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full sm:w-auto px-8 py-4 bg-white/15 text-white hover:bg-white/25 text-xs font-mono font-bold uppercase tracking-wider border border-white/30 rounded-xl transition-all flex items-center justify-center gap-2 backdrop-blur-sm cursor-pointer"
+              className="w-full sm:w-auto px-8 py-4 bg-[#1E2230] text-[#E8DFC8] hover:bg-[#D9CEB5] text-xs font-mono font-bold uppercase tracking-wider border border-[#D9CEB5] rounded-xl transition-all flex items-center justify-center gap-2 backdrop-blur-sm cursor-pointer"
             >
               <LayoutList className="w-4 h-4" />
               <span>Browse Public Ledger</span>

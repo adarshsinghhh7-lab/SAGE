@@ -43,8 +43,8 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             key={toast.id}
             className={`pointer-events-auto max-w-sm w-full border rounded-lg shadow-lg px-4 py-3 flex items-center gap-3 text-xs font-mono animate-in fade-in slide-in-from-bottom-4 duration-200 ${
               toast.type === 'success'
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
-                : 'bg-red-50 border-red-200 text-red-900'
+                ? 'bg-[#5B7D5B]/10 border-[#5B7D5B]/40 text-[#5B7D5B]'
+                : 'bg-[#A6352C]/10 border-[#A6352C]/40 text-[#A6352C]'
             }`}
           >
             {toast.type === 'success' ? (

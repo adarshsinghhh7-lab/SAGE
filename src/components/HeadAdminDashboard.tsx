@@ -216,36 +216,36 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
   // consistent across renders regardless of role.
   if (!isHeadAdmin) {
     return (
-      <div className="max-w-3xl mx-auto py-16 sm:py-24 px-4 text-slate-900">
-        <div className="bg-slate-50 border border-slate-200 rounded-lg p-8 sm:p-10 shadow-lg text-center">
-          <div className="w-14 h-14 mx-auto mb-5 bg-indigo-600 text-white flex items-center justify-center">
+      <div className="max-w-3xl mx-auto py-16 sm:py-24 px-4 text-[#14171F]">
+        <div className="bg-[#E8DFC8] border border-[#D9CEB5] rounded-lg p-8 sm:p-10 shadow-lg text-center">
+          <div className="w-14 h-14 mx-auto mb-5 bg-[#B08D3E] text-[#E8DFC8] flex items-center justify-center">
             <ShieldAlert className="w-7 h-7" />
           </div>
-          <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest bg-slate-900 text-white px-2.5 py-1 mb-4">
+          <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest bg-[#0B0C0F] text-[#E8DFC8] px-2.5 py-1 mb-4">
             <Lock className="w-3 h-3" /> Head Admin Access Control
           </div>
           <h1 className="font-sans text-3xl sm:text-4xl font-bold tracking-tight mb-3">
             Head Admin Panel Requires a Head Admin Role
           </h1>
-          <p className="font-sans text-sm sm:text-base text-slate-900/80 max-w-xl mx-auto mb-6">
+          <p className="font-sans text-sm sm:text-base text-[#14171F]/80 max-w-xl mx-auto mb-6">
             The identity reveal protocol and reveal audit ledger are restricted
             to the <strong className="uppercase">head_admin</strong> role and are
             enforced by the application router, the backend middleware, and
             Firestore security rules. A regular admin cannot access these functions.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 mb-6 text-xs font-mono">
-            <span className="inline-flex items-center gap-1.5 border border-slate-200 rounded-lg px-3 py-1.5">
+            <span className="inline-flex items-center gap-1.5 border border-[#D9CEB5] rounded-lg px-3 py-1.5">
               Current Role: <strong className="uppercase">{activeRole.replace('_', ' ')}</strong>
             </span>
-            <span className="inline-flex items-center gap-1.5 border border-slate-200 rounded-lg px-3 py-1.5">
-              <Crown className="w-3.5 h-3.5 text-indigo-600" /> Required:{' '}
+            <span className="inline-flex items-center gap-1.5 border border-[#D9CEB5] rounded-lg px-3 py-1.5">
+              <Crown className="w-3.5 h-3.5 text-[#B08D3E]" /> Required:{' '}
               <strong className="uppercase">head_admin</strong>
             </span>
           </div>
           <button
             type="button"
             onClick={openAuthModal}
-            className="px-6 py-3 bg-slate-900 text-white text-xs font-mono font-bold uppercase border border-slate-200 rounded-lg hover:bg-indigo-600 transition-colors cursor-pointer shadow-md"
+            className="px-6 py-3 bg-[#0B0C0F] text-[#E8DFC8] text-xs font-mono font-bold uppercase border border-[#D9CEB5] rounded-lg hover:bg-[#B08D3E] transition-colors cursor-pointer shadow-md"
           >
             Switch to Head Admin
           </button>
@@ -255,38 +255,38 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-8 sm:py-10 px-4 sm:px-6 text-slate-900">
+    <div className="max-w-7xl mx-auto py-8 sm:py-10 px-4 sm:px-6 text-[#14171F]">
       {/* Header Banner */}
-      <div className="mb-6 bg-slate-900 text-white border border-slate-200 rounded-lg p-5 shadow-lg">
+      <div className="mb-6 bg-[#0B0C0F] text-[#E8DFC8] border border-[#D9CEB5] rounded-lg p-5 shadow-lg">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 bg-indigo-600 text-white flex items-center justify-center rounded-lg">
+            <div className="w-11 h-11 bg-[#B08D3E] text-[#E8DFC8] flex items-center justify-center rounded-lg">
               <Crown className="w-6 h-6" />
             </div>
             <div>
               <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight">
                 Head Admin Command Panel
               </h1>
-              <p className="text-xs font-mono text-slate-300 mt-0.5">
+              <p className="text-xs font-mono text-[#D9CEB5] mt-0.5">
                 Immutable reveal audit + full grievance operations (Head Admin only)
               </p>
             </div>
           </div>
-          <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold uppercase bg-indigo-600 text-white px-2.5 py-1 rounded">
+          <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold uppercase bg-[#B08D3E] text-[#E8DFC8] px-2.5 py-1 rounded">
             <ShieldCheck className="w-3.5 h-3.5" /> Role: Head Admin
           </div>
         </div>
       </div>
 
       {/* Tab Switcher */}
-      <div className="mb-6 flex items-center gap-2 border-b border-slate-200">
+      <div className="mb-6 flex items-center gap-2 border-b border-[#D9CEB5]">
         <button
           type="button"
           onClick={() => setActiveTab('complaints')}
           className={`px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer border-b-2 ${
             activeTab === 'complaints'
-              ? 'border-indigo-600 text-indigo-700 bg-indigo-50'
-              : 'border-transparent text-slate-600 hover:text-slate-900'
+              ? 'border-[#B08D3E] text-[#B08D3E] bg-[#B08D3E]/10'
+              : 'border-transparent text-[#5B6472] hover:text-[#14171F]'
           } flex items-center gap-1.5`}
         >
           <Layers className="w-3.5 h-3.5" /> Complaint Triage
@@ -296,12 +296,12 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
           onClick={() => setActiveTab('reveal-logs')}
           className={`px-4 py-2.5 text-xs font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer border-b-2 ${
             activeTab === 'reveal-logs'
-              ? 'border-red-600 text-red-700 bg-red-50'
-              : 'border-transparent text-slate-600 hover:text-slate-900'
+              ? 'border-[#A6352C] text-[#A6352C] bg-[#A6352C]/10'
+              : 'border-transparent text-[#5B6472] hover:text-[#14171F]'
           } flex items-center gap-1.5`}
         >
           <ScrollText className="w-3.5 h-3.5" /> Reveal Logs
-          <span className="text-[10px] bg-red-600 text-white px-1.5 py-0.2 rounded-full">
+          <span className="text-[10px] bg-[#A6352C] text-[#E8DFC8] px-1.5 py-0.2 rounded-full">
             {revealLogs.length}
           </span>
         </button>
@@ -309,25 +309,25 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
 
 
       {activeTab === 'complaints' ? (
-        <section className="bg-slate-50 border border-slate-200 rounded-lg shadow-lg overflow-hidden">
+        <section className="bg-[#E8DFC8] border border-[#D9CEB5] rounded-lg shadow-lg overflow-hidden">
           {/* Filters Header */}
-          <div className="border-b border-slate-200 bg-slate-100 p-4">
+          <div className="border-b border-[#D9CEB5] bg-[#E8DFC8] p-4">
             <div className="flex flex-col md:flex-row gap-3">
               <div className="flex-1 relative">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-[#5B6472]/60 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search complaint ID, description, or location..."
-                  className="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-3 py-2 text-xs font-mono text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-400"
+                  className="w-full bg-[#E8DFC8] border border-[#D9CEB5] rounded-lg pl-9 pr-3 py-2 text-xs font-mono text-[#14171F] placeholder:text-[#5B6472]/60 focus:outline-none focus:border-[#B08D3E]"
                 />
               </div>
               <div className="flex flex-wrap gap-2">
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="bg-white border border-slate-200 rounded-lg p-2 text-xs font-mono text-slate-900 focus:outline-none cursor-pointer"
+                  className="bg-[#E8DFC8] border border-[#D9CEB5] rounded-lg p-2 text-xs font-mono text-[#14171F] focus:outline-none cursor-pointer"
                 >
                   <option value="All">All Categories</option>
                   {ALL_CATEGORIES.map((cat) => (
@@ -337,7 +337,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="bg-white border border-slate-200 rounded-lg p-2 text-xs font-mono text-slate-900 focus:outline-none cursor-pointer"
+                  className="bg-[#E8DFC8] border border-[#D9CEB5] rounded-lg p-2 text-xs font-mono text-[#14171F] focus:outline-none cursor-pointer"
                 >
                   <option value="All">All Statuses</option>
                   <option value="submitted">Submitted</option>
@@ -347,7 +347,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-                  className="bg-white border border-slate-200 rounded-lg p-2 text-xs font-mono text-slate-900 focus:outline-none cursor-pointer"
+                  className="bg-[#E8DFC8] border border-[#D9CEB5] rounded-lg p-2 text-xs font-mono text-[#14171F] focus:outline-none cursor-pointer"
                 >
                   <option value="date-desc">Newest</option>
                   <option value="date-asc">Oldest</option>
@@ -358,7 +358,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                   <button
                     type="button"
                     onClick={resetFilters}
-                    className="px-2.5 py-2 text-xs font-mono font-bold uppercase text-indigo-700 hover:underline cursor-pointer flex items-center gap-1"
+                    className="px-2.5 py-2 text-xs font-mono font-bold uppercase text-[#B08D3E] hover:underline cursor-pointer flex items-center gap-1"
                   >
                     <RotateCcw className="w-3 h-3" /> Reset
                   </button>
@@ -372,7 +372,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse font-mono text-xs">
               <thead>
-                <tr className="bg-slate-900 text-white border-b border-slate-200">
+                <tr className="bg-[#0B0C0F] text-[#E8DFC8] border-b border-[#D9CEB5]">
                   <th className="py-3 px-4 uppercase font-bold tracking-wider text-[11px] whitespace-nowrap">Complaint ID</th>
                   <th className="py-3 px-4 uppercase font-bold tracking-wider text-[11px] whitespace-nowrap">Category</th>
                   <th className="py-3 px-4 uppercase font-bold tracking-wider text-[11px] whitespace-nowrap">Status</th>
@@ -382,7 +382,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                   <th className="py-3 px-4 uppercase font-bold tracking-wider text-[11px] text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 bg-white">
+              <tbody className="divide-y divide-slate-200 bg-[#E8DFC8]">
                 {filteredComplaints.length > 0 ? (
                   filteredComplaints.map((complaint) => {
                     const compId = complaint.complaintId || complaint.id || '';
@@ -406,12 +406,12 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                     });
 
                     return (
-                      <tr key={compId} className="hover:bg-slate-100 transition-colors cursor-pointer group">
+                      <tr key={compId} className="hover:bg-[#E8DFC8] transition-colors cursor-pointer group">
                         <td className="py-3.5 px-4 font-bold whitespace-nowrap">
                           <button
                             type="button"
                             onClick={() => handleRowClick(complaint)}
-                            className="bg-slate-900 text-white px-2 py-0.5 group-hover:bg-indigo-600 transition-colors cursor-pointer"
+                            className="bg-[#0B0C0F] text-[#E8DFC8] px-2 py-0.5 group-hover:bg-[#B08D3E] transition-colors cursor-pointer"
                           >
                             {compId}
                           </button>
@@ -449,15 +449,15 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                         </td>
 
                         <td className="py-3.5 px-4 text-center whitespace-nowrap font-bold">
-                          <span className="inline-flex items-center gap-1"><ArrowBigUp className="w-3.5 h-3.5 text-emerald-800" />{upvoteCount}</span>
+                          <span className="inline-flex items-center gap-1"><ArrowBigUp className="w-3.5 h-3.5 text-[#5B7D5B]" />{upvoteCount}</span>
                         </td>
-                        <td className="py-3.5 px-4 whitespace-nowrap text-slate-900/80">
-                          <span className="font-bold text-slate-900">{formattedDate}</span>
-                          <span className="ml-1 text-[10px] text-slate-900/50">{formatTimeAgo(complaint.createdAt)}</span>
+                        <td className="py-3.5 px-4 whitespace-nowrap text-[#14171F]/80">
+                          <span className="font-bold text-[#14171F]">{formattedDate}</span>
+                          <span className="ml-1 text-[10px] text-[#14171F]/50">{formatTimeAgo(complaint.createdAt)}</span>
                         </td>
-                        <td className="py-3.5 px-4 text-slate-900 max-w-[200px] truncate" title={location}>
+                        <td className="py-3.5 px-4 text-[#14171F] max-w-[200px] truncate" title={location}>
                           <div className="flex items-center gap-1 truncate">
-                            <MapPin className="w-3 h-3 text-indigo-600 shrink-0" />
+                            <MapPin className="w-3 h-3 text-[#B08D3E] shrink-0" />
                             <span className="truncate">{location}</span>
                           </div>
                         </td>
@@ -466,7 +466,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                             <button
                               type="button"
                               onClick={() => handleRowClick(complaint)}
-                              className="px-2.5 py-1 bg-slate-100 hover:bg-slate-900 hover:text-white border border-slate-300 transition-colors text-[10px] uppercase font-bold cursor-pointer"
+                              className="px-2.5 py-1 bg-[#E8DFC8] hover:bg-[#0B0C0F] hover:text-[#E8DFC8] border border-[#D9CEB5] transition-colors text-[10px] uppercase font-bold cursor-pointer"
                             >
                               Review
                             </button>
@@ -474,7 +474,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                               <button
                                 type="button"
                                 onClick={() => handleRevealClick(complaint)}
-                                className="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white border border-red-700 transition-colors text-[10px] uppercase font-bold cursor-pointer flex items-center gap-1"
+                                className="px-2.5 py-1 bg-[#A6352C] hover:bg-[#A6352C] text-[#E8DFC8] border border-[#A6352C] transition-colors text-[10px] uppercase font-bold cursor-pointer flex items-center gap-1"
                                 title="Head Admin only: decrypt & reveal submitter identity"
                               >
                                 <Key className="w-3 h-3" /> Reveal Identity
@@ -487,7 +487,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                   })
                 ) : (
                   <tr>
-                    <td colSpan={7} className="py-12 px-4 text-center text-slate-900/60 bg-slate-50">
+                    <td colSpan={7} className="py-12 px-4 text-center text-[#14171F]/60 bg-[#E8DFC8]">
                       <p className="font-sans text-sm">No complaints match the selected filter parameters.</p>
                     </td>
                   </tr>
@@ -501,23 +501,23 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
         // ---------------------------------------------------------------
         // Reveal Logs Tab (Head Admin only, immutable audit trail)
         // ---------------------------------------------------------------
-        <section className="bg-slate-50 border border-slate-200 rounded-lg shadow-lg overflow-hidden">
-          <div className="border-b border-slate-200 bg-slate-100 p-4 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase text-red-800">
+        <section className="bg-[#E8DFC8] border border-[#D9CEB5] rounded-lg shadow-lg overflow-hidden">
+          <div className="border-b border-[#D9CEB5] bg-[#E8DFC8] p-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase text-[#A6352C]">
               <ScrollText className="w-4 h-4" /> Immutable Reveal Audit Ledger (revealLogs)
             </div>
             <button
               type="button"
               onClick={loadRevealLogs}
               disabled={logsLoading}
-              className="px-3 py-1.5 bg-slate-900 hover:bg-indigo-600 text-white text-[10px] font-mono font-bold uppercase border border-slate-300 rounded cursor-pointer disabled:opacity-50"
+              className="px-3 py-1.5 bg-[#0B0C0F] hover:bg-[#B08D3E] text-[#E8DFC8] text-[10px] font-mono font-bold uppercase border border-[#D9CEB5] rounded cursor-pointer disabled:opacity-50"
             >
               {logsLoading ? 'Refreshing...' : 'Refresh Ledger'}
             </button>
           </div>
 
           {logsError && (
-            <div className="border-b border-red-200 bg-red-50 p-3 text-xs font-mono text-red-700 font-bold">
+            <div className="border-b border-[#A6352C]/40 bg-[#A6352C]/10 p-3 text-xs font-mono text-[#A6352C] font-bold">
               {logsError}
             </div>
           )}
@@ -525,7 +525,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse font-mono text-xs">
               <thead>
-                <tr className="bg-slate-900 text-white border-b border-slate-200">
+                <tr className="bg-[#0B0C0F] text-[#E8DFC8] border-b border-[#D9CEB5]">
                   <th className="py-3 px-4 uppercase font-bold tracking-wider text-[11px] whitespace-nowrap">Complaint ID</th>
                   <th className="py-3 px-4 uppercase font-bold tracking-wider text-[11px] whitespace-nowrap">Revealed By (Admin)</th>
                   <th className="py-3 px-4 uppercase font-bold tracking-wider text-[11px] whitespace-nowrap">Reason</th>
@@ -533,7 +533,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                 </tr>
               </thead>
               <motion.tbody
-                className="divide-y divide-slate-200 bg-white"
+                className="divide-y divide-slate-200 bg-[#E8DFC8]"
                 initial="hidden"
                 animate="show"
                 variants={revealLogContainerVariants}
@@ -543,25 +543,25 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                     <motion.tr
                       key={log.logId}
                       variants={revealLogRowVariants}
-                      className="hover:bg-red-50/40 transition-colors"
+                      className="hover:bg-[#A6352C]/10/40 transition-colors"
                     >
                       <td className="py-3 px-4 font-bold whitespace-nowrap">
-                        <span className="bg-red-600 text-white px-2 py-0.5">{log.complaintId}</span>
+                        <span className="bg-[#A6352C] text-[#E8DFC8] px-2 py-0.5">{log.complaintId}</span>
                       </td>
-                      <td className="py-3 px-4 text-slate-900 font-mono">
+                      <td className="py-3 px-4 text-[#14171F] font-mono">
                         {log.revealedByAdminId}
                       </td>
-                      <td className="py-3 px-4 text-slate-800 max-w-[320px]">
+                      <td className="py-3 px-4 text-[#14171F] max-w-[320px]">
                         <span className="line-clamp-2">{log.reason}</span>
                       </td>
-                      <td className="py-3 px-4 whitespace-nowrap text-slate-900/80">
+                      <td className="py-3 px-4 whitespace-nowrap text-[#14171F]/80">
                         {formatTimestamp(log.timestamp)}
                       </td>
                     </motion.tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="py-12 px-4 text-center text-slate-900/60 bg-slate-50">
+                    <td colSpan={4} className="py-12 px-4 text-center text-[#14171F]/60 bg-[#E8DFC8]">
                       {logsLoading ? (
                         <p className="font-sans text-sm">Loading reveal audit ledger...</p>
                       ) : (
