@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { CheckCircle2, XCircle, X } from 'lucide-react';
 
 type ToastType = 'success' | 'error';
@@ -19,6 +20,7 @@ let toastIdCounter = 0;
 
 export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const prefersReduced = useReducedMotion();
 
   const showToast = useCallback((message: string, type: ToastType = 'success') => {
     const id = ++toastIdCounter;
@@ -37,11 +39,24 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       {children}
 
       {/* Toast container — bottom-right fixed */}
-      <div className="fixed bottom-4 right-4 z-[100] flex flex-col items-end gap-2 pointer-events-none">
+      <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-[100] flex flex-col items-end gap-2 pointer-events-none">
+        <AnimatePresence>
         {toasts.map((toast) => (
-          <div
+          <motion.div
             key={toast.id}
-            className={`pointer-events-auto max-w-sm w-full border rounded-lg shadow-lg px-4 py-3 flex items-center gap-3 text-xs font-mono animate-in fade-in slide-in-from-bottom-4 duration-200 ${
+            layout
+            initial={{ opacity: 0, x: 60 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 60 }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.4}
+            onDragEnd={(_, info) => {
+              if (prefersReduced) return;
+              if (info.offset.x > 80 || info.velocity.x > 600) dismissToast(toast.id);
+            }}
+            transition={prefersReduced ? { duration: 0.01 } : { type: 'spring', stiffness: 400, damping: 30 }}
+            className={`pointer-events-auto max-w-sm w-full border rounded-lg shadow-lg px-4 py-3 flex items-center gap-3 text-xs font-mono ${
               toast.type === 'success'
                 ? 'bg-[#5B7D5B]/10 border-[#5B7D5B]/40 text-[#5B7D5B]'
                 : 'bg-[#A6352C]/10 border-[#A6352C]/40 text-[#A6352C]'
@@ -61,8 +76,9 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             >
               <X className="w-3.5 h-3.5" />
             </button>
-          </div>
+          </motion.div>
         ))}
+        </AnimatePresence>
       </div>
     </ToastContext.Provider>
   );

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   Check,
@@ -9,8 +9,9 @@ import {
   Save,
   Calendar,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Complaint, ComplaintStatus } from '../types';
+import { heavyDrawer, instantFade } from '../motion/tokens';
 import { getCategoryBadgeStyle, formatCategoryLabel, formatTimeAgo } from '../utils/formatters';
 import { ComplaintIdStamp, StatusStamp } from './CaseFileComponents';
 
@@ -23,6 +24,7 @@ interface AdminComplaintModalProps {
 }
 
 export const AdminComplaintModal: React.FC<AdminComplaintModalProps> = ({ complaint, isOpen, onClose, onSave, onOpenImage }) => {
+  const prefersReduced = useReducedMotion();
   if (!isOpen || !complaint) return null;
 
   const compId = complaint.complaintId || complaint.id || 'SAGE-0000';
@@ -53,8 +55,8 @@ export const AdminComplaintModal: React.FC<AdminComplaintModalProps> = ({ compla
 
   return (
     <AnimatePresence>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-xs overflow-y-auto" onClick={onClose}>
-        <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} transition={{ duration: 0.25, ease: 'easeOut' }} className="bg-[#E8DFC8] border border-[#D9CEB5] max-w-2xl w-full my-8 overflow-hidden paper-grain" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={prefersReduced ? instantFade : { duration: 0.15 }} className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-0 sm:p-4 sm:p-6 overflow-y-auto modal-depth-backdrop" onClick={onClose}>
+        <motion.div initial={{ opacity: 0, scale: 0.94, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.94, y: 10 }} transition={prefersReduced ? instantFade : heavyDrawer} className="bg-[#E8DFC8] border border-[#D9CEB5] max-w-2xl w-full sm:my-8 mx-0 overflow-hidden paper-grain sm:rounded-none max-md:rounded-none max-sm:min-h-dvh max-sm:h-dvh max-sm:overflow-y-auto" style={{ boxShadow: '0 12px 28px rgba(11,12,15,0.28), 0 4px 10px rgba(11,12,15,0.14)' }} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
           <div className="bg-[#0B0C0F] text-[#E8DFC8] px-5 py-4 flex items-center justify-between border-b border-[#2A2F3E]">
             <div className="flex items-center gap-2.5">
               <FileText className="w-5 h-5 text-[#B08D3E]" />

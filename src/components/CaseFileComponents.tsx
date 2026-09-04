@@ -1,7 +1,8 @@
 import React from 'react';
 import { Lock } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { getCategoryTabColor } from '../utils/formatters';
+import { stampImpact, instantFade } from '../motion/tokens';
 
 /* ───────────────────────────────────────────────────────
    TallyMark — SVG tally for upvote counts (hand-counted feel)
@@ -141,6 +142,7 @@ export const StatusStamp: React.FC<{
         borderColor: stampColor,
         transform: 'rotate(-1deg)',
         opacity: 0.9,
+        boxShadow: '0 4px 10px rgba(11,12,15,0.18), 0 2px 4px rgba(11,12,15,0.10)',
       }}
     >
       {status}
@@ -164,18 +166,32 @@ export const IdentitySealedBar: React.FC<{
 
 /* ───────────────────────────────────────────────────────
    PriorityStamp — stamp-red "PRIORITY" stamp over card corner.
-   Framer Motion entrance: scale 1.4→1, sharp ease, 150ms —
-   as if struck down onto paper.
+   Uses stampImpact spring for a physical "thud" strike —
+   scale overshoots then settles, rotation swings past
+   final angle before correcting. A barely-visible impact
+   flash ring sells the moment of contact.
    ─────────────────────────────────────────────────────── */
 export const PriorityStamp: React.FC<{
   className?: string;
-}> = ({ className = '' }) => (
-  <motion.span
-    initial={{ scale: 1.4, opacity: 0, rotate: -8 }}
-    animate={{ scale: 1, opacity: 1, rotate: -8 }}
-    transition={{ duration: 0.15, ease: [0.2, 0, 0, 1] }}
-    className={`stamp-grain absolute -top-2 -right-2 z-10 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] border-[1.5px] border-[#A6352C] text-[#A6352C] bg-[#E8DFC8] ${className}`}
-  >
-    PRIORITY
-  </motion.span>
-);
+}> = ({ className = '' }) => {
+  const prefersReduced = useReducedMotion();
+  return (
+    <motion.span
+      initial={{ scale: 1.6, opacity: 0, rotate: -12 }}
+      animate={{ scale: 1, opacity: 1, rotate: -8 }}
+      transition={prefersReduced ? instantFade : stampImpact}
+      className={`stamp-grain absolute -top-2 -right-2 z-10 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] border-[1.5px] border-[#A6352C] text-[#A6352C] bg-[#E8DFC8] ${className}`}
+      style={{ boxShadow: '0 4px 10px rgba(11,12,15,0.18), 0 2px 4px rgba(11,12,15,0.10)' }}
+    >
+      PRIORITY
+      {/* Impact flash — brief opacity pulse on a ring, gone within 80ms */}
+      <motion.span
+        initial={{ opacity: 0.5, scale: 1 }}
+        animate={{ opacity: 0, scale: 1.9 }}
+        transition={prefersReduced ? instantFade : { duration: 0.08, ease: 'easeOut' }}
+        className="absolute inset-0 border border-[#A6352C]/60 pointer-events-none"
+        aria-hidden="true"
+      />
+    </motion.span>
+  );
+};

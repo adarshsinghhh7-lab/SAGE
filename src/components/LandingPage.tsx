@@ -12,8 +12,10 @@ import {
   Shield,
   Activity
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { PageView } from '../types';
+import { paperSpring, microTap, instantFade } from '../motion/tokens';
+import { useCanHover } from '../hooks/useMediaQuery';
 
 interface LandingPageProps {
   onNavigate: (view: PageView) => void;
@@ -30,6 +32,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   totalComplaintsCount,
 }) => {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const prefersReduced = useReducedMotion();
+  const canHover = useCanHover();
+  const { scrollY } = useScroll();
+  // Disable parallax on touch devices and when reduced-motion is preferred
+  const parallaxEnabled = !prefersReduced && canHover;
+  const heroY = useTransform(scrollY, [0, 600], [0, parallaxEnabled ? -90 : 0]);
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -42,7 +50,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     },
     {
       question: "What happens after I submit a complaint?",
-      answer: "Immediately upon submission, you receive an irreversible reference code (e.g., SAGE-2847). Your complaint is published to the Public Ledger where fellow students can view and upvote it. Campus wardens and department administrators are automatically alerted. As authorities investigate and repair the issue, they update the official status (Submitted → Under Review → Resolved) and append public resolution notes detailing work orders and dispatched personnel."
+      answer: "Immediately upon submission, you receive an irreversible reference code (e.g., SAGE-2847). Your complaint is published to the Public Ledger where fellow students can view and upvote it. Campus wardens and department administrators are automatically alerted. As authorities investigate and repair the issue, they update the official status (Submitted ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Under Review ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ Resolved) and append public resolution notes detailing work orders and dispatched personnel."
     },
     {
       question: "How does anonymity work, and is there any exception?",
@@ -63,7 +71,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       {/* 1. HERO SECTION */}
       {/* ========================================================================= */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #14171F 0%, #1E2230 50%, #0B0C0F 100%)' }}>
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-transparent">
         {/* Animated Floating Orbs */}
         <div className="orb orb-1" />
         <div className="orb orb-2" />
@@ -75,11 +83,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
           initial="hidden"
           animate="visible"
+          style={{ y: heroY }}
         >
           {/* Trust Pill */}
           <motion.div
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
+            transition={prefersReduced ? instantFade : paperSpring}
             className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-mono font-bold uppercase tracking-wider mb-6 shadow-lg rounded-full bg-[#1E2230] text-[#E8DFC8] border border-[#2A2F3E] backdrop-blur-sm"
           >
             <ShieldCheck className="w-4 h-4 text-[#5B7D5B]" />
@@ -89,8 +98,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           {/* Main Title */}
           <motion.h1
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="font-sans text-4xl sm:text-6xl lg:text-7xl font-bold text-[#E8DFC8] tracking-tight leading-[1.08] mb-6"
+            transition={prefersReduced ? instantFade : paperSpring}
+            style={{ fontSize: "clamp(2rem, 5vw + 1rem, 4.5rem)", textShadow: '0 2px 8px rgba(11,12,15,0.35), 0 1px 2px rgba(11,12,15,0.2)' }} className="font-sans font-bold text-[#E8DFC8] tracking-tight leading-[1.08] mb-6"
           >
             Fearless campus accountability.<br className="hidden sm:inline" />
             <span className="italic font-sans font-normal text-[#B08D3E]"> Without fear of retaliation.</span>
@@ -99,7 +108,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           {/* Subtitle */}
           <motion.p
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
+            transition={prefersReduced ? instantFade : paperSpring}
             className="font-sans text-lg sm:text-xl text-[#E8DFC8]/90 max-w-3xl mx-auto leading-relaxed mb-10"
           >
             S.A.G.E. is a secure, anonymous reporting platform that empowers students to voice hostel, mess, hygiene, and safety concerns. Your identity remains protected, while community upvoting ensures urgent issues get the immediate administrative attention they deserve.
@@ -108,12 +117,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           {/* Primary Dual Call-to-Action Buttons */}
           <motion.div
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
+            transition={prefersReduced ? instantFade : paperSpring}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto mb-12"
           >
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
               id="hero-submit-cta"
               type="button"
               onClick={() => onNavigate('submit')}
@@ -124,8 +132,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </motion.button>
 
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
               id="hero-browse-cta"
               type="button"
               onClick={() => onNavigate('feed')}
@@ -152,7 +159,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <motion.div
                 key={i}
                 variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
-                transition={{ duration: 0.4 }}
+                transition={prefersReduced ? instantFade : paperSpring}
                 className="flex items-center justify-center gap-2 p-2.5 bg-[#1E2230] border border-[#2A2F3E] rounded-xl backdrop-blur-sm"
               >
                 {item.icon}
@@ -172,7 +179,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={prefersReduced ? instantFade : paperSpring}
             className="text-center max-w-3xl mx-auto mb-14"
           >
             <div className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-[#B08D3E] mb-2">
@@ -183,7 +190,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               How Anonymity Works on S.A.G.E.
             </h2>
             <p className="font-sans text-base sm:text-lg text-[#5B6472] mt-3">
-              We built S.A.G.E. with a strict “safety-by-design” principle so that no student ever hesitates to report legitimate hazards or harassment.
+              We built S.A.G.E. with a strict ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œsafety-by-designÃƒÂ¢Ã¢â€šÂ¬Ã‚Â principle so that no student ever hesitates to report legitimate hazards or harassment.
             </p>
           </motion.div>
 
@@ -193,8 +200,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.5, delay: 0 }}
-              whileHover={{ y: -4, boxShadow: '0 10px 40px -10px rgba(176, 141, 62, 0.25)' }}
+              transition={prefersReduced ? instantFade : { ...paperSpring, delay: 0 }}
+              whileHover={prefersReduced ? {} : { y: -4 }}
               className="flat-paper p-6 flex flex-col justify-between"
             >
               <div>
@@ -219,8 +226,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.5, delay: 0.15 }}
-              whileHover={{ y: -4, boxShadow: '0 10px 40px -10px rgba(176, 141, 62, 0.25)' }}
+              transition={prefersReduced ? instantFade : { ...paperSpring, delay: 0.15 }}
+              whileHover={prefersReduced ? {} : { y: -4 }}
               className="flat-paper p-6 flex flex-col justify-between"
             >
               <div>
@@ -245,8 +252,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              whileHover={{ y: -4, boxShadow: '0 10px 40px -10px rgba(176, 141, 62, 0.25)' }}
+              transition={prefersReduced ? instantFade : { ...paperSpring, delay: 0.3 }}
+              whileHover={prefersReduced ? {} : { y: -4 }}
               className="flat-paper p-6 flex flex-col justify-between"
             >
               <div>
@@ -361,7 +368,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   initial={{ opacity: 0, y: 15 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-30px' }}
-                  transition={{ duration: 0.4, delay: idx * 0.08 }}
+                  transition={prefersReduced ? instantFade : { ...paperSpring, delay: idx * 0.08 }}
                   className="flat-paper overflow-hidden"
                 >
                   <button
@@ -376,7 +383,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     </span>
                     <motion.span
                       animate={{ rotate: isOpen ? 180 : 0 }}
-                      transition={{ duration: 0.3 }}
+                      transition={prefersReduced ? instantFade : paperSpring}
                       className="shrink-0"
                     >
                       <ChevronDown className="w-4 h-4 text-[#B08D3E]" />
@@ -390,7 +397,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        transition={prefersReduced ? instantFade : paperSpring}
                         className="overflow-hidden"
                       >
                         <div className="px-5 pb-5 pt-1 border-t border-[#2A2F3E] font-sans text-xs sm:text-sm text-[#5B6472] leading-relaxed bg-[#B08D3E]/10">
@@ -409,7 +416,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       {/* 6. BOTTOM CALL TO ACTION BANNER */}
       {/* ========================================================================= */}
-      <section className="py-14 sm:py-18 px-4 sm:px-6 lg:px-8" style={{ background: 'linear-gradient(135deg, #14171F 0%, #1E2230 50%, #0B0C0F 100%)' }}>
+      <section className="py-14 sm:py-18 px-4 sm:px-6 lg:px-8 bg-transparent">
         <div className="max-w-4xl mx-auto text-center space-y-6">
           <span className="text-[11px] font-mono font-bold uppercase tracking-widest bg-[#1E2230] text-[#E8DFC8] px-3 py-1 rounded-full border border-[#2A2F3E]">
             PROTECT YOUR CAMPUS COMMUNITY
@@ -425,8 +432,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <motion.button
               type="button"
               onClick={() => onNavigate('submit')}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
               className="w-full sm:w-auto px-8 py-4 bg-[#B08D3E] text-[#14171F] hover:bg-[#C09E4F] text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
@@ -436,8 +442,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <motion.button
               type="button"
               onClick={() => onNavigate('feed')}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
               className="w-full sm:w-auto px-8 py-4 bg-[#1E2230] text-[#E8DFC8] hover:bg-[#D9CEB5] text-xs font-mono font-bold uppercase tracking-wider border border-[#D9CEB5] rounded-xl transition-all flex items-center justify-center gap-2 backdrop-blur-sm cursor-pointer"
             >
               <LayoutList className="w-4 h-4" />

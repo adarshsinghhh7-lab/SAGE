@@ -1,14 +1,20 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   MapPin,
   Clock,
   ArrowRight,
   Link2
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'motion/react';
 import { Complaint } from '../types';
 import { getCategoryBadgeStyle, getCategoryTabColor, formatCategoryLabel, formatTimeAgo } from '../utils/formatters';
 import { TallyMarks, ComplaintIdStamp, PriorityStamp } from './CaseFileComponents';
+import { paperSpring, microTap, instantFade } from '../motion/tokens';
+import { useCanHover } from '../hooks/useMediaQuery';
+
+/* Warm-tinted shadow values for framer-motion animation (can't interpolate CSS vars) */
+const RESTING_SHADOW = '0 1px 2px rgba(11,12,15,0.12), 0 1px 1px rgba(11,12,15,0.08)';
+const RAISED_SHADOW = '0 4px 10px rgba(11,12,15,0.18), 0 2px 4px rgba(11,12,15,0.10)';
 
 interface ComplaintCardProps {
   complaint: Complaint;
@@ -23,6 +29,36 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
   onSelect,
 }) => {
   const [linkCopied, setLinkCopied] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const prefersReduced = useReducedMotion();
+  const canHover = useCanHover();
+
+  // 3D tilt â€” cursor position drives a subtle rotateX/rotateY via spring physics
+  const tiltX = useMotionValue(0);
+  const tiltY = useMotionValue(0);
+  const rotateX = useSpring(
+    useTransform(tiltY, [-0.5, 0.5], [(prefersReduced || !canHover) ? 0 : 4, (prefersReduced || !canHover) ? 0 : -4]),
+    { stiffness: 300, damping: 30 },
+  );
+  const rotateY = useSpring(
+    useTransform(tiltX, [-0.5, 0.5], [(prefersReduced || !canHover) ? 0 : -4, (prefersReduced || !canHover) ? 0 : 4]),
+    { stiffness: 300, damping: 30 },
+  );
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (prefersReduced || !canHover) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const xPct = (e.clientX - rect.left) / rect.width - 0.5;
+    const yPct = (e.clientY - rect.top) / rect.height - 0.5;
+    tiltX.set(xPct);
+    tiltY.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    tiltX.set(0);
+    tiltY.set(0);
+    setIsHovered(false);
+  };
   const compId = complaint.complaintId || complaint.id || 'SAGE-0000';
   const location = complaint.hostelOrLocation || complaint.location || 'Campus General';
   const upvoteCount = complaint.upvoteCount !== undefined ? complaint.upvoteCount : (complaint.upvotes || 0);
@@ -65,12 +101,23 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
       layout
       variants={{
         hidden: { opacity: 0, y: 8 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: 'easeOut' } },
-        exit: { opacity: 0, transition: { duration: 0.15, ease: 'easeOut' } },
+        visible: { opacity: 1, y: 0, transition: prefersReduced ? instantFade : paperSpring },
+        exit: { opacity: 0, transition: prefersReduced ? instantFade : { duration: 0.15 } },
       }}
-      whileHover={{ borderColor: '#B08D3E', transition: { duration: 0.15 } }}
-      className="relative bg-[#E8DFC8] border border-[#D9CEB5] p-4 sm:p-5 cursor-pointer group paper-grain"
-      style={{ borderLeftWidth: '10px', borderLeftColor: getCategoryTabColor(complaint.category) }}
+      whileHover={{ borderColor: '#B08D3E', boxShadow: RAISED_SHADOW, transition: prefersReduced ? instantFade : paperSpring }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      animate={{ boxShadow: isHovered ? RAISED_SHADOW : RESTING_SHADOW }}
+      transition={prefersReduced ? instantFade : paperSpring}
+      className="relative bg-[#E8DFC8] border border-[#D9CEB5] p-4 sm:p-5 cursor-pointer group paper-grain stacked-papers"
+      style={{
+        borderLeftWidth: '10px',
+        borderLeftColor: getCategoryTabColor(complaint.category),
+        rotateX,
+        rotateY,
+        transformPerspective: 800,
+      }}
     >
       {isHighPriority && <PriorityStamp />}
 
@@ -108,6 +155,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           id={`upvote-btn-${compId}`}
           type="button"
           disabled={complaint.hasUpvoted}
+          whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
           onClick={handleUpvoteClick}
           className={`inline-flex items-center gap-2 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
             complaint.hasUpvoted

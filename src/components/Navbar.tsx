@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { 
   PlusCircle, 
   LayoutList, 
@@ -6,7 +6,8 @@ import {
   Info,
   ShieldCheck
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
+import { paperSpring, instantFade } from '../motion/tokens';
 import { PageView } from '../types';
 import { useAuth } from '../context/AuthContext';
 
@@ -22,16 +23,17 @@ export const Navbar: React.FC<NavbarProps> = ({
   totalComplaintsCount,
 }) => {
   const { activeRole, openAuthModal } = useAuth();
+  const prefersReduced = useReducedMotion();
 
   return (
     <motion.header
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
+      transition={prefersReduced ? instantFade : paperSpring}
       className="border-b border-[#2A2F3E] sticky top-0 z-30 bg-[#1E2230]"
     >
       {/* Top classification bar */}
-      <div className="text-[#E8DFC8]/70 text-[10px] font-mono uppercase tracking-widest py-1.5 px-4 text-center bg-[#0B0C0F] border-b border-[#2A2F3E]">
+      <div className="text-[#E8DFC8]/70 text-[10px] font-mono uppercase tracking-widest py-1.5 px-4 text-center bg-[#0B0C0F] border-b border-[#2A2F3E] overflow-hidden">
         <span>CAMPUS INTEGRITY & ANONYMOUS ESCALATION LEDGER · PROTECTED BY S.A.G.E. PROTOCOL</span>
       </div>
 
@@ -49,7 +51,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="text-2xl font-bold tracking-tight text-[#E8DFC8]" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
                 S.A.G.E.
               </span>
-              <span className="text-[10px] font-mono uppercase text-[#B08D3E] px-1.5 py-0.5 border border-[#B08D3E]/40">
+              <span className="text-[10px] font-mono uppercase text-[#B08D3E] px-1.5 py-0.5 border border-[#B08D3E]/40 hidden xs:inline-flex">
                 OFFICIAL
               </span>
             </div>
@@ -59,7 +61,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        <nav className="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-center">
+        <nav className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto max-w-full scrollbar-none -mx-1 px-1 pb-1 sm:pb-0 sm:flex-wrap sm:justify-center">
           <NavButton id="nav-landing-btn" active={currentView === 'landing'} onClick={() => onNavigate('landing')}>
             <Info className="w-3.5 h-3.5" /><span>How It Works</span>
           </NavButton>

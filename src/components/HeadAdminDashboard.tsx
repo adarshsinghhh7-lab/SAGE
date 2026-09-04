@@ -34,9 +34,9 @@ interface HeadAdminDashboardProps {
   onOpenImage?: (imageUrl: string, title: string) => void;
 }
 
-// Gentle stagger for the immutable reveal audit ledger rows. Deliberately uses
-// simple fade + slight y offset with easeOut — no spring/bounce, so the most
-// sensitive surface in the app reads as procedural and serious, not playful.
+// Gentle stagger for the immutable reveal audit ledger rows. Uses a subtle
+// paperSpring for the settle so the rows ease into place with physical weight
+// without feeling bouncy or playful on this sensitive surface.
 const revealLogContainerVariants: Variants = {
   hidden: {},
   show: {
@@ -49,7 +49,7 @@ const revealLogRowVariants: Variants = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.3, ease: 'easeOut' },
+    transition: { type: 'spring', stiffness: 260, damping: 28, mass: 1 },
   },
 };
 

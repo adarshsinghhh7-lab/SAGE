@@ -1,8 +1,9 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Key, ShieldAlert, CheckCircle2, AlertTriangle } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { ApiService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { heavyDrawer, instantFade } from '../motion/tokens';
 
 const REVEAL_MIN_DELAY_MS = 550;
 
@@ -32,6 +33,7 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
     timestamp: string;
   } | null>(null);
   const [didUnmask, setDidUnmask] = useState(false);
+  const prefersReduced = useReducedMotion();
 
   useEffect(() => {
     if (isOpen) {
@@ -89,8 +91,8 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25, ease: 'easeOut' }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+          transition={prefersReduced ? instantFade : { duration: 0.18, ease: 'easeOut' }}
+          className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-0 sm:p-4 modal-depth-backdrop"
           role="dialog"
           aria-modal="true"
           aria-labelledby="reveal-modal-title"
@@ -98,11 +100,12 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
         >
           <motion.div
             key="reveal-card"
-            initial={{ opacity: 0, scale: 0.96 }}
+            initial={{ opacity: 0, scale: 0.94 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.3, ease: 'easeOut', delay: 0.05 }}
-            className="w-full max-w-md bg-[#E8DFC8] border border-[#A6352C]/40 shadow-2xl overflow-hidden paper-grain"
+            exit={{ opacity: 0, scale: 0.94 }}
+            transition={prefersReduced ? instantFade : { ...heavyDrawer, delay: 0.05 }}
+            className="w-full max-w-md bg-[#E8DFC8] border border-[#A6352C]/40 overflow-hidden paper-grain sm:rounded-none max-sm:min-h-dvh max-sm:h-dvh max-sm:overflow-y-auto"
+            style={{ boxShadow: '0 12px 28px rgba(11,12,15,0.28), 0 4px 10px rgba(11,12,15,0.14)' }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -151,7 +154,7 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
                         className="absolute inset-0"
                         initial={{ clipPath: 'inset(0% 0% 0% 0%)' }}
                         animate={{ clipPath: didUnmask ? 'inset(0% 0% 0% 100%)' : 'inset(0% 0% 0% 0%)' }}
-                        transition={{ duration: 0.55, ease: [0.45, 0, 0.35, 1] }}
+                        transition={prefersReduced ? instantFade : heavyDrawer}
                         onAnimationComplete={() => setDidUnmask(true)}
                       >
                         <div className="h-full w-full bg-[#A6352C] flex items-center justify-center">

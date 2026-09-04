@@ -1,6 +1,7 @@
-﻿import React from 'react';
+import React from 'react';
 import { Check, Clock, FileText, Search, CheckCircle2 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
+import { paperSpring, instantFade } from '../motion/tokens';
 import { ComplaintStatus, StatusUpdateDoc } from '../types';
 import { formatTimeAgo } from '../utils/formatters';
 
@@ -53,29 +54,32 @@ const STAGES: StageMeta[] = [
 ];
 
 export const StatusTimeline: React.FC<StatusTimelineProps> = ({ currentStatus, submittedAt, statusUpdates = [], resolvedAt }) => {
+  const prefersReduced = useReducedMotion();
   const currentStage = normalizeStatus(currentStatus);
   const currentIndex = STAGES.findIndex((s) => s.key === currentStage);
   const progressFraction = currentIndex === -1 ? 0 : currentIndex / (STAGES.length - 1);
 
   return (
-    <div className="bg-[#E8DFC8] border border-[#D9CEB5] p-5 paper-grain">
+    <div className="bg-[#E8DFC8] border border-[#D9CEB5] p-5 paper-grain" style={{ boxShadow: '0 1px 2px rgba(11,12,15,0.12), 0 1px 1px rgba(11,12,15,0.08)' }}>
       <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5B6472] mb-4">
         Disposition Timeline
       </div>
 
       <div className="relative">
+        {/* Vertical connector line for mobile */}
+        <div className="absolute top-10 left-11 w-0.5 bg-[#D9CEB5] sm:hidden" style={{ height: 'calc(100% - 2.5rem)' }} />
         {/* Connector line (desaturated) */}
-        <div className="absolute top-5 left-6 right-6 h-0.5 bg-[#D9CEB5]" />
+        <div className="absolute top-5 left-6 right-6 hidden sm:block h-0.5 bg-[#D9CEB5]" />
         {/* Filled progress up to current stage */}
         <motion.div
-          className="absolute top-5 left-6 h-0.5 bg-[#B08D3E]"
+          className="absolute top-5 left-6 hidden sm:block h-0.5 bg-[#B08D3E]"
           initial={{ width: '0%' }}
           animate={{ width: `${progressFraction * 100}%` }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+          transition={prefersReduced ? instantFade : paperSpring}
           style={{ maxWidth: 'calc(100% - 3rem)' }}
         />
 
-        <ol className="relative flex justify-between">
+        <ol className="relative flex flex-col sm:flex-row sm:justify-between gap-4 sm:gap-0">
           {STAGES.map((stage, idx) => {
             const isCompleted = idx <= currentIndex || currentIndex === -1 && idx === 0;
             const isCurrent = idx === currentIndex;
@@ -98,15 +102,15 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({ currentStatus, s
                 key={stage.key}
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25, delay: idx * 0.1, ease: 'easeOut' }}
-                className="relative z-10 flex-1 flex flex-col items-center text-center px-1"
+                transition={prefersReduced ? instantFade : { ...paperSpring, delay: idx * 0.08 }}
+                className="relative z-10 flex-1 flex flex-col sm:items-center sm:text-center px-1"
               >
                 <div className={`relative z-10 w-10 h-10 rounded-full border flex items-center justify-center mb-3 ${dotClass}`}>
                   {isCompleted && (
                     <motion.span
                       initial={{ scale: 0.6, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.25, ease: 'easeOut', delay: 0.3 + idx * 0.1 }}
+                      transition={prefersReduced ? instantFade : { ...paperSpring, delay: 0.3 + idx * 0.08 }}
                       className="flex items-center justify-center"
                     >
                       {isCompleted && !isCurrent ? <Check className="w-4 h-4" /> : stage.icon}

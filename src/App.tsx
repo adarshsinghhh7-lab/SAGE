@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { paperSpring, instantFade } from './motion/tokens';
 import { Complaint, ComplaintStatus, PageView } from './types';
 import { INITIAL_COMPLAINTS } from './data/initialComplaints';
 import { Navbar } from './components/Navbar';
@@ -24,6 +25,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 function MainApp() {
   const { activeRole, user } = useAuth();
   const { showToast } = useToast();
+  const prefersReduced = useReducedMotion();
   const isAdminRole = activeRole === 'admin' || activeRole === 'head_admin';
   const [complaints, setComplaints] = useState<Complaint[]>(() => INITIAL_COMPLAINTS.map((c) => normalizeComplaintData(c)));
   const [currentView, setCurrentView] = useState<PageView>('landing');
@@ -258,7 +260,7 @@ function MainApp() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25 }}
+            transition={prefersReduced ? instantFade : paperSpring}
           >
         {currentView === 'landing' && (
           <LandingPage

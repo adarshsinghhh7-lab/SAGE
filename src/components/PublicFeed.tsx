@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Search, 
   PlusCircle, 
@@ -6,7 +6,7 @@ import {
   Inbox, 
   Lock 
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Complaint } from '../types';
 import { ComplaintCard } from './ComplaintCard';
 import { formatCategoryLabel } from '../utils/formatters';
@@ -41,6 +41,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
   const [selectedLocation, setSelectedLocation] = useState<string>('All');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'upvotes' | 'newest'>('upvotes');
+  const prefersReduced = useReducedMotion();
 
   const uniqueHostelLocations = useMemo(() => {
     const locations = new Set<string>();
@@ -298,7 +299,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           initial="hidden"
           animate="visible"
           layout
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: prefersReduced ? 0.06 : 0.06, delayChildren: prefersReduced ? 0 : 0.04 } } }}
         >
           <AnimatePresence mode="popLayout">
             {filteredComplaints.map((complaint) => (

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { motion, type Variants } from 'motion/react';
+import { motion, type Variants, useReducedMotion } from 'motion/react';
+import { microTap, instantFade } from '../motion/tokens';
 import { 
   Upload, 
   X, 
@@ -59,7 +60,7 @@ const formFieldVariants: Variants = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.35, ease: 'easeOut' as const },
+    transition: { type: 'spring', stiffness: 260, damping: 28, mass: 1 },
   },
 };
 
@@ -68,6 +69,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
   onCancelToFeed
 }) => {
   const { activeRole } = useAuth();
+  const prefersReduced = useReducedMotion();
   const [category, setCategory] = useState<ComplaintCategory>('Infrastructure');
   const [locationPreset, setLocationPreset] = useState<string>('Hostel Block A');
   const [customLocation, setCustomLocation] = useState<string>('');
@@ -203,7 +205,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
       exit={{
         opacity: 0,
         scale: 0.98,
-        transition: { duration: 0.25, ease: 'easeOut' },
+        transition: { type: 'spring', stiffness: 260, damping: 28, mass: 1 },
       }}
       variants={formContainerVariants}
     >
@@ -249,7 +251,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
             key={errorMsg}
             initial={{ opacity: 0, x: 0 }}
             animate={{ opacity: 1, x: [0, -6, 6, -4, 4, 0] }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
+            transition={prefersReduced ? instantFade : { duration: 0.4, ease: 'easeOut' }}
             className="mb-6 p-4 bg-[#A6352C]/10 border border-[#A6352C]/40 text-[#A6352C] text-xs font-mono flex items-start gap-3 rounded-lg"
             role="alert"
           >
@@ -519,19 +521,21 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
 
           {/* Action Buttons */}
           <motion.div variants={formFieldVariants} className="pt-6 border-t border-[#D9CEB5] flex flex-col sm:flex-row items-center justify-between gap-4">
-            <button
+            <motion.button
               id="cancel-btn"
               type="button"
               onClick={onCancelToFeed}
+              whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
               className="w-full sm:w-auto px-5 py-3 text-xs font-mono font-bold uppercase tracking-wider text-[#14171F] border border-[#2A2F3E] rounded-xl bg-[#E8DFC8] hover:bg-[#B08D3E]/10 transition-colors cursor-pointer text-center"
             >
               ← Back to Ledger
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
               id="submit-complaint-btn"
               type="submit"
               disabled={isSubmitting || charCount < 20 || charCount > 1000 || !isLocationValid}
+              whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
               className="w-full sm:w-auto px-8 py-3.5 bg-[#B08D3E] hover:opacity-90 disabled:bg-[#D9CEB5] disabled:text-[#5B6472] disabled:border-[#D9CEB5] disabled:cursor-not-allowed text-[#E8DFC8] text-xs font-mono font-bold uppercase tracking-widest border border-[#2A2F3E] rounded-xl transition-all shadow-sm shadow-[#B08D3E]/20 hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
@@ -545,7 +549,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
-            </button>
+            </motion.button>
           </motion.div>
         </form>
       </motion.div>

@@ -9,7 +9,8 @@ import {
   FileCheck,
   Link2
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
+import { paperSpring, instantFade } from '../motion/tokens';
 import { Complaint } from '../types';
 import { getCategoryBadgeStyle, formatCategoryLabel, formatTimeAgo } from '../utils/formatters';
 import { ComplaintIdStamp, IdentitySealedBar } from './CaseFileComponents';
@@ -27,6 +28,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
 }) => {
   const [copied, setCopied] = useState<boolean>(false);
   const [linkCopied, setLinkCopied] = useState<boolean>(false);
+  const prefersReduced = useReducedMotion();
   const compId = complaint.complaintId || complaint.id || 'SAGE-0000';
   const location = complaint.hostelOrLocation || complaint.location || 'Campus General';
 
@@ -49,14 +51,15 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
     <motion.div
       initial={{ opacity: 0, scale: 0.97 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.35, ease: 'easeOut' }}
+      transition={prefersReduced ? instantFade : paperSpring}
       className="max-w-2xl mx-auto py-10 sm:py-14 px-4 sm:px-6"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.35, delay: 0.08, ease: 'easeOut' }}
+        transition={prefersReduced ? instantFade : { ...paperSpring, delay: 0.08 }}
         className="bg-[#E8DFC8] border border-[#D9CEB5] p-6 sm:p-10 text-center paper-grain"
+        style={{ boxShadow: '0 1px 2px rgba(11,12,15,0.12), 0 1px 1px rgba(11,12,15,0.08)' }}
       >
         {/* Success Marker */}
         <div className="w-14 h-14 bg-[#5B7D5B] text-[#E8DFC8] flex items-center justify-center mx-auto mb-4">

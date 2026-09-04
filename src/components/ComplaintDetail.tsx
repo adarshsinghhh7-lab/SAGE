@@ -8,7 +8,8 @@ import {
   Image as ImageIcon, 
   ExternalLink, 
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
+import { paperSpring, instantFade } from '../motion/tokens';
 import { Complaint, ComplaintStatus } from '../types';
 import { getCategoryBadgeStyle, formatCategoryLabel, formatTimeAgo } from '../utils/formatters';
 import { useAuth } from '../context/AuthContext';
@@ -35,6 +36,7 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
   const { activeRole } = useAuth();
   const [copied, setCopied] = useState<boolean>(false);
   const [isRevealModalOpen, setIsRevealModalOpen] = useState<boolean>(false);
+  const prefersReduced = useReducedMotion();
 
   const compId = complaint.complaintId || complaint.id || 'SAGE-0000';
   const location = complaint.hostelOrLocation || complaint.location || 'Campus General';
@@ -58,7 +60,7 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: 'easeOut' }}
+      transition={prefersReduced ? instantFade : paperSpring}
       className="max-w-4xl mx-auto py-8 sm:py-12 px-4 sm:px-6"
     >
       {/* Navigation Breadcrumb */}
@@ -76,7 +78,7 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
       </div>
 
       {/* Case File Card */}
-      <div className="bg-[#E8DFC8] border border-[#D9CEB5] paper-grain" style={{ borderLeft: `10px solid ${getCategoryColor(complaint.category)}` }}>
+      <div className="bg-[#E8DFC8] border border-[#D9CEB5] paper-grain" style={{ borderLeft: `10px solid ${getCategoryColor(complaint.category)}`, boxShadow: '0 1px 2px rgba(11,12,15,0.12), 0 1px 1px rgba(11,12,15,0.08)' }}>
         {/* Header strip */}
         <div className="px-6 py-4 border-b border-[#D9CEB5] flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 flex-wrap">
