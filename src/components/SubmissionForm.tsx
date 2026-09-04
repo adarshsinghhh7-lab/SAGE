@@ -209,7 +209,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
     >
       {/* Editorial Confidentiality Warning Banner */}
       <motion.div variants={formFieldVariants} className="mb-6 bg-[#E8DFC8]/60 backdrop-blur-md border border-[#2A2F3E] rounded-xl p-4 sm:p-5 shadow-sm flex items-start gap-4">
-        <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-500 text-[#E8DFC8] shrink-0 mt-0.5 rounded-lg shadow-sm shadow-[#B08D3E]/20">
+        <div className="p-2 bg-[#5B7A8D] text-[#E8DFC8] shrink-0 mt-0.5 rounded">
           <Lock className="w-4 h-4" />
         </div>
         <div className="text-xs">
@@ -217,7 +217,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
             <h3 className="font-mono font-bold uppercase tracking-wider text-[#14171F]">
               Strict Anonymity Guarantee
             </h3>
-            <span className="bg-[#B08D3E] text-[#E8DFC8] text-[9px] font-mono uppercase px-1.5 py-0.2 font-bold">
+            <span className="bg-[#B08D3E] text-[#14171F] text-[9px] font-mono uppercase px-1.5 py-0.2 font-bold">
               Protected
             </span>
           </div>
@@ -296,8 +296,8 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                   onClick={() => setCategory(cat)}
                   className={`text-[11px] font-mono uppercase px-2.5 py-1 border transition-all cursor-pointer ${
                     category === cat
-                      ? 'bg-[#B08D3E] text-[#E8DFC8] border-transparent font-bold'
-                      : 'bg-[#B08D3E]/10/50 text-[#14171F] border-[#2A2F3E] hover:bg-[#B08D3E]/15'
+                      ? 'bg-[#B08D3E] text-[#14171F] border-transparent font-bold'
+                      : 'bg-[#B08D3E]/10 text-[#14171F] border-[#2A2F3E] hover:bg-[#B08D3E]/20'
                   }`}
                 >
                   {cat}
@@ -339,7 +339,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                 placeholder="State the grievance clearly (minimum 20 characters). Specify details, timelines, repeated offenses, or required remedy. Do NOT include personal identifying information..."
                 className={`w-full bg-[#E8DFC8] border p-3.5 text-sm text-[#14171F] font-sans leading-relaxed placeholder:font-sans placeholder:text-[#14171F]/40 focus:outline-none shadow-sm ${
                   touched.description && charCount < 20
-                    ? 'border-[#B08D3E] focus:bg-[#B08D3E]/10/20'
+                    ? 'border-[#B08D3E] focus:bg-[#B08D3E]/10'
                     : 'border-[#D9CEB5] focus:bg-[#E8DFC8]'
                 }`}
                 required
@@ -361,7 +361,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                   </span>
                 )}
               </div>
-              <div className="w-28 bg-slate-200 h-1.5 border border-[#2A2F3E]/40 overflow-hidden">
+              <div className="w-28 bg-[#D9CEB5] h-1.5 border border-[#2A2F3E]/40 overflow-hidden">
                 <div 
                   className={`h-full ${
                     charCount < 20
@@ -476,7 +476,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                 onDragLeave={handleDragLeave}
                 onClick={() => fileInputRef.current?.click()}
                 className={`border border-dashed border-[#D9CEB5] p-6 text-center cursor-pointer transition-all ${
-                  isDragging ? 'bg-slate-200' : 'bg-[#E8DFC8] hover:bg-[#E8DFC8]'
+                  isDragging ? 'bg-[#D9CEB5]' : 'bg-[#E8DFC8] hover:bg-[#E8DFC8]'
                 }`}
               >
                 <div className="w-8 h-8 bg-[#0B0C0F] text-[#E8DFC8] flex items-center justify-center mx-auto mb-2">
@@ -532,11 +532,11 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
               id="submit-complaint-btn"
               type="submit"
               disabled={isSubmitting || charCount < 20 || charCount > 1000 || !isLocationValid}
-              className="w-full sm:w-auto px-8 py-3.5 bg-[#B08D3E] hover:opacity-90 disabled:bg-slate-300 disabled:text-[#5B6472] disabled:border-slate-400 disabled:cursor-not-allowed text-[#E8DFC8] text-xs font-mono font-bold uppercase tracking-widest border border-[#2A2F3E] rounded-xl transition-all shadow-sm shadow-[#B08D3E]/20 hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 bg-[#B08D3E] hover:opacity-90 disabled:bg-[#D9CEB5] disabled:text-[#5B6472] disabled:border-[#D9CEB5] disabled:cursor-not-allowed text-[#E8DFC8] text-xs font-mono font-bold uppercase tracking-widest border border-[#2A2F3E] rounded-xl transition-all shadow-sm shadow-[#B08D3E]/20 hover:translate-x-[-1px] hover:translate-y-[-1px] cursor-pointer flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-3.5 h-3.5 border border-white/30/40 border-t-white rounded-full animate-spin" />
+                  <div className="w-3.5 h-3.5 border border-white/30 border-t-white rounded-full animate-spin" />
                   <span>Deposing to Ledger...</span>
                 </>
               ) : (

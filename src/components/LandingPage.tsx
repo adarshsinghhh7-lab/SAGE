@@ -93,7 +93,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             className="font-sans text-4xl sm:text-6xl lg:text-7xl font-bold text-[#E8DFC8] tracking-tight leading-[1.08] mb-6"
           >
             Fearless campus accountability.<br className="hidden sm:inline" />
-            <span className="italic font-sans font-normal text-cyan-200"> Without fear of retaliation.</span>
+            <span className="italic font-sans font-normal text-[#B08D3E]"> Without fear of retaliation.</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -117,7 +117,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               id="hero-submit-cta"
               type="button"
               onClick={() => onNavigate('submit')}
-              className="w-full sm:w-auto px-7 py-4 bg-white text-[#B08D3E] hover:text-[#14171F] text-sm font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-black/15 cursor-pointer"
+              className="w-full sm:w-auto px-7 py-4 bg-[#B08D3E] text-[#14171F] hover:bg-[#C09E4F] text-sm font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-black/15 cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Submit a Complaint</span>
@@ -179,7 +179,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <Lock className="w-4 h-4" />
               <span>Privacy & Security Architecture</span>
             </div>
-            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-[#E8DFC8] tracking-tight">
+            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-[#14171F] tracking-tight">
               How Anonymity Works on S.A.G.E.
             </h2>
             <p className="font-sans text-base sm:text-lg text-[#5B6472] mt-3">
@@ -194,14 +194,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: 0 }}
-              whileHover={{ y: -4, boxShadow: '0 10px 40px -10px rgba(99, 102, 241, 0.25)' }}
-              className="glass-card-strong p-6 flex flex-col justify-between"
+              whileHover={{ y: -4, boxShadow: '0 10px 40px -10px rgba(176, 141, 62, 0.25)' }}
+              className="flat-paper p-6 flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 text-[#E8DFC8] flex items-center justify-center font-mono font-bold text-sm mb-4 rounded-xl shadow-md shadow-[#B08D3E]/20">
+                <div className="w-10 h-10 bg-[#5B7A8D] text-[#E8DFC8] flex items-center justify-center font-mono font-bold text-sm mb-4 rounded-lg border border-[#5B7A8D]">
                   01
                 </div>
-                <h3 className="font-sans text-xl font-bold text-[#E8DFC8] mb-2">
+                <h3 className="font-sans text-xl font-bold text-[#14171F] mb-2">
                   Encrypted & Hidden by Default
                 </h3>
                 <p className="text-xs sm:text-sm font-sans text-[#5B6472] leading-relaxed">
@@ -220,21 +220,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: 0.15 }}
-              whileHover={{ y: -4, boxShadow: '0 10px 40px -10px rgba(139, 92, 246, 0.25)' }}
-              className="glass-card-strong p-6 flex flex-col justify-between"
+              whileHover={{ y: -4, boxShadow: '0 10px 40px -10px rgba(176, 141, 62, 0.25)' }}
+              className="flat-paper p-6 flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 text-[#E8DFC8] flex items-center justify-center font-mono font-bold text-sm mb-4 rounded-xl shadow-md shadow-violet-200">
+                <div className="w-10 h-10 bg-[#8B4050] text-[#E8DFC8] flex items-center justify-center font-mono font-bold text-sm mb-4 rounded-lg border border-[#8B4050]">
                   02
                 </div>
-                <h3 className="font-sans text-xl font-bold text-[#E8DFC8] mb-2">
+                <h3 className="font-sans text-xl font-bold text-[#14171F] mb-2">
                   Audited Misuse Safeguards
                 </h3>
                 <p className="text-xs sm:text-sm font-sans text-[#5B6472] leading-relaxed">
                   To prevent abuse, a reveal option exists strictly for verified extreme criminal offenses (e.g. violent threats or extortion). This requires formal dual-authorization from proctorial and legal boards.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-[#2A2F3E] flex items-center gap-2 text-xs font-mono font-bold text-violet-600">
+              <div className="mt-6 pt-4 border-t border-[#2A2F3E] flex items-center gap-2 text-xs font-mono font-bold text-[#8B4050]">
                 <Shield className="w-4 h-4" />
                 <span>Every Query Publicly Audited</span>
               </div>
@@ -246,21 +246,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              whileHover={{ y: -4, boxShadow: '0 10px 40px -10px rgba(6, 182, 212, 0.25)' }}
-              className="glass-card-strong p-6 flex flex-col justify-between"
+              whileHover={{ y: -4, boxShadow: '0 10px 40px -10px rgba(176, 141, 62, 0.25)' }}
+              className="flat-paper p-6 flex flex-col justify-between"
             >
               <div>
-                <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 text-[#E8DFC8] flex items-center justify-center font-mono font-bold text-sm mb-4 rounded-xl shadow-md shadow-cyan-200">
+                <div className="w-10 h-10 bg-[#5B6B8D] text-[#E8DFC8] flex items-center justify-center font-mono font-bold text-sm mb-4 rounded-lg border border-[#5B6B8D]">
                   03
                 </div>
-                <h3 className="font-sans text-xl font-bold text-[#E8DFC8] mb-2">
+                <h3 className="font-sans text-xl font-bold text-[#14171F] mb-2">
                   Anti-Retaliation Immunity
                 </h3>
                 <p className="text-xs sm:text-sm font-sans text-[#5B6472] leading-relaxed">
                   Because wardens, maintenance contractors, and faculty cannot access identifying details, you are shielded from academic penalties, hostel harassment, or disciplinary retribution.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-[#2A2F3E] flex items-center gap-2 text-xs font-mono font-bold text-cyan-600">
+              <div className="mt-6 pt-4 border-t border-[#2A2F3E] flex items-center gap-2 text-xs font-mono font-bold text-[#5B6B8D]">
                 <CheckCircle2 className="w-4 h-4 text-[#5B7D5B]" />
                 <span>Protected Student Expression</span>
               </div>
@@ -272,27 +272,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       {/* 3. 3-STEP ESCALATION LIFECYCLE */}
       {/* ========================================================================= */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-[#2A2F3E]" style={{ background: 'linear-gradient(180deg, rgba(240,240,255,0.5) 0%, rgba(255,255,255,0.9) 100%)' }}>
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-[#2A2F3E]" style={{ background: 'linear-gradient(180deg, #E8DFC8 0%, #D9CEB5 100%)' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#B08D3E] block mb-2">
               Simple 3-Step Lifecycle
             </span>
-            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-[#E8DFC8] tracking-tight">
+            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-[#14171F] tracking-tight">
               From Grievance to Remediation
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
             {/* Step 1 */}
-            <div className="glass-card p-6">
+            <div className="flat-paper p-6">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-mono font-bold text-xs bg-gradient-to-r from-indigo-500 to-purple-500 text-[#E8DFC8] px-2.5 py-0.5 rounded-lg">
+                <span className="font-mono font-bold text-xs bg-[#5B7A8D] text-[#E8DFC8] px-2.5 py-0.5">
                   STEP 01
                 </span>
                 <FileText className="w-5 h-5 text-[#B08D3E]" />
               </div>
-              <h3 className="font-sans text-lg font-bold text-[#E8DFC8] mb-2">
+              <h3 className="font-sans text-lg font-bold text-[#14171F] mb-2">
                 1. Submit Anonymously
               </h3>
               <p className="text-xs font-sans text-[#5B6472] leading-relaxed">
@@ -301,14 +301,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             {/* Step 2 */}
-            <div className="glass-card p-6">
+            <div className="flat-paper p-6">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-mono font-bold text-xs bg-gradient-to-r from-violet-500 to-purple-500 text-[#E8DFC8] px-2.5 py-0.5 rounded-lg">
+                <span className="font-mono font-bold text-xs bg-[#8B4050] text-[#E8DFC8] px-2.5 py-0.5">
                   STEP 02
                 </span>
-                <Vote className="w-5 h-5 text-violet-500" />
+                <Vote className="w-5 h-5 text-[#8B4050]" />
               </div>
-              <h3 className="font-sans text-lg font-bold text-[#E8DFC8] mb-2">
+              <h3 className="font-sans text-lg font-bold text-[#14171F] mb-2">
                 2. Community Upvotes
               </h3>
               <p className="text-xs font-sans text-[#5B6472] leading-relaxed">
@@ -317,14 +317,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             {/* Step 3 */}
-            <div className="glass-card p-6">
+            <div className="flat-paper p-6">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-mono font-bold text-xs bg-gradient-to-r from-cyan-500 to-blue-500 text-[#E8DFC8] px-2.5 py-0.5 rounded-lg">
+                <span className="font-mono font-bold text-xs bg-[#5B6B8D] text-[#E8DFC8] px-2.5 py-0.5">
                   STEP 03
                 </span>
-                <CheckCircle2 className="w-5 h-5 text-cyan-500" />
+                <CheckCircle2 className="w-5 h-5 text-[#5B6B8D]" />
               </div>
-              <h3 className="font-sans text-lg font-bold text-[#E8DFC8] mb-2">
+              <h3 className="font-sans text-lg font-bold text-[#14171F] mb-2">
                 3. Action & Public Notes
               </h3>
               <p className="text-xs font-sans text-[#5B6472] leading-relaxed">
@@ -338,13 +338,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       {/* 4. FREQUENTLY ASKED QUESTIONS (FAQ SECTION) */}
       {/* ========================================================================= */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-[#2A2F3E] bg-white/60">
+      <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-[#D9CEB5] bg-[#D9CEB5]/40">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#B08D3E] block mb-2">
               Clear Answers
             </span>
-            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-[#E8DFC8] tracking-tight">
+            <h2 className="font-sans text-3xl sm:text-5xl font-bold text-[#14171F] tracking-tight">
               Frequently Asked Questions
             </h2>
             <p className="font-sans text-sm sm:text-base text-[#5B6472] mt-2">
@@ -362,12 +362,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-30px' }}
                   transition={{ duration: 0.4, delay: idx * 0.08 }}
-                  className="glass-card overflow-hidden"
+                  className="flat-paper overflow-hidden"
                 >
                   <button
                     type="button"
                     onClick={() => toggleFaq(idx)}
-                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-mono font-bold text-xs sm:text-sm text-[#E8DFC8] hover:bg-[#B08D3E]/10/50 transition-colors cursor-pointer"
+                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-mono font-bold text-xs sm:text-sm text-[#14171F] hover:bg-[#B08D3E]/10 transition-colors cursor-pointer"
                     aria-expanded={isOpen}
                   >
                     <span className="flex items-center gap-3">
@@ -427,7 +427,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               onClick={() => onNavigate('submit')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full sm:w-auto px-8 py-4 bg-white text-[#B08D3E] hover:text-[#14171F] text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+              className="w-full sm:w-auto px-8 py-4 bg-[#B08D3E] text-[#14171F] hover:bg-[#C09E4F] text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Submit a Complaint</span>

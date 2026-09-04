@@ -10,6 +10,15 @@ import { getCategoryTabColor } from '../utils/formatters';
 export const TallyMarks: React.FC<{ count: number; className?: string }> = ({ count, className = '' }) => {
   if (count <= 0) return <span className={`font-mono text-[10px] text-[#5B6472] ${className}`}>0</span>;
 
+  // Beyond 20 strokes, switch to a compact numeric display to avoid overflow
+  if (count > 20) {
+    return (
+      <span className={`inline-flex items-center gap-1.5 ${className}`}>
+        <span className="font-mono text-[10px] font-bold">{count}</span>
+      </span>
+    );
+  }
+
   const groups = Math.floor(count / 5);
   const remainder = count % 5;
   const strokes: React.ReactNode[] = [];
@@ -166,7 +175,6 @@ export const PriorityStamp: React.FC<{
     animate={{ scale: 1, opacity: 1, rotate: -8 }}
     transition={{ duration: 0.15, ease: [0.2, 0, 0, 1] }}
     className={`stamp-grain absolute -top-2 -right-2 z-10 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] border-[1.5px] border-[#A6352C] text-[#A6352C] bg-[#E8DFC8] ${className}`}
-    style={{ transform: 'rotate(-8deg)' }}
   >
     PRIORITY
   </motion.span>

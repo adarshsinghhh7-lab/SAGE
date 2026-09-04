@@ -53,7 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 OFFICIAL
               </span>
             </div>
-            <p className="text-[10px] font-mono tracking-wider text-[#5B6472] uppercase">
+            <p className="text-[10px] font-mono tracking-wider text-[#9AA3B0] uppercase">
               Student Anonymous Grievance & Escalation
             </p>
           </div>
@@ -98,7 +98,7 @@ const NavButton: React.FC<{ id: string; active: boolean; onClick: () => void; ch
     className={`px-3 py-2 text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
       active
         ? 'bg-[#B08D3E] text-[#14171F]'
-        : 'bg-transparent text-[#5B6472] hover:text-[#E8DFC8] border border-[#2A2F3E] hover:border-[#5B6472]'
+        : 'bg-transparent text-[#9AA3B0] hover:text-[#E8DFC8] border border-[#2A2F3E] hover:border-[#9AA3B0]'
     }`}
   >
     {children}

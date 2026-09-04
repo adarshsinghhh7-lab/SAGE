@@ -48,9 +48,9 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             }`}
           >
             {toast.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-[#5B7D5B] shrink-0" />
             ) : (
-              <XCircle className="w-4 h-4 text-red-600 shrink-0" />
+              <XCircle className="w-4 h-4 text-[#A6352C] shrink-0" />
             )}
             <span className="flex-1 font-bold">{toast.message}</span>
             <button

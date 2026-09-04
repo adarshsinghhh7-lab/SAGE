@@ -272,7 +272,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
               </p>
             </div>
           </div>
-          <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold uppercase bg-[#B08D3E] text-[#E8DFC8] px-2.5 py-1 rounded">
+          <div className="inline-flex items-center gap-2 text-[10px] font-mono font-bold uppercase bg-[#B08D3E] text-[#14171F] px-2.5 py-1 rounded">
             <ShieldCheck className="w-3.5 h-3.5" /> Role: Head Admin
           </div>
         </div>
@@ -382,7 +382,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                   <th className="py-3 px-4 uppercase font-bold tracking-wider text-[11px] text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 bg-[#E8DFC8]">
+              <tbody className="divide-y divide-[#D9CEB5] bg-[#E8DFC8]">
                 {filteredComplaints.length > 0 ? (
                   filteredComplaints.map((complaint) => {
                     const compId = complaint.complaintId || complaint.id || '';
@@ -533,7 +533,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                 </tr>
               </thead>
               <motion.tbody
-                className="divide-y divide-slate-200 bg-[#E8DFC8]"
+                className="divide-y divide-[#D9CEB5] bg-[#E8DFC8]"
                 initial="hidden"
                 animate="show"
                 variants={revealLogContainerVariants}
@@ -543,7 +543,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                     <motion.tr
                       key={log.logId}
                       variants={revealLogRowVariants}
-                      className="hover:bg-[#A6352C]/10/40 transition-colors"
+                      className="hover:bg-[#A6352C]/10 transition-colors"
                     >
                       <td className="py-3 px-4 font-bold whitespace-nowrap">
                         <span className="bg-[#A6352C] text-[#E8DFC8] px-2 py-0.5">{log.complaintId}</span>

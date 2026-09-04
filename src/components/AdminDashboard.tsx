@@ -415,7 +415,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="mb-8 border-b border-[#D9CEB5] pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-[#B08D3E] text-[#E8DFC8] px-2 py-0.5">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-[#B08D3E] text-[#14171F] px-2 py-0.5">
               ADMINISTRATIVE CONTROL DESK
             </span>
             <span className="text-[10px] font-mono text-[#14171F]/70 uppercase tracking-wider flex items-center gap-1">
@@ -458,7 +458,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <button
             type="button"
             onClick={openAuthModal}
-            className="px-3 py-1 bg-[#B08D3E] text-[#E8DFC8] font-mono text-xs font-bold uppercase hover:bg-[#B08D3E] cursor-pointer"
+            className="px-3 py-1 bg-[#B08D3E] text-[#14171F] font-mono text-xs font-bold uppercase hover:bg-[#B08D3E] cursor-pointer"
           >
             Manage Claims
           </button>
@@ -531,7 +531,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
 
           {/* Card 4: Urgent Priority — AI-Flagged + Upvote High Priority */}
-          <div className="bg-[#A6352C]/10/60 border border-[#A6352C]/40 rounded-lg p-5 shadow-md">
+          <div className="bg-[#A6352C]/10 border border-[#A6352C]/40 rounded-lg p-5 shadow-md">
             <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#A6352C] mb-1 flex items-center gap-1.5">
               <AlertTriangle className="w-3.5 h-3.5 text-[#A6352C]" />
               Urgent Priority
@@ -542,7 +542,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <span className="w-2.5 h-2.5 rounded-full bg-[#A6352C] animate-pulse" />
               )}
             </div>
-            <div className="flex flex-col gap-1 text-[11px] font-mono border-t border-[#A6352C]/40/70 pt-2 text-[#A6352C]">
+            <div className="flex flex-col gap-1 text-[11px] font-mono border-t border-[#A6352C]/40 pt-2 text-[#A6352C]">
               <div className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-[#5B6B8D]" />
@@ -762,7 +762,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   type="button"
                   onClick={handleRunSweepNow}
                   disabled={escalationRunning}
-                  className="w-full px-3 py-2 bg-[#B08D3E] text-[#E8DFC8] text-[11px] font-mono font-bold uppercase border border-[#2A2F3E] hover:bg-[#B08D3E] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-md flex items-center justify-center gap-2"
+                  className="w-full px-3 py-2 bg-[#B08D3E] text-[#14171F] text-[11px] font-mono font-bold uppercase border border-[#2A2F3E] hover:bg-[#B08D3E] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-md flex items-center justify-center gap-2"
                 >
                   <Send className="w-3.5 h-3.5" />
                   {escalationRunning ? 'Sweeping…' : 'Run Sweep Now'}
@@ -1032,7 +1032,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 bg-[#E8DFC8]">
+            <tbody className="divide-y divide-[#D9CEB5] bg-[#E8DFC8]">
               {filteredComplaints.length > 0 ? (
                 filteredComplaints.map((complaint) => {
                   const compId = complaint.complaintId || complaint.id || '';

@@ -230,7 +230,7 @@ function MainApp() {
   }, [complaints, selectedComplaintId]);
 
   return (
-    <div className="min-h-screen flex flex-col text-slate-900" style={{ background: 'linear-gradient(135deg, #f0f0ff 0%, #f5f0ff 50%, #f0f5ff 100%)' }}>
+    <div className="min-h-screen flex flex-col text-[#E8DFC8]">
       {/* Header / Navbar */}
       <Navbar
         currentView={currentView}
@@ -356,10 +356,10 @@ function MainApp() {
 
         {currentView === 'detail' && !activeComplaint && (
           <div className="max-w-md mx-auto py-16 px-4 text-center">
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">
+            <h2 className="text-2xl font-bold text-[#E8DFC8] mb-2">
               Deposition Not Found
             </h2>
-            <p className="text-xs font-mono text-[#E8DFC8]0 mb-6">
+            <p className="text-xs font-mono text-[#E8DFC8]/70 mb-6">
               The requested complaint record could not be retrieved from the ledger.
             </p>
             <button
@@ -381,7 +381,7 @@ function MainApp() {
           <p className="text-sm text-[#E8DFC8]/70">
             <strong className="text-[#B08D3E]">S.A.G.E.</strong> — Student Anonymous Grievance & Escalation System
           </p>
-          <div className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest text-[#5B6472] flex-wrap justify-center">
+          <div className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest text-[#9AA3B0] flex-wrap justify-center">
             <button type="button" onClick={() => { setCurrentView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-[#B08D3E] underline cursor-pointer">How It Works & FAQ</button>
             <span>·</span>
             <button type="button" onClick={() => { setCurrentView('admin'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-[#B08D3E] underline cursor-pointer">Administrative Portal</button>

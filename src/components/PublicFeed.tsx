@@ -125,7 +125,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
             <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-[#0B0C0F] text-[#E8DFC8] px-2 py-0.5 border border-[#2A2F3E]">
               Live Public Ledger (Firestore)
             </span>
-            <span className="text-[10px] font-mono text-[#5B6472] uppercase tracking-wider flex items-center gap-1">
+            <span className="text-[10px] font-mono text-[#9AA3B0] uppercase tracking-wider flex items-center gap-1">
               <Lock className="w-3 h-3 text-[#B08D3E]" />
               Cryptographically Blinded · SHA-256 Voter Registry
             </span>
@@ -152,7 +152,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
       {/* Top Status & Summary Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         <div className="bg-[#1E2230] border border-[#2A2F3E] p-3.5">
-          <div className="text-[10px] font-mono font-bold uppercase text-[#5B6472]">Total Depositions</div>
+          <div className="text-[10px] font-mono font-bold uppercase text-[#9AA3B0]">Total Depositions</div>
           <div className="text-2xl font-mono font-bold text-[#E8DFC8] mt-0.5">{stats.total}</div>
         </div>
         <div className="bg-[#1E2230] border border-[#B08D3E]/40 p-3.5">
@@ -173,7 +173,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
       <div className="bg-[#1E2230] border border-[#2A2F3E] p-5 sm:p-6 mb-8 paper-grain">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="relative">
-            <label htmlFor="feed-search-input" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#5B6472] mb-1">
+            <label htmlFor="feed-search-input" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#9AA3B0] mb-1">
               Search Grievances
             </label>
             <div className="relative">
@@ -190,7 +190,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           </div>
 
           <div>
-            <label htmlFor="feed-cat-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#5B6472] mb-1">
+            <label htmlFor="feed-cat-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#9AA3B0] mb-1">
               Category
             </label>
             <select
@@ -205,7 +205,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           </div>
 
           <div>
-            <label htmlFor="feed-status-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#5B6472] mb-1">
+            <label htmlFor="feed-status-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#9AA3B0] mb-1">
               Status
             </label>
             <select
@@ -223,7 +223,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           </div>
 
           <div>
-            <label htmlFor="feed-loc-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#5B6472] mb-1">
+            <label htmlFor="feed-loc-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#9AA3B0] mb-1">
               Hostel / Location
             </label>
             <select
@@ -239,7 +239,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
         </div>
 
         <div className="mt-4 pt-3 border-t border-[#2A2F3E] flex flex-wrap items-center gap-1.5">
-          <span className="text-[10px] font-mono uppercase text-[#5B6472] font-bold mr-1">Filter Chips:</span>
+          <span className="text-[10px] font-mono uppercase text-[#9AA3B0] font-bold mr-1">Filter Chips:</span>
           <button
             type="button"
             onClick={() => setSelectedCategory('All')}
@@ -260,7 +260,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
         {/* Sort controls */}
         <div className="mt-4 pt-3 border-t border-[#2A2F3E] flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase text-[#5B6472] font-bold mr-1">Sort:</span>
+            <span className="text-[10px] font-mono uppercase text-[#9AA3B0] font-bold mr-1">Sort:</span>
             <button
               type="button"
               onClick={() => setSortBy('upvotes')}
@@ -284,7 +284,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
                 <span>Reset Filters</span>
               </button>
             )}
-            <span className="text-[#5B6472] text-[11px]">
+            <span className="text-[#9AA3B0] text-[11px]">
               Showing <strong className="text-[#E8DFC8]">{filteredComplaints.length}</strong> of <strong className="text-[#E8DFC8]">{complaints.length}</strong> complaints
             </span>
           </div>
