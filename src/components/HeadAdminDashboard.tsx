@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { motion, Variants } from 'motion/react';
 import {
   Search,
   ArrowBigUp,
@@ -32,6 +33,25 @@ interface HeadAdminDashboardProps {
   onUpdateComplaint: (id: string, newStatus: ComplaintStatus, resolutionNotes: string) => void;
   onOpenImage?: (imageUrl: string, title: string) => void;
 }
+
+// Gentle stagger for the immutable reveal audit ledger rows. Deliberately uses
+// simple fade + slight y offset with easeOut — no spring/bounce, so the most
+// sensitive surface in the app reads as procedural and serious, not playful.
+const revealLogContainerVariants: Variants = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.06 },
+  },
+};
+
+const revealLogRowVariants: Variants = {
+  hidden: { opacity: 0, y: 8 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: 'easeOut' },
+  },
+};
 
 const ALL_CATEGORIES: string[] = [
   'infrastructure',
@@ -512,10 +532,19 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                   <th className="py-3 px-4 uppercase font-bold tracking-wider text-[11px] whitespace-nowrap">Timestamp</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 bg-white">
+              <motion.tbody
+                className="divide-y divide-slate-200 bg-white"
+                initial="hidden"
+                animate="show"
+                variants={revealLogContainerVariants}
+              >
                 {revealLogs.length > 0 ? (
                   revealLogs.map((log) => (
-                    <tr key={log.logId} className="hover:bg-red-50/40 transition-colors">
+                    <motion.tr
+                      key={log.logId}
+                      variants={revealLogRowVariants}
+                      className="hover:bg-red-50/40 transition-colors"
+                    >
                       <td className="py-3 px-4 font-bold whitespace-nowrap">
                         <span className="bg-red-600 text-white px-2 py-0.5">{log.complaintId}</span>
                       </td>
@@ -528,7 +557,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                       <td className="py-3 px-4 whitespace-nowrap text-slate-900/80">
                         {formatTimestamp(log.timestamp)}
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))
                 ) : (
                   <tr>
@@ -544,7 +573,7 @@ export const HeadAdminDashboard: React.FC<HeadAdminDashboardProps> = ({
                     </td>
                   </tr>
                 )}
-              </tbody>
+              </motion.tbody>
             </table>
           </div>
         </section>

@@ -107,6 +107,9 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({
 }) => {
   const currentStage = normalizeStatus(currentStatus);
   const currentIndex = STAGES.findIndex((s) => s.key === currentStage);
+  // Fraction of the connector line that should be "filled" up to the current
+  // stage (0 = submitted, 0.5 = under review, 1 = resolved).
+  const progressFraction = STAGES.length > 1 ? currentIndex / (STAGES.length - 1) : 0;
 
   return (
     <div className="glass-card p-5 sm:p-6">
@@ -131,6 +134,18 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({
           aria-hidden="true"
         />
 
+        {/* Animated progress fill: visibly "fills up to" the current stage on
+            mount via a scaleX/scaleY transition. Origin-left (horizontal,
+            mobile) and origin-top (vertical, sm+) let it grow from the first
+            stage toward the current one rather than appearing pre-filled. */}
+        <motion.div
+          className="absolute left-[15px] right-[15px] top-5 bottom-5 origin-left border-t-2 border-t-indigo-500 sm:left-1/2 sm:right-auto sm:w-0 sm:h-full sm:border-t-0 sm:border-l-2 sm:border-l-indigo-500 sm:origin-top sm:top-[15px] sm:bottom-[15px] sm:translate-x-[-50%]"
+          initial={{ scaleX: 0, scaleY: 0 }}
+          animate={{ scaleX: progressFraction, scaleY: progressFraction }}
+          transition={{ duration: 0.9, ease: 'easeInOut' }}
+          aria-hidden="true"
+        />
+
         <ol className="relative flex flex-col sm:flex-row gap-6 sm:gap-0">
           {STAGES.map((stage, idx) => {
             const isCompleted = currentIndex > idx;
@@ -150,7 +165,7 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({
               dotClass = 'bg-gradient-to-br from-emerald-500 to-emerald-600 border-emerald-600 text-white';
               icon = <Check className="w-5 h-5 stroke-[3]" />;
             } else if (isCurrent) {
-              dotClass = 'bg-gradient-to-br from-indigo-500 to-purple-600 border-indigo-300 text-white ring-4 ring-indigo-200/50';
+              dotClass = 'bg-gradient-to-br from-indigo-500 to-purple-600 border-indigo-300 text-white';
               icon = <CircleDot className="w-5 h-5" />;
             }
 
@@ -171,12 +186,34 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({
                 }`}
               >
                 {/* Dot */}
-                <div
-                  className={`relative z-10 w-10 h-10 rounded-full border flex items-center justify-center mb-3 ${dotClass} ${
-                    isCurrent ? 'shadow-md' : ''
-                  }`}
-                >
-                  {icon}
+                <div className={`relative z-10 w-10 h-10 rounded-full border flex items-center justify-center mb-3 ${dotClass} ${
+                  isCurrent ? 'shadow-md' : ''
+                }`}>
+                  {/* Gentle looping pulsing ring behind the active stage dot — the
+                      one place a loop is appropriate since it signals "in progress". */}
+                  {isCurrent && (
+                    <motion.span
+                      className="absolute -inset-1.5 rounded-full border-2 border-indigo-400"
+                      initial={{ scale: 1, opacity: 0.6 }}
+                      animate={{ scale: [1, 1.6], opacity: [0.55, 0] }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+                      aria-hidden="true"
+                    />
+                  )}
+
+                  {/* Completed markers get a quick scale-in checkmark when reached */}
+                  {isCompleted ? (
+                    <motion.span
+                      initial={{ scale: 0.6, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 16, delay: 0.4 + idx * 0.15 }}
+                      className="flex items-center justify-center"
+                    >
+                      {icon}
+                    </motion.span>
+                  ) : (
+                    icon
+                  )}
                 </div>
 
                 {/* Label */}
