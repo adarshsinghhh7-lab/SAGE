@@ -7,7 +7,7 @@ import {
   Inbox, 
   Lock 
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Complaint } from '../types';
 import { ComplaintCard } from './ComplaintCard';
 import { formatCategoryLabel } from '../utils/formatters';
@@ -357,21 +357,25 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           initial="hidden"
           animate="visible"
+          layout
           variants={{
+            hidden: {},
             visible: {
-              transition: { staggerChildren: 0.06 }
+              transition: { staggerChildren: 0.06, delayChildren: 0.05 }
             }
           }}
         >
-          {filteredComplaints.map((complaint) => (
-            <ComplaintCard
-              key={complaint.complaintId || complaint.id}
-              complaint={complaint}
-              onUpvote={onUpvote}
-              onSelect={onSelectComplaint}
-              onOpenImage={onOpenImage}
-            />
-          ))}
+          <AnimatePresence mode="popLayout">
+            {filteredComplaints.map((complaint) => (
+              <ComplaintCard
+                key={complaint.complaintId || complaint.id}
+                complaint={complaint}
+                onUpvote={onUpvote}
+                onSelect={onSelectComplaint}
+                onOpenImage={onOpenImage}
+              />
+            ))}
+          </AnimatePresence>
         </motion.div>
       ) : (
         /* Empty State */

@@ -35,6 +35,20 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
 
   const isHighPriority = (urgencyScore >= 0.75 || complaint.urgency === 'Urgent') && complaint.status.toLowerCase() !== 'resolved';
 
+  // Solid colors per status for smooth Motion-driven background/text/border
+  // transitions (Tailwind gradient classes can't be cross-faded).
+  const normStatus = (complaint.status || '').toLowerCase().replace(' ', '_');
+  const isUrgent = complaint.urgency === 'Urgent' && normStatus !== 'resolved';
+
+  const STATUS_COLORS: Record<string, { bg: string; color: string; border: string }> = {
+    submitted: { bg: '#f1f5f9', color: '#1e293b', border: '#cbd5e1' },
+    under_review: { bg: '#fffbeb', color: '#78350f', border: '#fbbf24' },
+    resolved: { bg: '#ecfdf5', color: '#064e3b', border: '#34d399' },
+    urgent: { bg: '#fef2f2', color: '#7f1d1d', border: '#f87171' },
+  };
+
+  const activeStatusColor = STATUS_COLORS[isUrgent ? 'urgent' : normStatus] ?? STATUS_COLORS.submitted;
+
   // Short description preview (first 140 chars)
   const descriptionPreview = complaint.description.length > 140
     ? `${complaint.description.slice(0, 140).trim()}...`
@@ -64,10 +78,12 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
       id={`complaint-card-${compId}`}
       onClick={handleCardClick}
       layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -3, boxShadow: '0 8px 30px -8px rgba(0,0,0,0.15)' }}
-      transition={{ duration: 0.25 }}
+      variants={{
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
+        exit: { opacity: 0, y: -12, transition: { duration: 0.2, ease: 'easeOut' } },
+      }}
+      whileHover={{ y: -3, boxShadow: '0 8px 30px -8px rgba(0,0,0,0.15)', transition: { duration: 0.2, ease: 'easeOut' } }}
       className="group glass-card p-5 sm:p-6 cursor-pointer flex flex-col justify-between"
     >
       <div>
@@ -89,15 +105,36 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           {/* Color-Coded Status Badge: Yellow = Under Review, Green = Resolved, Red = High Priority */}
           <div className="flex items-center gap-1.5">
             {isHighPriority ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-mono font-bold uppercase border bg-red-100 text-red-950 border-red-600 shadow-md">
-                <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+              <motion.span
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-mono font-bold uppercase border bg-red-100 text-red-950 border-red-600 shadow-md relative"
+                initial={{ scale: 0.9, boxShadow: '0 0 0 0 rgba(220,38,38,0)' }}
+                animate={{
+                  scale: [0.9, 1.06, 1],
+                  boxShadow: [
+                    '0 0 0 0 rgba(220,38,38,0)',
+                    '0 0 0 10px rgba(220,38,38,0.18)',
+                    '0 0 0 0 rgba(220,38,38,0)',
+                  ],
+                }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+              >
+                <span className="w-2 h-2 rounded-full bg-red-600" />
                 <span>High Priority</span>
-              </span>
+              </motion.span>
             ) : (
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-mono font-bold uppercase border ${statusStyle.bg} ${statusStyle.text} ${statusStyle.border}`}>
+              <motion.span
+                className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-mono font-bold uppercase border"
+                initial={false}
+                animate={{
+                  backgroundColor: activeStatusColor.bg,
+                  color: activeStatusColor.color,
+                  borderColor: activeStatusColor.border,
+                }}
+                transition={{ duration: 0.45, ease: 'easeOut' }}
+              >
                 <span className={`w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
                 <span>{formatStatusLabel(complaint.status)}</span>
-              </span>
+              </motion.span>
             )}
           </div>
         </div>
@@ -135,11 +172,14 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
       {/* Card Footer: Upvote Button & Detail Callout */}
       <div className="pt-3 border-t border-indigo-100/30 flex items-center justify-between gap-3 mt-1">
         {/* Upvote Button: Toggles to "Upvoted" and disables itself once clicked */}
-        <button
+        <motion.button
           id={`upvote-btn-${compId}`}
           type="button"
           disabled={complaint.hasUpvoted}
           onClick={handleUpvoteClick}
+          initial={false}
+          animate={complaint.hasUpvoted ? { scale: [1, 1.08, 1] } : { scale: 1 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
           className={`inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider border border-indigo-100/50 rounded-xl transition-all cursor-pointer ${
             complaint.hasUpvoted
               ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-emerald-500 opacity-95 cursor-default shadow-none shadow-emerald-200'
@@ -149,8 +189,21 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
         >
           {complaint.hasUpvoted ? (
             <>
-              <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>{upvoteCount}</span>
+              <motion.span
+                initial={false}
+                animate={{ scale: [1, 1.25, 1] }}
+                transition={{ type: 'spring', stiffness: 300, damping: 12 }}
+                className="inline-flex"
+              >
+                <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+              </motion.span>
+              <motion.span
+                key={upvoteCount}
+                initial={{ scale: 1 }}
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                className="inline-block"
+              >{upvoteCount}</motion.span>
               <span className="text-[10px]">Upvoted</span>
             </>
           ) : (
@@ -160,7 +213,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
               <span className="text-[10px]">Upvote</span>
             </>
           )}
-        </button>
+        </motion.button>
 
         <div className="flex items-center gap-2 ml-auto">
           {/* Copy Public Link */}

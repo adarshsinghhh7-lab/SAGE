@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { motion, type Variants } from 'motion/react';
 import { 
   Upload, 
   X, 
@@ -43,6 +44,24 @@ const PRESET_LOCATIONS = [
   'East Gate Campus Area',
   'Other / Custom Location'
 ];
+
+// Staggered entrance for the form fields (top to bottom). Uses a calm easeOut
+// so the form eases into view rather than snapping in or bouncing.
+const formContainerVariants: Variants = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.06, delayChildren: 0.05 },
+  },
+};
+
+const formFieldVariants: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: 'easeOut' as const },
+  },
+};
 
 export const SubmissionForm: React.FC<SubmissionFormProps> = ({
   onSubmitSuccess,
@@ -177,9 +196,19 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-8 sm:py-12 px-4 sm:px-6">
+    <motion.div
+      className="max-w-3xl mx-auto py-8 sm:py-12 px-4 sm:px-6"
+      initial="hidden"
+      animate="show"
+      exit={{
+        opacity: 0,
+        scale: 0.98,
+        transition: { duration: 0.25, ease: 'easeOut' },
+      }}
+      variants={formContainerVariants}
+    >
       {/* Editorial Confidentiality Warning Banner */}
-      <div className="mb-6 bg-white/60 backdrop-blur-md border border-indigo-100/50 rounded-xl p-4 sm:p-5 shadow-md flex items-start gap-4">
+      <motion.div variants={formFieldVariants} className="mb-6 bg-white/60 backdrop-blur-md border border-indigo-100/50 rounded-xl p-4 sm:p-5 shadow-md flex items-start gap-4">
         <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-500 text-white shrink-0 mt-0.5 rounded-lg shadow-md shadow-indigo-200">
           <Lock className="w-4 h-4" />
         </div>
@@ -196,10 +225,10 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
             Student names, emails, and device identifiers are stripped at point of ingress. You will receive an untraceable public ledger ID (<span className="font-mono font-bold text-indigo-600">SAGE-XXXX</span>) upon deposition.
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Submission Form Card */}
-      <div className="bg-white/60 backdrop-blur-md border border-indigo-100/50 rounded-xl p-6 sm:p-10 shadow-lg relative">
+      <motion.div variants={formFieldVariants} className="bg-white/60 backdrop-blur-md border border-indigo-100/50 rounded-xl p-6 sm:p-10 shadow-lg relative">
         {/* Header */}
         <div className="mb-8 border-b border-indigo-100/50 pb-5">
           <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest text-slate-900/60 mb-1">
@@ -214,20 +243,27 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
           </p>
         </div>
 
-        {/* Error Alert */}
+        {/* Error Alert: shakes slightly on appear so it's noticed, without feeling alarming */}
         {errorMsg && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-900 text-xs font-mono flex items-start gap-3 rounded-lg">
+          <motion.div
+            key={errorMsg}
+            initial={{ opacity: 0, x: 0 }}
+            animate={{ opacity: 1, x: [0, -6, 6, -4, 4, 0] }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            className="mb-6 p-4 bg-red-50 border border-red-200 text-red-900 text-xs font-mono flex items-start gap-3 rounded-lg"
+            role="alert"
+          >
             <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
             <div>
               <p className="font-bold uppercase tracking-wider">Validation Error</p>
               <p className="mt-0.5">{errorMsg}</p>
             </div>
-          </div>
+          </motion.div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Field 1: Category Dropdown */}
-          <div id="field-category" className="space-y-2">
+          <motion.div variants={formFieldVariants} id="field-category" className="space-y-2">
             <div className="flex items-center justify-between">
               <label htmlFor="category-select" className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
                 1. Grievance Category <span className="text-indigo-600">*</span>
@@ -268,10 +304,10 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                 </button>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Field 2: Description Textarea (Min 20, Max 1000, Live Count) */}
-          <div id="field-description" className="space-y-2">
+          <motion.div variants={formFieldVariants} id="field-description" className="space-y-2">
             <div className="flex items-center justify-between">
               <label htmlFor="description-textarea" className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
                 2. Statement & Evidence Description <span className="text-indigo-600">*</span>
@@ -338,10 +374,10 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                 />
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Field 3: Hostel / Location Dropdown or Text Input */}
-          <div id="field-location" className="space-y-2">
+          <motion.div variants={formFieldVariants} id="field-location" className="space-y-2">
             <div className="flex items-center justify-between">
               <label htmlFor="location-select" className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
                 3. Hostel / Campus Location <span className="text-indigo-600">*</span>
@@ -400,10 +436,10 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                 </button>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Field 4: Optional Photo Upload (Max 5MB, JPG/PNG only) */}
-          <div id="field-photo" className="space-y-2">
+          <motion.div variants={formFieldVariants} id="field-photo" className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
                 4. Photographic Evidence <span className="text-[10px] font-normal text-slate-900/60">(Optional · Max 5MB, JPG/PNG)</span>
@@ -479,10 +515,10 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                 </button>
               </div>
             )}
-          </div>
+          </motion.div>
 
           {/* Action Buttons */}
-          <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <motion.div variants={formFieldVariants} className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
             <button
               id="cancel-btn"
               type="button"
@@ -510,9 +546,9 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                 </>
               )}
             </button>
-          </div>
+          </motion.div>
         </form>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

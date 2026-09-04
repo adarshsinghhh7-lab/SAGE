@@ -70,12 +70,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         <div className="orb orb-3" />
         <div className="orb orb-4" />
 
-        <div className="max-w-5xl mx-auto text-center relative z-10">
+        <motion.div
+          className="max-w-5xl mx-auto text-center relative z-10"
+          variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
+          initial="hidden"
+          animate="visible"
+        >
           {/* Trust Pill */}
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
             className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-mono font-bold uppercase tracking-wider mb-6 shadow-lg rounded-full bg-white/15 text-white border border-white/20 backdrop-blur-sm"
           >
             <ShieldCheck className="w-4 h-4 text-emerald-300" />
@@ -84,9 +88,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Main Title */}
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
             className="font-sans text-4xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.08] mb-6"
           >
             Fearless campus accountability.<br className="hidden sm:inline" />
@@ -95,9 +98,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Subtitle */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.35 }}
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
             className="font-sans text-lg sm:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed mb-10"
           >
             S.A.G.E. is a secure, anonymous reporting platform that empowers students to voice hostel, mess, hygiene, and safety concerns. Your identity remains protected, while community upvoting ensures urgent issues get the immediate administrative attention they deserve.
@@ -105,14 +107,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Primary Dual Call-to-Action Buttons */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto mb-12"
           >
             <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               id="hero-submit-cta"
               type="button"
               onClick={() => onNavigate('submit')}
@@ -123,8 +124,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </motion.button>
 
             <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               id="hero-browse-cta"
               type="button"
               onClick={() => onNavigate('feed')}
@@ -140,9 +141,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* 3 Quick Confidence Highlights */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.65 }}
+            variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
             className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-white/20 text-xs font-mono text-white/90"
           >
             {[
@@ -152,9 +151,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             ].map((item, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.7 + i * 0.1 }}
+                variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.4 }}
                 className="flex items-center justify-center gap-2 p-2.5 bg-white/10 border border-white/15 rounded-xl backdrop-blur-sm"
               >
                 {item.icon}
@@ -162,7 +160,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </motion.div>
             ))}
           </motion.div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ========================================================================= */}
@@ -170,7 +168,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ========================================================================= */}
       <section className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-indigo-100/50" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(240,240,255,0.5) 100%)' }}>
         <div className="max-w-6xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center max-w-3xl mx-auto mb-14"
+          >
             <div className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-indigo-600 mb-2">
               <Lock className="w-4 h-4" />
               <span>Privacy & Security Architecture</span>
@@ -181,7 +185,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <p className="font-sans text-base sm:text-lg text-slate-600 mt-3">
               We built S.A.G.E. with a strict “safety-by-design” principle so that no student ever hesitates to report legitimate hazards or harassment.
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Card 1: Default Zero-Knowledge */}
@@ -190,7 +194,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: 0 }}
-              whileHover={{ y: -4 }}
+              whileHover={{ y: -4, boxShadow: '0 10px 40px -10px rgba(99, 102, 241, 0.25)' }}
               className="glass-card-strong p-6 flex flex-col justify-between"
             >
               <div>
@@ -216,7 +220,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: 0.15 }}
-              whileHover={{ y: -4 }}
+              whileHover={{ y: -4, boxShadow: '0 10px 40px -10px rgba(139, 92, 246, 0.25)' }}
               className="glass-card-strong p-6 flex flex-col justify-between"
             >
               <div>
@@ -242,7 +246,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              whileHover={{ y: -4 }}
+              whileHover={{ y: -4, boxShadow: '0 10px 40px -10px rgba(6, 182, 212, 0.25)' }}
               className="glass-card-strong p-6 flex flex-col justify-between"
             >
               <div>
@@ -418,23 +422,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <button
+            <motion.button
               type="button"
               onClick={() => onNavigate('submit')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               className="w-full sm:w-auto px-8 py-4 bg-white text-indigo-600 hover:text-indigo-700 text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Submit a Complaint</span>
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
               type="button"
               onClick={() => onNavigate('feed')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               className="w-full sm:w-auto px-8 py-4 bg-white/15 text-white hover:bg-white/25 text-xs font-mono font-bold uppercase tracking-wider border border-white/30 rounded-xl transition-all flex items-center justify-center gap-2 backdrop-blur-sm cursor-pointer"
             >
               <LayoutList className="w-4 h-4" />
               <span>Browse Public Ledger</span>
-            </button>
+            </motion.button>
           </div>
         </div>
       </section>

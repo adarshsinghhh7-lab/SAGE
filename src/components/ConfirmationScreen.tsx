@@ -51,15 +51,15 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
       className="max-w-2xl mx-auto py-10 sm:py-14 px-4 sm:px-6 text-slate-900"
     >
       <motion.div 
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.15 }}
+        transition={{ duration: 0.45, delay: 0.1, ease: 'easeOut' }}
         className="bg-slate-50 border border-indigo-100/50 rounded-xl p-6 sm:p-10 text-center shadow-lg relative"
       >
         {/* Success Marker */}
@@ -90,9 +90,20 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
                 Official Tracking ID
               </span>
               <div className="flex items-center gap-3">
-                <span id="generated-complaint-id" className="text-3xl sm:text-4xl font-mono font-bold tracking-wider text-indigo-600">
+                <motion.span
+                  id="generated-complaint-id"
+                  className="text-3xl sm:text-4xl font-mono font-bold tracking-wider text-indigo-600"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 120,
+                    damping: 14,
+                    delay: 0.25,
+                  }}
+                >
                   {compId}
-                </span>
+                </motion.span>
               </div>
               <p className="text-xs font-sans text-slate-900/70 mt-1 italic">
                 Retain this reference ID to track administrative responses or escalation status.
