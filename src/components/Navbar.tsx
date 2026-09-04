@@ -30,10 +30,10 @@ export const Navbar: React.FC<NavbarProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={prefersReduced ? instantFade : paperSpring}
-      className="border-b border-[#2A2F3E] sticky top-0 z-30 bg-[#1E2230]"
+      className="border-b border-[#2A2F3E] sticky top-0 z-30 bg-[#1D2130]"
     >
       {/* Top classification bar */}
-      <div className="text-[#E8DFC8]/70 text-[10px] font-mono uppercase tracking-widest py-1.5 px-4 text-center bg-[#0B0C0F] border-b border-[#2A2F3E] overflow-hidden">
+      <div className="text-[#EBE3D0]/70 text-[10px] font-mono uppercase tracking-widest py-1.5 px-4 text-center bg-[#0B0C0F] border-b border-[#2A2F3E] overflow-hidden">
         <span>CAMPUS INTEGRITY & ANONYMOUS ESCALATION LEDGER · PROTECTED BY S.A.G.E. PROTOCOL</span>
       </div>
 
@@ -43,19 +43,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => onNavigate('landing')}
           title="Return to S.A.G.E. Overview"
         >
-          <div className="w-10 h-10 text-[#14171F] font-bold text-xl flex items-center justify-center bg-[#B08D3E] group-hover:scale-105 transition-transform">
+          <div className="w-10 h-10 text-[#151820] font-bold text-xl flex items-center justify-center bg-[#B59340] group-hover:scale-105 transition-transform">
             S
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold tracking-tight text-[#E8DFC8]" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
+              <span className="text-2xl font-bold tracking-tight text-[#EBE3D0]" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
                 S.A.G.E.
               </span>
-              <span className="text-[10px] font-mono uppercase text-[#B08D3E] px-1.5 py-0.5 border border-[#B08D3E]/40 hidden xs:inline-flex">
+              <span className="text-[10px] font-mono uppercase text-[#B59340] px-1.5 py-0.5 border border-[#B59340]/40 hidden xs:inline-flex">
                 OFFICIAL
               </span>
             </div>
-            <p className="text-[10px] font-mono tracking-wider text-[#9AA3B0] uppercase">
+            <p className="text-[10px] font-mono tracking-wider text-[#A0A9B6] uppercase">
               Student Anonymous Grievance & Escalation
             </p>
           </div>
@@ -70,7 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </NavButton>
           <NavButton id="nav-feed-btn" active={currentView === 'feed' || currentView === 'detail'} onClick={() => onNavigate('feed')}>
             <LayoutList className="w-3.5 h-3.5" /><span>Public Ledger</span>
-            <span className="ml-0.5 text-[10px] bg-[#2A2F3E] text-[#E8DFC8] px-1.5 py-0.2 font-mono">{totalComplaintsCount}</span>
+            <span className="ml-0.5 text-[10px] bg-[#2A2F3E] text-[#EBE3D0] px-1.5 py-0.2 font-mono">{totalComplaintsCount}</span>
           </NavButton>
           <NavButton id="nav-admin-btn" active={currentView === 'admin'} onClick={() => onNavigate('admin')}>
             <BarChart3 className="w-3.5 h-3.5" /><span>Admin Dashboard</span>
@@ -99,8 +99,8 @@ const NavButton: React.FC<{ id: string; active: boolean; onClick: () => void; ch
     onClick={onClick}
     className={`px-3 py-2 text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
       active
-        ? 'bg-[#B08D3E] text-[#14171F]'
-        : 'bg-transparent text-[#9AA3B0] hover:text-[#E8DFC8] border border-[#2A2F3E] hover:border-[#9AA3B0]'
+        ? 'bg-[#B59340] text-[#151820]'
+        : 'bg-transparent text-[#A0A9B6] hover:text-[#EBE3D0] border border-[#2A2F3E] hover:border-[#A0A9B6]'
     }`}
   >
     {children}

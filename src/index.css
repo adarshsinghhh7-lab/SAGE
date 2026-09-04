@@ -8,34 +8,34 @@
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1440px;
 
-  /* Sealed Case File palette */
-  --color-ink: #14171F;
-  --color-ink-light: #1E2230;
-  --color-kraft: #E8DFC8;
-  --color-kraft-dark: #D9CEB5;
+  /* Sealed Case File palette — softened & warmed */
+  --color-ink: #151820;
+  --color-ink-light: #1D2130;
+  --color-kraft: #EBE3D0;
+  --color-kraft-dark: #DDD4BD;
   --color-redact: #0B0C0F;
   --color-stamp-red: #A6352C;
-  --color-seal-brass: #B08D3E;
-  --color-slate: #5B6472;
-  --color-slate-light: #9AA3B0;
+  --color-seal-brass: #B59340;
+  --color-slate: #68707E;
+  --color-slate-light: #A0A9B6;
 
-  /* Category tab colors — muted, case-file palette */
-  --color-tab-infra: #5B7A8D;
-  --color-tab-mess: #8B7340;
-  --color-tab-harass: #8B4050;
-  --color-tab-wifi: #5B6B8D;
-  --color-tab-hygiene: #5B7D5B;
-  --color-tab-other: #7D7568;
+  /* Category tab colors — softened pastels of original palette */
+  --color-tab-infra: #6A8699;
+  --color-tab-mess: #9A8350;
+  --color-tab-harass: #9A5060;
+  --color-tab-wifi: #6A7A99;
+  --color-tab-hygiene: #6A8D6A;
+  --color-tab-other: #8D8578;
 
-  /* Status stamp colors */
-  --color-stamp-submitted: #5B6472;
-  --color-stamp-review: #B08D3E;
-  --color-stamp-resolved: #5B7D5B;
+  /* Status stamp colors — slightly warmer */
+  --color-stamp-submitted: #68707E;
+  --color-stamp-review: #B59340;
+  --color-stamp-resolved: #6A8D6A;
 
   /* Legacy tokens kept for minimal migration */
-  --color-surface: #1E2230;
-  --color-surface-alt: #252A36;
-  --color-accent: #B08D3E;
+  --color-surface: #1D2130;
+  --color-surface-alt: #242A38;
+  --color-accent: #B59340;
 }
 
 @layer base {
@@ -44,16 +44,17 @@
   }
   body {
     font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
-    color: #E8DFC8;
-    /* Premium page-canvas gradient — see .page-bg below */
-    background-color: #14171F;
+    color: #EBE3D0;
+    /* Premium page-canvas gradient — warmer, softer transitions */
+    background-color: #151820;
     background-image:
       url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
-      radial-gradient(ellipse 60% 45% at 78% -10%, rgba(176, 141, 62, 0.07) 0%, transparent 60%),
-      linear-gradient(180deg, #171B24 0%, #14171F 40%, #10131A 100%);
-    background-size: 256px 256px, auto, auto;
-    background-repeat: repeat, no-repeat, no-repeat;
-    background-attachment: fixed, fixed, fixed;
+      radial-gradient(ellipse 70% 50% at 75% -8%, rgba(181, 147, 64, 0.08) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 40% at 20% 100%, rgba(106, 134, 153, 0.05) 0%, transparent 50%),
+      linear-gradient(180deg, #181C26 0%, #151820 35%, #12151D 70%, #0F1219 100%);
+    background-size: 256px 256px, auto, auto, auto;
+    background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+    background-attachment: fixed, fixed, fixed, fixed;
   }
   @media (max-width: 768px) {
     body {
@@ -72,8 +73,8 @@
   }
 
   ::selection {
-    background-color: #B08D3E;
-    color: #14171F;
+    background-color: #B59340;
+    color: #151820;
   }
 }
 
@@ -117,7 +118,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.25rem 0.75rem;
-  color: #E8DFC8;
+  color: #EBE3D0;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
   font-weight: 600;
@@ -138,8 +139,8 @@
 
 /* Case-file card base */
 .case-file-card {
-  background: #E8DFC8;
-  border: 1px solid #D9CEB5;
+  background: #EBE3D0;
+  border: 1px solid #DDD4BD;
   position: relative;
   overflow: visible;
 }
@@ -177,25 +178,25 @@
 
 /* Slashed gradient replacement — kraft paper panel */
 .kraft-panel {
-  background: #E8DFC8;
-  border: 1px solid #D9CEB5;
+  background: #EBE3D0;
+  border: 1px solid #DDD4BD;
 }
 
 /* Ink surface panel */
 .ink-panel {
-  background: #1E2230;
+  background: #1D2130;
   border: 1px solid #2A2F3E;
 }
 
 /* Simple 1px border card — no SaaS shadows */
 .flat-paper {
-  background: #E8DFC8;
-  border: 1px solid #D9CEB5;
+  background: #EBE3D0;
+  border: 1px solid #DDD4BD;
 }
 
 /* Subtle hover lift — restrained, not SaaS-like */
 .flat-paper:hover {
-  border-color: #B08D3E;
+  border-color: #B59340;
 }
 
 /* ── Mobile Responsive Utilities ──────────────────────── */
@@ -252,12 +253,12 @@
 
 /* Identity sealed motif bar */
 .identity-sealed-bar {
-  background: #0B0C0F;
+  background: #0F1219;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  color: #E8DFC8;
+  color: #EBE3D0;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
   font-weight: 600;
@@ -296,7 +297,7 @@
   content: '';
   position: absolute;
   pointer-events: none;
-  border: 1px solid #C9BC9F;
+  border: 1px solid #C5BCA5;
   z-index: -1;
 }
 /* Bottom-right "page" edge */
@@ -305,8 +306,8 @@
   right: -2px;
   width: 100%;
   height: 100%;
-  background: #D9CEB5;
-  opacity: 0.35;
+  background: #DDD4BD;
+  opacity: 0.3;
 }
 /* Top-left "page" edge */
 .stacked-papers::after {
@@ -314,8 +315,8 @@
   left: -2px;
   width: 100%;
   height: 100%;
-  background: #E0D6C0;
-  opacity: 0.2;
+  background: #E5DDD0;
+  opacity: 0.18;
 }
 
 /* ── Layered Page Background (Desktop Only) ───────────────────────────────
@@ -330,9 +331,10 @@
     pointer-events: none;
     z-index: 0;
     box-shadow:
-      inset 5px 0 0 rgba(217,206,181,0.04),
-      inset -5px 0 0 rgba(217,206,181,0.04),
-      inset 0 -5px 0 rgba(217,206,181,0.03);
+      inset 6px 0 0 rgba(221,212,189,0.04),
+      inset -6px 0 0 rgba(221,212,189,0.04),
+      inset 0 -6px 0 rgba(221,212,189,0.03),
+      inset 0 6px 0 rgba(221,212,189,0.02);
   }
 }
 

@@ -120,21 +120,21 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
   return (
     <div className="max-w-7xl mx-auto py-8 sm:py-10 px-4 sm:px-6 lg:px-8">
       {/* Header Banner */}
-      <div className="mb-8 border-b border-[#2A2F3E] pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="mb-10 border-b border-[#2A2F3E] pb-7 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-[#0B0C0F] text-[#E8DFC8] px-2 py-0.5 border border-[#2A2F3E]">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-[#0B0C0F] text-[#EBE3D0] px-2 py-0.5 border border-[#2A2F3E]">
               Live Public Ledger (Firestore)
             </span>
-            <span className="text-[10px] font-mono text-[#9AA3B0] uppercase tracking-wider flex items-center gap-1">
-              <Lock className="w-3 h-3 text-[#B08D3E]" />
+            <span className="text-[10px] font-mono text-[#A0A9B6] uppercase tracking-wider flex items-center gap-1">
+              <Lock className="w-3 h-3 text-[#B59340]" />
               Cryptographically Blinded · SHA-256 Voter Registry
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#E8DFC8] tracking-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#EBE3D0] tracking-tight">
             Campus Grievance Ledger
           </h1>
-          <p className="text-sm sm:text-base text-[#E8DFC8]/70 mt-1 max-w-2xl">
+          <p className="text-sm sm:text-base text-[#EBE3D0]/70 mt-1 max-w-2xl">
             Community-prioritized grievances across student housing, academic facilities, and campus infrastructure.
           </p>
         </div>
@@ -143,7 +143,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           id="feed-lodge-grievance-btn"
           type="button"
           onClick={onGoToSubmit}
-          className="px-5 py-3 bg-[#B08D3E] hover:bg-[#C09E4F] text-[#14171F] text-xs font-mono font-bold uppercase tracking-wider border border-[#B08D3E] transition-all cursor-pointer flex items-center justify-center gap-2 self-start md:self-auto shrink-0"
+          className="px-5 py-3 bg-[#B59340] hover:bg-[#C09E4F] text-[#151820] text-xs font-mono font-bold uppercase tracking-wider border border-[#B59340] transition-all cursor-pointer flex items-center justify-center gap-2 self-start md:self-auto shrink-0"
         >
           <PlusCircle className="w-4 h-4" />
           <span>Lodge Grievance</span>
@@ -151,54 +151,54 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
       </div>
 
       {/* Top Status & Summary Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-        <div className="bg-[#1E2230] border border-[#2A2F3E] p-3.5">
-          <div className="text-[10px] font-mono font-bold uppercase text-[#9AA3B0]">Total Depositions</div>
-          <div className="text-2xl font-mono font-bold text-[#E8DFC8] mt-0.5">{stats.total}</div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+        <div className="bg-[#1D2130] border border-[#2A2F3E] p-3.5">
+          <div className="text-[10px] font-mono font-bold uppercase text-[#A0A9B6]">Total Depositions</div>
+          <div className="text-2xl font-mono font-bold text-[#EBE3D0] mt-0.5">{stats.total}</div>
         </div>
-        <div className="bg-[#1E2230] border border-[#B08D3E]/40 p-3.5">
-          <div className="text-[10px] font-mono font-bold uppercase text-[#B08D3E]">Under Review</div>
-          <div className="text-2xl font-mono font-bold text-[#B08D3E] mt-0.5">{stats.underReview}</div>
+        <div className="bg-[#1D2130] border border-[#B59340]/40 p-3.5">
+          <div className="text-[10px] font-mono font-bold uppercase text-[#B59340]">Under Review</div>
+          <div className="text-2xl font-mono font-bold text-[#B59340] mt-0.5">{stats.underReview}</div>
         </div>
-        <div className="bg-[#1E2230] border border-[#5B7D5B]/40 p-3.5">
+        <div className="bg-[#1D2130] border border-[#5B7D5B]/40 p-3.5">
           <div className="text-[10px] font-mono font-bold uppercase text-[#5B7D5B]">Resolved</div>
           <div className="text-2xl font-mono font-bold text-[#5B7D5B] mt-0.5">{stats.resolved}</div>
         </div>
-        <div className="bg-[#1E2230] border border-[#A6352C]/40 p-3.5">
+        <div className="bg-[#1D2130] border border-[#A6352C]/40 p-3.5">
           <div className="text-[10px] font-mono font-bold uppercase text-[#A6352C]">High Priority</div>
           <div className="text-2xl font-mono font-bold text-[#A6352C] mt-0.5">{stats.highPriority}</div>
         </div>
       </div>
 
       {/* Filter & Search Controls */}
-      <div className="bg-[#1E2230] border border-[#2A2F3E] p-5 sm:p-6 mb-8 paper-grain">
+      <div className="bg-[#1D2130] border border-[#2A2F3E] p-6 sm:p-7 mb-10 paper-grain">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="relative">
-            <label htmlFor="feed-search-input" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#9AA3B0] mb-1">
+            <label htmlFor="feed-search-input" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#A0A9B6] mb-1">
               Search Grievances
             </label>
             <div className="relative">
-              <Search className="w-4 h-4 text-[#5B6472] absolute left-3 top-2.5 pointer-events-none" />
+              <Search className="w-4 h-4 text-[#68707E] absolute left-3 top-2.5 pointer-events-none" />
               <input
                 id="feed-search-input"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search ID, issue, or keyword..."
-                className="w-full bg-[#0B0C0F] border border-[#2A2F3E] pl-9 pr-3 py-2 text-xs font-mono text-[#E8DFC8] placeholder:text-[#5B6472] focus:outline-none focus:border-[#B08D3E]"
+                className="w-full bg-[#0B0C0F] border border-[#2A2F3E] pl-9 pr-3 py-2 text-xs font-mono text-[#EBE3D0] placeholder:text-[#68707E] focus:outline-none focus:border-[#B59340]"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="feed-cat-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#9AA3B0] mb-1">
+            <label htmlFor="feed-cat-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#A0A9B6] mb-1">
               Category
             </label>
             <select
               id="feed-cat-select"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full bg-[#0B0C0F] border border-[#2A2F3E] p-2 text-xs font-mono text-[#E8DFC8] focus:outline-none cursor-pointer"
+              className="w-full bg-[#0B0C0F] border border-[#2A2F3E] p-2 text-xs font-mono text-[#EBE3D0] focus:outline-none cursor-pointer"
             >
               <option value="All">All Categories</option>
               {CATEGORIES.map((cat) => <option key={cat} value={cat}>{formatCategoryLabel(cat)}</option>)}
@@ -206,14 +206,14 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           </div>
 
           <div>
-            <label htmlFor="feed-status-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#9AA3B0] mb-1">
+            <label htmlFor="feed-status-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#A0A9B6] mb-1">
               Status
             </label>
             <select
               id="feed-status-select"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full bg-[#0B0C0F] border border-[#2A2F3E] p-2 text-xs font-mono text-[#E8DFC8] focus:outline-none cursor-pointer"
+              className="w-full bg-[#0B0C0F] border border-[#2A2F3E] p-2 text-xs font-mono text-[#EBE3D0] focus:outline-none cursor-pointer"
             >
               <option value="All">All Statuses</option>
               <option value="under_review">Under Review</option>
@@ -224,14 +224,14 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           </div>
 
           <div>
-            <label htmlFor="feed-loc-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#9AA3B0] mb-1">
+            <label htmlFor="feed-loc-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#A0A9B6] mb-1">
               Hostel / Location
             </label>
             <select
               id="feed-loc-select"
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="w-full bg-[#0B0C0F] border border-[#2A2F3E] p-2 text-xs font-mono text-[#E8DFC8] focus:outline-none cursor-pointer truncate"
+              className="w-full bg-[#0B0C0F] border border-[#2A2F3E] p-2 text-xs font-mono text-[#EBE3D0] focus:outline-none cursor-pointer truncate"
             >
               <option value="All">All Locations</option>
               {uniqueHostelLocations.map((loc) => <option key={loc} value={loc}>{loc}</option>)}
@@ -240,18 +240,18 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
         </div>
 
         <div className="mt-4 pt-3 border-t border-[#2A2F3E] flex flex-wrap items-center gap-1.5">
-          <span className="text-[10px] font-mono uppercase text-[#9AA3B0] font-bold mr-1">Filter Chips:</span>
+          <span className="text-[10px] font-mono uppercase text-[#A0A9B6] font-bold mr-1">Filter Chips:</span>
           <button
             type="button"
             onClick={() => setSelectedCategory('All')}
-            className={`text-[10px] font-mono uppercase px-2 py-0.5 border transition-all cursor-pointer ${selectedCategory === 'All' ? 'bg-[#B08D3E] text-[#14171F] border-[#B08D3E] font-bold' : 'bg-transparent text-[#E8DFC8]/70 border-[#2A2F3E] hover:border-[#5B6472]'}`}
+            className={`text-[10px] font-mono uppercase px-2 py-0.5 border transition-all cursor-pointer ${selectedCategory === 'All' ? 'bg-[#B59340] text-[#151820] border-[#B59340] font-bold' : 'bg-transparent text-[#EBE3D0]/70 border-[#2A2F3E] hover:border-[#68707E]'}`}
           >All</button>
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               type="button"
               onClick={() => setSelectedCategory(selectedCategory === cat ? 'All' : cat)}
-              className={`text-[10px] font-mono uppercase px-2 py-0.5 border transition-all cursor-pointer ${selectedCategory === cat ? 'bg-[#B08D3E] text-[#14171F] border-[#B08D3E] font-bold' : 'bg-transparent text-[#E8DFC8]/70 border-[#2A2F3E] hover:border-[#5B6472]'}`}
+              className={`text-[10px] font-mono uppercase px-2 py-0.5 border transition-all cursor-pointer ${selectedCategory === cat ? 'bg-[#B59340] text-[#151820] border-[#B59340] font-bold' : 'bg-transparent text-[#EBE3D0]/70 border-[#2A2F3E] hover:border-[#68707E]'}`}
             >
               {formatCategoryLabel(cat)}
             </button>
@@ -261,16 +261,16 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
         {/* Sort controls */}
         <div className="mt-4 pt-3 border-t border-[#2A2F3E] flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase text-[#9AA3B0] font-bold mr-1">Sort:</span>
+            <span className="text-[10px] font-mono uppercase text-[#A0A9B6] font-bold mr-1">Sort:</span>
             <button
               type="button"
               onClick={() => setSortBy('upvotes')}
-              className={`px-3 py-1 text-[10px] uppercase font-bold border transition-colors cursor-pointer ${sortBy === 'upvotes' ? 'bg-[#B08D3E] text-[#14171F] border-[#B08D3E]' : 'bg-transparent text-[#E8DFC8]/70 border-[#2A2F3E]'}`}
+              className={`px-3 py-1 text-[10px] uppercase font-bold border transition-colors cursor-pointer ${sortBy === 'upvotes' ? 'bg-[#B59340] text-[#151820] border-[#B59340]' : 'bg-transparent text-[#EBE3D0]/70 border-[#2A2F3E]'}`}
             >Most Upvoted</button>
             <button
               type="button"
               onClick={() => setSortBy('newest')}
-              className={`px-3 py-1 text-[10px] uppercase font-bold border transition-colors cursor-pointer ${sortBy === 'newest' ? 'bg-[#B08D3E] text-[#14171F] border-[#B08D3E]' : 'bg-transparent text-[#E8DFC8]/70 border-[#2A2F3E]'}`}
+              className={`px-3 py-1 text-[10px] uppercase font-bold border transition-colors cursor-pointer ${sortBy === 'newest' ? 'bg-[#B59340] text-[#151820] border-[#B59340]' : 'bg-transparent text-[#EBE3D0]/70 border-[#2A2F3E]'}`}
             >Most Recent</button>
           </div>
 
@@ -279,14 +279,14 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="font-bold text-[#B08D3E] hover:underline cursor-pointer flex items-center gap-1 text-xs"
+                className="font-bold text-[#B59340] hover:underline cursor-pointer flex items-center gap-1 text-xs"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>Reset Filters</span>
               </button>
             )}
-            <span className="text-[#9AA3B0] text-[11px]">
-              Showing <strong className="text-[#E8DFC8]">{filteredComplaints.length}</strong> of <strong className="text-[#E8DFC8]">{complaints.length}</strong> complaints
+            <span className="text-[#A0A9B6] text-[11px]">
+              Showing <strong className="text-[#EBE3D0]">{filteredComplaints.length}</strong> of <strong className="text-[#EBE3D0]">{complaints.length}</strong> complaints
             </span>
           </div>
         </div>
@@ -295,7 +295,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
       {/* Grid of Complaints Cards */}
       {filteredComplaints.length > 0 ? (
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7"
           initial="hidden"
           animate="visible"
           layout
@@ -314,15 +314,15 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           </AnimatePresence>
         </motion.div>
       ) : (
-        <div className="bg-[#1E2230] border border-[#2A2F3E] p-12 text-center max-w-xl mx-auto my-8 paper-grain">
+        <div className="bg-[#1D2130] border border-[#2A2F3E] p-12 text-center max-w-xl mx-auto my-8 paper-grain">
           <div className="w-12 h-12 bg-[#0B0C0F] border border-[#2A2F3E] flex items-center justify-center mx-auto mb-4">
-            <Inbox className="w-6 h-6 text-[#B08D3E]" />
+            <Inbox className="w-6 h-6 text-[#B59340]" />
           </div>
-          <h3 className="text-2xl font-bold text-[#E8DFC8] mb-2">No Matching Grievances Found</h3>
-          <p className="text-sm text-[#E8DFC8]/70 mb-6">There are currently no reported issues matching your filter parameters.</p>
+          <h3 className="text-2xl font-bold text-[#EBE3D0] mb-2">No Matching Grievances Found</h3>
+          <p className="text-sm text-[#EBE3D0]/70 mb-6">There are currently no reported issues matching your filter parameters.</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <button type="button" onClick={handleResetFilters} className="px-4 py-2 bg-[#B08D3E] text-[#14171F] text-xs font-mono font-bold uppercase cursor-pointer">Reset Filters</button>
-            <button type="button" onClick={onGoToSubmit} className="px-4 py-2 bg-transparent text-[#E8DFC8] text-xs font-mono font-bold uppercase border border-[#2A2F3E] hover:border-[#5B6472] cursor-pointer">Lodge New Grievance</button>
+            <button type="button" onClick={handleResetFilters} className="px-4 py-2 bg-[#B59340] text-[#151820] text-xs font-mono font-bold uppercase cursor-pointer">Reset Filters</button>
+            <button type="button" onClick={onGoToSubmit} className="px-4 py-2 bg-transparent text-[#EBE3D0] text-xs font-mono font-bold uppercase border border-[#2A2F3E] hover:border-[#68707E] cursor-pointer">Lodge New Grievance</button>
           </div>
         </div>
       )}

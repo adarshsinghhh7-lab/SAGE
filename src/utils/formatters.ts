@@ -60,15 +60,15 @@ export function formatStatusLabel(status: string): string {
 export function getCategoryTabColor(category: string): string {
   const norm = (category || '').toLowerCase().replace('/', '_');
   switch (norm) {
-    case 'infrastructure': return '#5B7A8D';
+    case 'infrastructure': return '#6A8699';
     case 'mess':
-    case 'mess_food': return '#8B7340';
-    case 'harassment': return '#8B4050';
+    case 'mess_food': return '#9A8350';
+    case 'harassment': return '#9A5060';
     case 'wifi':
-    case 'wifi_internet': return '#5B6B8D';
+    case 'wifi_internet': return '#6A7A99';
     case 'hygiene': return '#5B7D5B';
     case 'other':
-    default: return '#7D7568';
+    default: return '#8D8578';
   }
 }
 
@@ -82,33 +82,33 @@ export function getCategoryBadgeStyle(category: string): {
   switch (norm) {
     case 'infrastructure':
       return {
-        bg: 'bg-[#5B7A8D]/15',
-        text: 'text-[#5B7A8D]',
-        border: 'border-[#5B7A8D]/40',
-        indicator: 'bg-[#5B7A8D]',
+        bg: 'bg-[#6A8699]/15',
+        text: 'text-[#6A8699]',
+        border: 'border-[#6A8699]/40',
+        indicator: 'bg-[#6A8699]',
       };
     case 'mess':
     case 'mess_food':
       return {
-        bg: 'bg-[#8B7340]/15',
-        text: 'text-[#8B7340]',
-        border: 'border-[#8B7340]/40',
-        indicator: 'bg-[#8B7340]',
+        bg: 'bg-[#9A8350]/15',
+        text: 'text-[#9A8350]',
+        border: 'border-[#9A8350]/40',
+        indicator: 'bg-[#9A8350]',
       };
     case 'harassment':
       return {
-        bg: 'bg-[#8B4050]/15',
-        text: 'text-[#8B4050]',
-        border: 'border-[#8B4050]/40',
-        indicator: 'bg-[#8B4050]',
+        bg: 'bg-[#9A5060]/15',
+        text: 'text-[#9A5060]',
+        border: 'border-[#9A5060]/40',
+        indicator: 'bg-[#9A5060]',
       };
     case 'wifi':
     case 'wifi_internet':
       return {
-        bg: 'bg-[#5B6B8D]/15',
-        text: 'text-[#5B6B8D]',
-        border: 'border-[#5B6B8D]/40',
-        indicator: 'bg-[#5B6B8D]',
+        bg: 'bg-[#6A7A99]/15',
+        text: 'text-[#6A7A99]',
+        border: 'border-[#6A7A99]/40',
+        indicator: 'bg-[#6A7A99]',
       };
     case 'hygiene':
       return {
@@ -120,10 +120,10 @@ export function getCategoryBadgeStyle(category: string): {
     case 'other':
     default:
       return {
-        bg: 'bg-[#7D7568]/15',
-        text: 'text-[#7D7568]',
-        border: 'border-[#7D7568]/40',
-        indicator: 'bg-[#7D7568]',
+        bg: 'bg-[#8D8578]/15',
+        text: 'text-[#8D8578]',
+        border: 'border-[#8D8578]/40',
+        indicator: 'bg-[#8D8578]',
       };
   }
 }
@@ -189,17 +189,17 @@ export function getStatusBadgeStyle(status: string, urgency?: string): {
   switch (normStatus) {
     case 'submitted':
       return {
-        bg: 'bg-[#5B6472]/10',
-        text: 'text-[#5B6472]',
-        border: 'border-[#5B6472]/40',
-        dot: 'bg-[#5B6472]',
+        bg: 'bg-[#68707E]/10',
+        text: 'text-[#68707E]',
+        border: 'border-[#68707E]/40',
+        dot: 'bg-[#68707E]',
       };
     case 'under_review':
       return {
-        bg: 'bg-[#B08D3E]/10',
-        text: 'text-[#B08D3E]',
-        border: 'border-[#B08D3E]/40',
-        dot: 'bg-[#B08D3E]',
+        bg: 'bg-[#B59340]/10',
+        text: 'text-[#B59340]',
+        border: 'border-[#B59340]/40',
+        dot: 'bg-[#B59340]',
       };
     case 'resolved':
       return {
@@ -210,10 +210,10 @@ export function getStatusBadgeStyle(status: string, urgency?: string): {
       };
     default:
       return {
-        bg: 'bg-[#5B6472]/10',
-        text: 'text-[#5B6472]',
-        border: 'border-[#5B6472]/40',
-        dot: 'bg-[#5B6472]',
+        bg: 'bg-[#68707E]/10',
+        text: 'text-[#68707E]',
+        border: 'border-[#68707E]/40',
+        dot: 'bg-[#68707E]',
       };
   }
 }

@@ -42,7 +42,7 @@ export const AdminComplaintModal: React.FC<AdminComplaintModalProps> = ({ compla
 
   const catStyle = getCategoryBadgeStyle(complaint.category);
   const normStatus = (status || 'submitted').toLowerCase().replace(' ', '_');
-  const statusColor = normStatus === 'resolved' ? '#5B7D5B' : normStatus === 'under_review' ? '#B08D3E' : '#5B6472';
+  const statusColor = normStatus === 'resolved' ? '#5B7D5B' : normStatus === 'under_review' ? '#B59340' : '#68707E';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,13 +56,13 @@ export const AdminComplaintModal: React.FC<AdminComplaintModalProps> = ({ compla
   return (
     <AnimatePresence>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={prefersReduced ? instantFade : { duration: 0.15 }} className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-0 sm:p-4 sm:p-6 overflow-y-auto modal-depth-backdrop" onClick={onClose}>
-        <motion.div initial={{ opacity: 0, scale: 0.94, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.94, y: 10 }} transition={prefersReduced ? instantFade : heavyDrawer} className="bg-[#E8DFC8] border border-[#D9CEB5] max-w-2xl w-full sm:my-8 mx-0 overflow-hidden paper-grain sm:rounded-none max-md:rounded-none max-sm:min-h-dvh max-sm:h-dvh max-sm:overflow-y-auto" style={{ boxShadow: '0 12px 28px rgba(11,12,15,0.28), 0 4px 10px rgba(11,12,15,0.14)' }} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-          <div className="bg-[#0B0C0F] text-[#E8DFC8] px-5 py-4 flex items-center justify-between border-b border-[#2A2F3E]">
+        <motion.div initial={{ opacity: 0, scale: 0.94, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.94, y: 10 }} transition={prefersReduced ? instantFade : heavyDrawer} className="bg-[#EBE3D0] border border-[#DDD4BD] max-w-2xl w-full sm:my-8 mx-0 overflow-hidden paper-grain sm:rounded-none max-md:rounded-none max-sm:min-h-dvh max-sm:h-dvh max-sm:overflow-y-auto" style={{ boxShadow: '0 12px 28px rgba(11,12,15,0.28), 0 4px 10px rgba(11,12,15,0.14)' }} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+          <div className="bg-[#0B0C0F] text-[#EBE3D0] px-5 py-4 flex items-center justify-between border-b border-[#2A2F3E]">
             <div className="flex items-center gap-2.5">
-              <FileText className="w-5 h-5 text-[#B08D3E]" />
+              <FileText className="w-5 h-5 text-[#B59340]" />
               <span className="font-mono font-bold text-sm uppercase tracking-wider">Complaint Disposition</span>
             </div>
-            <button type="button" onClick={onClose} className="text-[#E8DFC8]/60 hover:text-[#E8DFC8] p-1 cursor-pointer" aria-label="Close modal"><X className="w-5 h-5" /></button>
+            <button type="button" onClick={onClose} className="text-[#EBE3D0]/60 hover:text-[#EBE3D0] p-1 cursor-pointer" aria-label="Close modal"><X className="w-5 h-5" /></button>
           </div>
 
           <div className="p-6">
@@ -71,38 +71,38 @@ export const AdminComplaintModal: React.FC<AdminComplaintModalProps> = ({ compla
               <ComplaintIdStamp id={compId} className="text-lg" />
               <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider border ${catStyle.bg} ${catStyle.text} ${catStyle.border}`}>{formatCategoryLabel(complaint.category)}</span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[12px] text-[#5B6472] mb-5">
-              <div className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 shrink-0" /><span className="font-mono text-[10px]">Location: <span className="font-bold text-[#14171F]">{location}</span></span></div>
-              <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 shrink-0" /><span className="font-mono text-[10px]">Filed: <span className="font-bold text-[#14171F]">{formattedExactDate}</span></span></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[12px] text-[#68707E] mb-5">
+              <div className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 shrink-0" /><span className="font-mono text-[10px]">Location: <span className="font-bold text-[#151820]">{location}</span></span></div>
+              <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 shrink-0" /><span className="font-mono text-[10px]">Filed: <span className="font-bold text-[#151820]">{formattedExactDate}</span></span></div>
             </div>
 
             {/* Identity sealed motif + evidence */}
             <div className="flex flex-col sm:flex-row gap-4 mb-5">
-              <div className="flex-1 flex items-center gap-2 border border-[#D9CEB5] bg-white/40 p-3">
-                <Lock className="w-4 h-4 text-[#B08D3E]" />
-                <div className="text-[10px] font-mono text-[#5B6472]"><span className="font-bold text-[#14171F]">Identity: sealed</span><br />AES-256 encrypted · no identity data viewable</div>
+              <div className="flex-1 flex items-center gap-2 border border-[#DDD4BD] bg-white/40 p-3">
+                <Lock className="w-4 h-4 text-[#B59340]" />
+                <div className="text-[10px] font-mono text-[#68707E]"><span className="font-bold text-[#151820]">Identity: sealed</span><br />AES-256 encrypted · no identity data viewable</div>
               </div>
               {complaint.photoUrl && (
-                <button type="button" onClick={() => onOpenImage?.(complaint.photoUrl!, `${compId} evidence`)} className="flex items-center gap-1.5 border border-[#D9CEB5] bg-white/40 p-3 text-[10px] font-mono text-[#5B6472] hover:border-[#5B6472] cursor-pointer">
-                  <ImageIcon className="w-4 h-4 text-[#B08D3E]" /> <span>Evidence</span>
+                <button type="button" onClick={() => onOpenImage?.(complaint.photoUrl!, `${compId} evidence`)} className="flex items-center gap-1.5 border border-[#DDD4BD] bg-white/40 p-3 text-[10px] font-mono text-[#68707E] hover:border-[#68707E] cursor-pointer">
+                  <ImageIcon className="w-4 h-4 text-[#B59340]" /> <span>Evidence</span>
                 </button>
               )}
             </div>
 
             <div className="mb-5">
-              <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-[#5B6472] mb-2">Description</h2>
-              <div className="bg-white/60 border border-[#D9CEB5] p-4">
-                <p className="text-sm text-[#14171F] leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>{complaint.description}</p>
+              <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-[#68707E] mb-2">Description</h2>
+              <div className="bg-white/60 border border-[#DDD4BD] p-4">
+                <p className="text-sm text-[#151820] leading-relaxed whitespace-pre-line" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>{complaint.description}</p>
               </div>
-              <p className="mt-2 text-[10px] font-mono text-[#5B6472]">Deposited {formatTimeAgo(complaint.createdAt)} · {complaint.upvoteCount ?? complaint.upvotes ?? 0} endorsements</p>
+              <p className="mt-2 text-[10px] font-mono text-[#68707E]">Deposited {formatTimeAgo(complaint.createdAt)} · {complaint.upvoteCount ?? complaint.upvotes ?? 0} endorsements</p>
             </div>
 
             <form onSubmit={handleSubmit}>
               {/* Status Update */}
               <div className="mb-5">
-                <label htmlFor="admin-status-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#5B6472] mb-1">Official Status</label>
+                <label htmlFor="admin-status-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#68707E] mb-1">Official Status</label>
                 <div className="flex items-center gap-3">
-                  <select id="admin-status-select" value={status} onChange={(e) => setStatus(e.target.value as ComplaintStatus)} className="w-full sm:w-64 bg-white/70 border border-[#D9CEB5] p-2.5 text-xs font-mono font-bold text-[#14171F] focus:outline-none cursor-pointer">
+                  <select id="admin-status-select" value={status} onChange={(e) => setStatus(e.target.value as ComplaintStatus)} className="w-full sm:w-64 bg-white/70 border border-[#DDD4BD] p-2.5 text-xs font-mono font-bold text-[#151820] focus:outline-none cursor-pointer">
                     <option value="submitted">Submitted (Pending Review)</option>
                     <option value="under_review">Under Review (Assigned / Investigating)</option>
                     <option value="resolved">Resolved (Remedy Completed)</option>
@@ -113,14 +113,14 @@ export const AdminComplaintModal: React.FC<AdminComplaintModalProps> = ({ compla
 
               {/* Resolution Notes */}
               <div className="mb-5">
-                <label htmlFor="admin-resolution-notes" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#5B6472] mb-1">Administrative Resolution Notes (Appended to statusUpdates)</label>
-                <textarea id="admin-resolution-notes" rows={3} value={resolutionNotes} onChange={(e) => setResolutionNotes(e.target.value)} placeholder="Log dispatched departments, work order IDs, contractor notes, or resolution confirmation details..." className="w-full bg-white/70 border border-[#D9CEB5] p-3 text-xs font-mono text-[#14171F] placeholder:text-[#5B6472]/60 focus:outline-none focus:border-[#B08D3E]" />
-                <p className="text-[10px] font-mono text-[#5B6472] mt-1">Resolution notes will be committed to the Firestore statusUpdates collection.</p>
+                <label htmlFor="admin-resolution-notes" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#68707E] mb-1">Administrative Resolution Notes (Appended to statusUpdates)</label>
+                <textarea id="admin-resolution-notes" rows={3} value={resolutionNotes} onChange={(e) => setResolutionNotes(e.target.value)} placeholder="Log dispatched departments, work order IDs, contractor notes, or resolution confirmation details..." className="w-full bg-white/70 border border-[#DDD4BD] p-3 text-xs font-mono text-[#151820] placeholder:text-[#68707E]/60 focus:outline-none focus:border-[#B59340]" />
+                <p className="text-[10px] font-mono text-[#68707E] mt-1">Resolution notes will be committed to the Firestore statusUpdates collection.</p>
               </div>
 
-              <div className="pt-3 flex items-center justify-between gap-3 border-t border-[#D9CEB5]">
-                <button type="button" onClick={onClose} className="px-5 py-2.5 text-xs font-mono font-bold uppercase tracking-wider border border-[#D9CEB5] bg-transparent hover:border-[#5B6472] text-[#5B6472] transition-colors cursor-pointer">Cancel</button>
-                <button id="admin-save-complaint-btn" type="submit" className="px-6 py-2.5 text-xs font-mono font-bold uppercase tracking-wider border border-[#0B0C0F] bg-[#0B0C0F] text-[#E8DFC8] hover:bg-[#14171F] transition-all flex items-center gap-2 cursor-pointer">
+              <div className="pt-3 flex items-center justify-between gap-3 border-t border-[#DDD4BD]">
+                <button type="button" onClick={onClose} className="px-5 py-2.5 text-xs font-mono font-bold uppercase tracking-wider border border-[#DDD4BD] bg-transparent hover:border-[#68707E] text-[#68707E] transition-colors cursor-pointer">Cancel</button>
+                <button id="admin-save-complaint-btn" type="submit" className="px-6 py-2.5 text-xs font-mono font-bold uppercase tracking-wider border border-[#0B0C0F] bg-[#0B0C0F] text-[#EBE3D0] hover:bg-[#151820] transition-all flex items-center gap-2 cursor-pointer">
                   {saveSuccess ? (<><Check className="w-4 h-4 text-[#5B7D5B]" /><span>Ledger Updated!</span></>) : (<><Save className="w-4 h-4" /><span>Save Disposition</span></>)}
                 </button>
               </div>

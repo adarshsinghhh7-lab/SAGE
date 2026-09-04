@@ -9,7 +9,7 @@ import { stampImpact, instantFade } from '../motion/tokens';
    Every 5th stroke is diagonal.
    ─────────────────────────────────────────────────────── */
 export const TallyMarks: React.FC<{ count: number; className?: string }> = ({ count, className = '' }) => {
-  if (count <= 0) return <span className={`font-mono text-[10px] text-[#5B6472] ${className}`}>0</span>;
+  if (count <= 0) return <span className={`font-mono text-[10px] text-[#68707E] ${className}`}>0</span>;
 
   // Beyond 20 strokes, switch to a compact numeric display to avoid overflow
   if (count > 20) {
@@ -58,7 +58,7 @@ export const TallyMarks: React.FC<{ count: number; className?: string }> = ({ co
       >
         {strokes}
       </svg>
-      <span className="font-mono text-[10px] text-[#5B6472]">{count}</span>
+      <span className="font-mono text-[10px] text-[#68707E]">{count}</span>
     </span>
   );
 };
@@ -106,7 +106,7 @@ export const ComplaintIdStamp: React.FC<{
   const rotation = ((hash % 5) - 2); // -2 to +2 degrees
   return (
     <span
-      className={`font-mono text-[10px] font-bold text-[#5B6472] tracking-wider ${className}`}
+      className={`font-mono text-[10px] font-bold text-[#68707E] tracking-wider ${className}`}
       style={{ transform: `rotate(${rotation}deg)`, display: 'inline-block' }}
     >
       {id}
@@ -124,15 +124,15 @@ export const StatusStamp: React.FC<{
   className?: string;
 }> = ({ status, color, className = '' }) => {
   const colorMap: Record<string, string> = {
-    submitted: '#5B6472',
-    under_review: '#B08D3E',
+    submitted: '#68707E',
+    under_review: '#B59340',
     resolved: '#5B7D5B',
     urgent: '#A6352C',
-    'under review': '#B08D3E',
-    pending: '#5B6472',
+    'under review': '#B59340',
+    pending: '#68707E',
   };
   const norm = (status || '').toLowerCase().replace(/\s+/g, '_');
-  const stampColor = color || colorMap[norm] || '#5B6472';
+  const stampColor = color || colorMap[norm] || '#68707E';
 
   return (
     <span
@@ -159,7 +159,7 @@ export const IdentitySealedBar: React.FC<{
   className?: string;
 }> = ({ className = '' }) => (
   <div className={`identity-sealed-bar ${className}`}>
-    <Lock className="w-3 h-3 text-[#E8DFC8]/60" />
+    <Lock className="w-3 h-3 text-[#EBE3D0]/60" />
     <span>Identity: sealed</span>
   </div>
 );
@@ -180,7 +180,7 @@ export const PriorityStamp: React.FC<{
       initial={{ scale: 1.6, opacity: 0, rotate: -12 }}
       animate={{ scale: 1, opacity: 1, rotate: -8 }}
       transition={prefersReduced ? instantFade : stampImpact}
-      className={`stamp-grain absolute -top-2 -right-2 z-10 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] border-[1.5px] border-[#A6352C] text-[#A6352C] bg-[#E8DFC8] ${className}`}
+      className={`stamp-grain absolute -top-2 -right-2 z-10 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] border-[1.5px] border-[#A6352C] text-[#A6352C] bg-[#EBE3D0] ${className}`}
       style={{ boxShadow: '0 4px 10px rgba(11,12,15,0.18), 0 2px 4px rgba(11,12,15,0.10)' }}
     >
       PRIORITY

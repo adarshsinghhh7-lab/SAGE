@@ -104,13 +104,13 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
         visible: { opacity: 1, y: 0, transition: prefersReduced ? instantFade : paperSpring },
         exit: { opacity: 0, transition: prefersReduced ? instantFade : { duration: 0.15 } },
       }}
-      whileHover={{ borderColor: '#B08D3E', boxShadow: RAISED_SHADOW, transition: prefersReduced ? instantFade : paperSpring }}
+      whileHover={{ borderColor: '#B59340', boxShadow: RAISED_SHADOW, transition: prefersReduced ? instantFade : paperSpring }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       animate={{ boxShadow: isHovered ? RAISED_SHADOW : RESTING_SHADOW }}
       transition={prefersReduced ? instantFade : paperSpring}
-      className="relative bg-[#E8DFC8] border border-[#D9CEB5] p-4 sm:p-5 cursor-pointer group paper-grain stacked-papers"
+      className="relative bg-[#EBE3D0] border border-[#DDD4BD] p-5 sm:p-6 cursor-pointer group paper-grain stacked-papers"
       style={{
         borderLeftWidth: '10px',
         borderLeftColor: getCategoryTabColor(complaint.category),
@@ -121,9 +121,9 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
     >
       {isHighPriority && <PriorityStamp />}
 
-      <div className="flex items-start justify-between gap-3 mb-3">
+      <div className="flex items-start justify-between gap-3 mb-4">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider border ${catStyle.bg} ${catStyle.text} ${catStyle.border}`}>
+          <span className={`inline-flex items-center gap-1 px-2.5 py-1 text-[9px] font-mono font-bold uppercase tracking-wider border ${catStyle.bg} ${catStyle.text} ${catStyle.border}`}>
             {formatCategoryLabel(complaint.category)}
           </span>
           {isUrgent && (
@@ -135,11 +135,11 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
         <ComplaintIdStamp id={compId} />
       </div>
 
-      <p className="text-sm text-[#14171F]/80 leading-relaxed mb-3 line-clamp-3" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
+      <p className="text-sm text-[#151820]/80 leading-relaxed mb-4 line-clamp-3" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
         {descriptionPreview}
       </p>
 
-      <div className="flex items-center gap-3 text-[10px] text-[#5B6472] font-mono mb-3">
+      <div className="flex items-center gap-3 text-[10px] text-[#68707E] font-mono mb-4">
         <span className="inline-flex items-center gap-1">
           <MapPin className="w-3 h-3" />
           {location}
@@ -150,7 +150,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
         </span>
       </div>
 
-      <div className="pt-3 border-t border-[#D9CEB5] flex items-center justify-between gap-3">
+      <div className="pt-4 border-t border-[#DDD4BD] flex items-center justify-between gap-3">
         <motion.button
           id={`upvote-btn-${compId}`}
           type="button"
@@ -159,8 +159,8 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           onClick={handleUpvoteClick}
           className={`inline-flex items-center gap-2 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
             complaint.hasUpvoted
-              ? 'bg-[#5B7D5B] text-[#E8DFC8] border-[#5B7D5B]'
-              : 'bg-transparent text-[#5B6472] border-[#D9CEB5] hover:border-[#B08D3E] hover:text-[#14171F]'
+              ? 'bg-[#5B7D5B] text-[#EBE3D0] border-[#5B7D5B]'
+              : 'bg-transparent text-[#68707E] border-[#DDD4BD] hover:border-[#B59340] hover:text-[#151820]'
           }`}
         >
           <TallyMarks count={upvoteCount} />
@@ -173,8 +173,8 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
             onClick={handleCopyLink}
             className={`inline-flex items-center gap-1 px-2 py-1 text-[9px] font-mono font-bold uppercase tracking-wider border transition-all cursor-pointer ${
               linkCopied
-                ? 'bg-[#5B7D5B] text-[#E8DFC8] border-[#5B7D5B]'
-                : 'bg-transparent text-[#5B6472] border-[#D9CEB5] hover:border-[#B08D3E]'
+                ? 'bg-[#5B7D5B] text-[#EBE3D0] border-[#5B7D5B]'
+                : 'bg-transparent text-[#68707E] border-[#DDD4BD] hover:border-[#B59340]'
             }`}
             title="Copy public tracking link"
           >
@@ -182,7 +182,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
             <span>{linkCopied ? 'Copied' : 'Share'}</span>
           </button>
 
-          <div className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase text-[#5B6472] group-hover:text-[#B08D3E] transition-colors">
+          <div className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase text-[#68707E] group-hover:text-[#B59340] transition-colors">
             <span>View Deposition</span>
             <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
           </div>

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Copy,
   Check,
@@ -52,36 +52,36 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
       initial={{ opacity: 0, scale: 0.97 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={prefersReduced ? instantFade : paperSpring}
-      className="max-w-2xl mx-auto py-10 sm:py-14 px-4 sm:px-6"
+      className="max-w-2xl mx-auto py-12 sm:py-16 px-4 sm:px-6"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={prefersReduced ? instantFade : { ...paperSpring, delay: 0.08 }}
-        className="bg-[#E8DFC8] border border-[#D9CEB5] p-6 sm:p-10 text-center paper-grain"
+        className="bg-[#EBE3D0] border border-[#DDD4BD] p-8 sm:p-12 text-center paper-grain"
         style={{ boxShadow: '0 1px 2px rgba(11,12,15,0.12), 0 1px 1px rgba(11,12,15,0.08)' }}
       >
         {/* Success Marker */}
-        <div className="w-14 h-14 bg-[#5B7D5B] text-[#E8DFC8] flex items-center justify-center mx-auto mb-4">
+        <div className="w-14 h-14 bg-[#5B7D5B] text-[#EBE3D0] flex items-center justify-center mx-auto mb-5">
           <FileCheck className="w-7 h-7" />
         </div>
 
-        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#B08D3E] border border-[#B08D3E]/40 px-2.5 py-0.5 inline-block mb-2">
+        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#B59340] border border-[#B59340]/40 px-2.5 py-0.5 inline-block mb-2">
           DEPOSITION RECORDED (complaints COLLECTION)
         </span>
-        <h1 className="text-3xl sm:text-4xl font-bold text-[#14171F] mb-2">Grievance Lodged Successfully</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold text-[#151820] mb-2">Grievance Lodged Successfully</h1>
 
         {/* Identity sealed motif */}
         <div className="my-6 flex justify-center"><IdentitySealedBar /></div>
 
         {/* Complaint Tracking ID Ticket */}
-        <div className="bg-white/60 border border-[#D9CEB5] p-6 mb-7 text-left">
+        <div className="bg-white/60 border border-[#DDD4BD] p-6 mb-8 text-left">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="text-[10px] font-mono uppercase tracking-wider text-[#5B6472] mb-1">Public Tracking ID</div>
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#68707E] mb-1">Public Tracking ID</div>
               <div className="flex items-center gap-2">
                 <ComplaintIdStamp id={compId} className="text-lg" />
-                <button type="button" onClick={copyIdToClipboard} className="inline-flex items-center gap-1 p-1.5 text-[#5B6472] hover:text-[#B08D3E] cursor-pointer border border-[#D9CEB5]" title="Copy tracking ID">
+                <button type="button" onClick={copyIdToClipboard} className="inline-flex items-center gap-1 p-1.5 text-[#68707E] hover:text-[#B59340] cursor-pointer border border-[#DDD4BD]" title="Copy tracking ID">
                   {copied ? <Check className="w-3.5 h-3.5 text-[#5B7D5B]" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
               </div>
@@ -93,19 +93,19 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
             </div>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-[#D9CEB5] grid gap-2.5 text-[12px]">
-            <div className="flex items-center gap-2 text-[#14171F]">
-              <MapPin className="w-3.5 h-3.5 text-[#5B6472] shrink-0" />
+          <div className="mt-4 pt-4 border-t border-[#DDD4BD] grid gap-2.5 text-[12px]">
+            <div className="flex items-center gap-2 text-[#151820]">
+              <MapPin className="w-3.5 h-3.5 text-[#68707E] shrink-0" />
               <span className="font-mono text-[10px]">Location: <span className="font-bold">{location}</span></span>
             </div>
-            <div className="flex items-center gap-2 text-[#14171F]">
-              <Clock className="w-3.5 h-3.5 text-[#5B6472] shrink-0" />
+            <div className="flex items-center gap-2 text-[#151820]">
+              <Clock className="w-3.5 h-3.5 text-[#68707E] shrink-0" />
               <span className="font-mono text-[10px]">Deposited: <span>{formatTimeAgo(complaint.createdAt)}</span></span>
             </div>
           </div>
 
-          <div className="pt-3 mt-3 border-t border-[#D9CEB5]">
-            <p className="text-sm text-[#14171F]/90 leading-relaxed italic bg-white/70 border border-[#D9CEB5] p-3">
+          <div className="pt-3 mt-3 border-t border-[#DDD4BD]">
+            <p className="text-sm text-[#151820]/90 leading-relaxed italic bg-white/70 border border-[#DDD4BD] p-3">
               "{complaint.description}"
             </p>
           </div>
@@ -117,7 +117,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
             id="copy-public-link-btn"
             type="button"
             onClick={copyPublicLink}
-            className={`w-full sm:w-auto px-6 py-3.5 font-mono font-bold text-xs uppercase tracking-wider border transition-all flex items-center justify-center gap-2 cursor-pointer ${linkCopied ? 'bg-[#5B7D5B] text-[#E8DFC8] border-[#5B7D5B]' : 'bg-[#14171F] text-[#E8DFC8] hover:bg-[#0B0C0F] border-[#14171F]'}`}
+            className={`w-full sm:w-auto px-6 py-3.5 font-mono font-bold text-xs uppercase tracking-wider border transition-all flex items-center justify-center gap-2 cursor-pointer ${linkCopied ? 'bg-[#5B7D5B] text-[#EBE3D0] border-[#5B7D5B]' : 'bg-[#151820] text-[#EBE3D0] hover:bg-[#0B0C0F] border-[#151820]'}`}
           >
             {linkCopied ? (<><Check className="w-4 h-4" /><span>Public Link Copied</span></>) : (<><Link2 className="w-4 h-4" /><span>Copy Public Tracking Link</span></>)}
           </button>
@@ -126,7 +126,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
             id="view-in-feed-btn"
             type="button"
             onClick={onGoToFeed}
-            className="w-full sm:w-auto px-6 py-3.5 bg-[#14171F] hover:bg-[#0B0C0F] text-[#E8DFC8] font-mono font-bold text-xs uppercase tracking-wider border border-[#14171F] transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto px-6 py-3.5 bg-[#151820] hover:bg-[#0B0C0F] text-[#EBE3D0] font-mono font-bold text-xs uppercase tracking-wider border border-[#151820] transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>View in Public Ledger</span><ArrowRight className="w-4 h-4" />
           </button>
@@ -135,7 +135,7 @@ export const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
             id="submit-another-btn"
             type="button"
             onClick={onSubmitAnother}
-            className="w-full sm:w-auto px-6 py-3.5 bg-transparent hover:border-[#5B6472] text-[#5B6472] font-mono font-bold text-xs uppercase tracking-wider border border-[#D9CEB5] transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto px-6 py-3.5 bg-transparent hover:border-[#68707E] text-[#68707E] font-mono font-bold text-xs uppercase tracking-wider border border-[#DDD4BD] transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
             <PlusCircle className="w-4 h-4" /><span>Lodge Another Grievance</span>
           </button>

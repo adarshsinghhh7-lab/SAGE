@@ -104,12 +104,12 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.94 }}
             transition={prefersReduced ? instantFade : { ...heavyDrawer, delay: 0.05 }}
-            className="w-full max-w-md bg-[#E8DFC8] border border-[#A6352C]/40 overflow-hidden paper-grain sm:rounded-none max-sm:min-h-dvh max-sm:h-dvh max-sm:overflow-y-auto"
+            className="w-full max-w-md bg-[#EBE3D0] border border-[#A6352C]/40 overflow-hidden paper-grain sm:rounded-none max-sm:min-h-dvh max-sm:h-dvh max-sm:overflow-y-auto"
             style={{ boxShadow: '0 12px 28px rgba(11,12,15,0.28), 0 4px 10px rgba(11,12,15,0.14)' }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="bg-[#0B0C0F] text-[#E8DFC8] px-5 py-4 flex items-center justify-between border-b border-[#A6352C]/40">
+            <div className="bg-[#0B0C0F] text-[#EBE3D0] px-5 py-4 flex items-center justify-between border-b border-[#A6352C]/40">
               <div className="flex items-center gap-2.5">
                 <Key className="w-5 h-5 text-[#A6352C]" />
                 <h2 id="reveal-modal-title" className="font-mono text-sm font-bold uppercase tracking-wider">
@@ -120,14 +120,14 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
                 type="button"
                 onClick={onClose}
                 disabled={isRevealing}
-                className="text-[#E8DFC8]/70 hover:text-[#E8DFC8] cursor-pointer disabled:opacity-40"
+                className="text-[#EBE3D0]/70 hover:text-[#EBE3D0] cursor-pointer disabled:opacity-40"
                 aria-label="Close"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-5 text-[#14171F]">
+            <div className="p-5 text-[#151820]">
               {revealResult ? (
                 <>
                   {/* Success — the ONE bold animation: redaction bar wipes away
@@ -143,11 +143,11 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
                   </div>
 
                   <div className="relative bg-[#0B0C0F] border border-[#2A2F3E] p-4 mb-3 overflow-hidden">
-                    <p className="text-[10px] font-mono uppercase tracking-wider text-[#E8DFC8]/50 mb-1">
+                    <p className="text-[10px] font-mono uppercase tracking-wider text-[#EBE3D0]/50 mb-1">
                       Decrypted Submitter Reference
                     </p>
                     <div className="relative">
-                      <p className="text-sm font-mono font-bold text-[#E8DFC8] break-words">
+                      <p className="text-sm font-mono font-bold text-[#EBE3D0] break-words">
                         {revealResult.decryptedIdentity}
                       </p>
                       <motion.div
@@ -158,25 +158,25 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
                         onAnimationComplete={() => setDidUnmask(true)}
                       >
                         <div className="h-full w-full bg-[#A6352C] flex items-center justify-center">
-                          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#E8DFC8]/70">██ REDACTED ██</span>
+                          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#EBE3D0]/70">██ REDACTED ██</span>
                         </div>
                       </motion.div>
                     </div>
-                    <p className="mt-1 text-[10px] font-mono text-[#E8DFC8]/40">
+                    <p className="mt-1 text-[10px] font-mono text-[#EBE3D0]/40">
                       Displayed only on this screen. Never stored or cached on the client.
                     </p>
                   </div>
 
-                  <p className="text-[10px] font-mono text-[#5B6472]">
+                  <p className="text-[10px] font-mono text-[#68707E]">
                     Timestamp: {revealResult.timestamp} · Stored in{' '}
-                    <span className="font-bold text-[#14171F]">revealLogs</span> (update/delete forbidden).
+                    <span className="font-bold text-[#151820]">revealLogs</span> (update/delete forbidden).
                   </p>
 
                   <div className="mt-4 flex items-center justify-end">
                     <button
                       type="button"
                       onClick={onClose}
-                      className="px-4 py-2 bg-[#0B0C0F] text-[#E8DFC8] font-mono text-xs font-bold uppercase hover:bg-[#14171F] cursor-pointer"
+                      className="px-4 py-2 bg-[#0B0C0F] text-[#EBE3D0] font-mono text-xs font-bold uppercase hover:bg-[#151820] cursor-pointer"
                     >
                       Close
                     </button>
@@ -186,12 +186,12 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
                 <>
                   <div className="flex flex-col items-center justify-center py-8 text-center">
                     <motion.div className="relative w-12 h-12" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, ease: 'easeOut' }}>
-                      <span className="absolute inset-0 rounded-full border-2 border-[#D9CEB5]" aria-hidden="true" />
+                      <span className="absolute inset-0 rounded-full border-2 border-[#DDD4BD]" aria-hidden="true" />
                       <motion.span className="absolute inset-0 rounded-full border-2 border-transparent border-t-[#A6352C]" animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }} aria-hidden="true" />
                     </motion.div>
-                    <p className="mt-5 text-xs font-mono font-bold uppercase tracking-wider text-[#14171F]">Executing reveal protocol</p>
-                    <p className="mt-1 text-[10px] font-mono text-[#5B6472]">Decrypting reference &amp; writing immutable audit record...</p>
-                    <div className="mt-5 w-full max-w-[220px] h-1 bg-[#D9CEB5] overflow-hidden">
+                    <p className="mt-5 text-xs font-mono font-bold uppercase tracking-wider text-[#151820]">Executing reveal protocol</p>
+                    <p className="mt-1 text-[10px] font-mono text-[#68707E]">Decrypting reference &amp; writing immutable audit record...</p>
+                    <div className="mt-5 w-full max-w-[220px] h-1 bg-[#DDD4BD] overflow-hidden">
                       <motion.div className="h-full bg-[#A6352C]" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: REVEAL_MIN_DELAY_MS / 1000, ease: 'easeInOut' }} style={{ transformOrigin: 'left' }} />
                     </div>
                   </div>
@@ -200,17 +200,17 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
                 <>
                   <div className="mb-4 flex items-start gap-2 border border-[#A6352C]/40 bg-[#A6352C]/5 p-3">
                     <AlertTriangle className="w-4 h-4 text-[#A6352C] shrink-0 mt-0.5" />
-                    <p className="text-xs text-[#14171F]/85 leading-relaxed">
+                    <p className="text-xs text-[#151820]/85 leading-relaxed">
                       You are about to decrypt and expose this submitter's identity. This
                       action is permanently logged and cannot be undone. Please provide a reason before proceeding.
                     </p>
                   </div>
 
-                  <p className="text-[11px] font-mono text-[#5B6472] mb-3">
-                    Target Complaint: <strong className="text-[#14171F]">{complaintRef || complaintId}</strong>
+                  <p className="text-[11px] font-mono text-[#68707E] mb-3">
+                    Target Complaint: <strong className="text-[#151820]">{complaintRef || complaintId}</strong>
                   </p>
 
-                  <label htmlFor="reveal-reason" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#5B6472] mb-1">
+                  <label htmlFor="reveal-reason" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#68707E] mb-1">
                     Official Justification (min 10 characters) <span className="text-[#A6352C] font-bold">* required</span>
                   </label>
                   <motion.div
@@ -225,7 +225,7 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
                       disabled={isRevealing}
                       rows={3}
                       placeholder="Enter the official investigation / legal justification for decryption..."
-                      className="w-full bg-white/70 border border-[#D9CEB5] p-2.5 text-xs font-sans text-[#14171F] placeholder:text-[#5B6472]/60 focus:outline-none focus:border-[#A6352C] disabled:bg-[#D9CEB5]/50"
+                      className="w-full bg-white/70 border border-[#DDD4BD] p-2.5 text-xs font-sans text-[#151820] placeholder:text-[#68707E]/60 focus:outline-none focus:border-[#A6352C] disabled:bg-[#DDD4BD]/50"
                     />
                   </motion.div>
                   {reasonError && (
@@ -242,7 +242,7 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
                       type="button"
                       onClick={onClose}
                       disabled={isRevealing}
-                      className="px-4 py-2 text-xs font-mono font-bold uppercase border border-[#D9CEB5] bg-transparent hover:border-[#5B6472] text-[#5B6472] transition-colors cursor-pointer disabled:opacity-40"
+                      className="px-4 py-2 text-xs font-mono font-bold uppercase border border-[#DDD4BD] bg-transparent hover:border-[#68707E] text-[#68707E] transition-colors cursor-pointer disabled:opacity-40"
                     >
                       Cancel
                     </button>
@@ -250,7 +250,7 @@ export const RevealIdentityModal: React.FC<RevealIdentityModalProps> = ({
                       type="button"
                       onClick={handleConfirm}
                       disabled={isRevealing}
-                      className="px-4 py-2 bg-[#A6352C] text-[#E8DFC8] font-mono text-xs font-bold uppercase hover:bg-[#8F2B24] cursor-pointer disabled:bg-[#D9CEB5] flex items-center gap-1.5"
+                      className="px-4 py-2 bg-[#A6352C] text-[#EBE3D0] font-mono text-xs font-bold uppercase hover:bg-[#8F2B24] cursor-pointer disabled:bg-[#DDD4BD] flex items-center gap-1.5"
                     >
                       <Key className="w-3.5 h-3.5" />
                       <span>{isRevealing ? 'Decrypting & Logging...' : 'Confirm Reveal'}</span>

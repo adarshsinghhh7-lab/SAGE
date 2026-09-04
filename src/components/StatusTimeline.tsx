@@ -60,19 +60,19 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({ currentStatus, s
   const progressFraction = currentIndex === -1 ? 0 : currentIndex / (STAGES.length - 1);
 
   return (
-    <div className="bg-[#E8DFC8] border border-[#D9CEB5] p-5 paper-grain" style={{ boxShadow: '0 1px 2px rgba(11,12,15,0.12), 0 1px 1px rgba(11,12,15,0.08)' }}>
-      <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5B6472] mb-4">
+    <div className="bg-[#EBE3D0] border border-[#DDD4BD] p-6 paper-grain" style={{ boxShadow: '0 1px 2px rgba(11,12,15,0.12), 0 1px 1px rgba(11,12,15,0.08)' }}>
+      <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#68707E] mb-5">
         Disposition Timeline
       </div>
 
       <div className="relative">
         {/* Vertical connector line for mobile */}
-        <div className="absolute top-10 left-11 w-0.5 bg-[#D9CEB5] sm:hidden" style={{ height: 'calc(100% - 2.5rem)' }} />
+        <div className="absolute top-10 left-11 w-0.5 bg-[#DDD4BD] sm:hidden" style={{ height: 'calc(100% - 2.5rem)' }} />
         {/* Connector line (desaturated) */}
-        <div className="absolute top-5 left-6 right-6 hidden sm:block h-0.5 bg-[#D9CEB5]" />
+        <div className="absolute top-5 left-6 right-6 hidden sm:block h-0.5 bg-[#DDD4BD]" />
         {/* Filled progress up to current stage */}
         <motion.div
-          className="absolute top-5 left-6 hidden sm:block h-0.5 bg-[#B08D3E]"
+          className="absolute top-5 left-6 hidden sm:block h-0.5 bg-[#B59340]"
           initial={{ width: '0%' }}
           animate={{ width: `${progressFraction * 100}%` }}
           transition={prefersReduced ? instantFade : paperSpring}
@@ -87,15 +87,15 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({ currentStatus, s
             const timestamp = resolved.timestamp;
 
             const dotClass = isCurrent
-              ? 'bg-[#B08D3E] border-[#B08D3E] text-[#14171F]'
+              ? 'bg-[#B59340] border-[#B59340] text-[#151820]'
               : isCompleted
-              ? 'bg-[#5B7D5B] border-[#5B7D5B] text-[#E8DFC8]'
-              : 'bg-[#E8DFC8] border-[#D9CEB5] text-[#5B6472]';
+              ? 'bg-[#5B7D5B] border-[#5B7D5B] text-[#EBE3D0]'
+              : 'bg-[#EBE3D0] border-[#DDD4BD] text-[#68707E]';
             const labelClass = isCurrent
-              ? 'text-[#B08D3E]'
+              ? 'text-[#B59340]'
               : isCompleted
               ? 'text-[#5B7D5B]'
-              : 'text-[#5B6472]';
+              : 'text-[#68707E]';
 
             return (
               <motion.li
@@ -119,21 +119,21 @@ export const StatusTimeline: React.FC<StatusTimelineProps> = ({ currentStatus, s
                 </div>
 
                 <span className={`text-xs font-mono font-bold uppercase tracking-wider mb-1 ${labelClass}`}>{stage.label}</span>
-                <span className="hidden sm:block text-[10px] text-[#5B6472] mb-1">{stage.description}</span>
-                <span className={`text-[11px] font-mono ${timestamp ? (isCurrent ? 'text-[#B08D3E] font-bold' : 'text-[#5B6472]') : 'text-[#5B6472]/40 italic'}`}>
+                <span className="hidden sm:block text-[10px] text-[#68707E] mb-1">{stage.description}</span>
+                <span className={`text-[11px] font-mono ${timestamp ? (isCurrent ? 'text-[#B59340] font-bold' : 'text-[#68707E]') : 'text-[#68707E]/40 italic'}`}>
                   {timestamp ? formatExactTimestamp(timestamp) : 'Pending'}
                 </span>
-                <span className="text-[9px] font-mono text-[#5B6472]/50 mt-0.5">{timestamp ? formatTimeAgo(timestamp) : '—'}</span>
+                <span className="text-[9px] font-mono text-[#68707E]/50 mt-0.5">{timestamp ? formatTimeAgo(timestamp) : '—'}</span>
               </motion.li>
             );
           })}
         </ol>
       </div>
 
-      <div className="mt-5 pt-3 border-t border-[#D9CEB5] flex items-start gap-1.5 text-[10px] font-mono text-[#5B6472]">
+      <div className="mt-5 pt-3 border-t border-[#DDD4BD] flex items-start gap-1.5 text-[10px] font-mono text-[#68707E]">
         <Clock className="w-3 h-3 shrink-0 mt-0.5" />
         <span>
-          Timestamps reflect immutable transitions recorded in the <span className="font-bold text-[#14171F]/70">statusUpdates</span> collection.
+          Timestamps reflect immutable transitions recorded in the <span className="font-bold text-[#151820]/70">statusUpdates</span> collection.
         </span>
       </div>
     </div>
