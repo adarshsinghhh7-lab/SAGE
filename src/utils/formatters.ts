@@ -54,21 +54,21 @@ export function formatStatusLabel(status: string): string {
 }
 
 /**
- * Category tab colors — muted palette for folder-tab styling.
- * These differ from Tailwind defaults and are tuned for a kraft-paper surface.
+ * Category accent colors — a restrained, warm earth-and-stone set that stays
+ * legible on the light ivory canvas and reads as one family, not six.
  */
 export function getCategoryTabColor(category: string): string {
   const norm = (category || '').toLowerCase().replace('/', '_');
   switch (norm) {
-    case 'infrastructure': return '#6A8699';
+    case 'infrastructure': return '#6F8A9C';
     case 'mess':
-    case 'mess_food': return '#9A8350';
-    case 'harassment': return '#9A5060';
+    case 'mess_food': return '#B3955B';
+    case 'harassment': return '#B8776C';
     case 'wifi':
-    case 'wifi_internet': return '#6A7A99';
-    case 'hygiene': return '#5B7D5B';
+    case 'wifi_internet': return '#818AA8';
+    case 'hygiene': return '#6F9C83';
     case 'other':
-    default: return '#8D8578';
+    default: return '#948B7D';
   }
 }
 
@@ -82,55 +82,54 @@ export function getCategoryBadgeStyle(category: string): {
   switch (norm) {
     case 'infrastructure':
       return {
-        bg: 'bg-[#6A8699]/15',
-        text: 'text-[#6A8699]',
-        border: 'border-[#6A8699]/40',
-        indicator: 'bg-[#6A8699]',
+        bg: 'bg-[#6F8A9C]/12',
+        text: 'text-[#6F8A9C]',
+        border: 'border-[#6F8A9C]/35',
+        indicator: 'bg-[#6F8A9C]',
       };
     case 'mess':
     case 'mess_food':
       return {
-        bg: 'bg-[#9A8350]/15',
-        text: 'text-[#9A8350]',
-        border: 'border-[#9A8350]/40',
-        indicator: 'bg-[#9A8350]',
+        bg: 'bg-[#B3955B]/12',
+        text: 'text-[#9C7C43]',
+        border: 'border-[#B3955B]/35',
+        indicator: 'bg-[#B3955B]',
       };
     case 'harassment':
       return {
-        bg: 'bg-[#9A5060]/15',
-        text: 'text-[#9A5060]',
-        border: 'border-[#9A5060]/40',
-        indicator: 'bg-[#9A5060]',
+        bg: 'bg-[#B8776C]/12',
+        text: 'text-[#A25648]',
+        border: 'border-[#B8776C]/35',
+        indicator: 'bg-[#B8776C]',
       };
     case 'wifi':
     case 'wifi_internet':
       return {
-        bg: 'bg-[#6A7A99]/15',
-        text: 'text-[#6A7A99]',
-        border: 'border-[#6A7A99]/40',
-        indicator: 'bg-[#6A7A99]',
+        bg: 'bg-[#818AA8]/12',
+        text: 'text-[#6B7391]',
+        border: 'border-[#818AA8]/35',
+        indicator: 'bg-[#818AA8]',
       };
     case 'hygiene':
       return {
-        bg: 'bg-[#5B7D5B]/15',
-        text: 'text-[#5B7D5B]',
-        border: 'border-[#5B7D5B]/40',
-        indicator: 'bg-[#5B7D5B]',
+        bg: 'bg-[#6F9C83]/12',
+        text: 'text-[#4F7C63]',
+        border: 'border-[#6F9C83]/35',
+        indicator: 'bg-[#6F9C83]',
       };
     case 'other':
     default:
       return {
-        bg: 'bg-[#8D8578]/15',
-        text: 'text-[#8D8578]',
-        border: 'border-[#8D8578]/40',
-        indicator: 'bg-[#8D8578]',
+        bg: 'bg-[#948B7D]/12',
+        text: 'text-[#766E60]',
+        border: 'border-[#948B7D]/35',
+        indicator: 'bg-[#948B7D]',
       };
   }
 }
 
 /**
- * Badge style for the AI-Flagged Urgent indicator.
- * Uses stamp-red for urgency.
+ * Badge style for the AI-Flagged Urgent indicator — soft clay wash.
  */
 export function getAiFlaggedBadgeStyle(): {
   bg: string;
@@ -139,16 +138,15 @@ export function getAiFlaggedBadgeStyle(): {
   indicator: string;
 } {
   return {
-    bg: 'bg-[#A6352C]/10',
-    text: 'text-[#A6352C]',
-    border: 'border-[#A6352C]/60',
-    indicator: 'bg-[#A6352C]',
+    bg: 'bg-[#BC6C56]/10',
+    text: 'text-[#A2533F]',
+    border: 'border-[#BC6C56]/50',
+    indicator: 'bg-[#BC6C56]',
   };
 }
 
 /**
- * Badge style for the upvote-based High Priority indicator.
- * Uses stamp-red for urgency.
+ * Badge style for the upvote-based High Priority indicator — soft clay wash.
  */
 export function getHighPriorityBadgeStyle(): {
   bg: string;
@@ -157,16 +155,35 @@ export function getHighPriorityBadgeStyle(): {
   indicator: string;
 } {
   return {
-    bg: 'bg-[#A6352C]/10',
-    text: 'text-[#A6352C]',
-    border: 'border-[#A6352C]/60',
-    indicator: 'bg-[#A6352C]',
+    bg: 'bg-[#BC6C56]/10',
+    text: 'text-[#A2533F]',
+    border: 'border-[#BC6C56]/50',
+    indicator: 'bg-[#BC6C56]',
   };
 }
 
 /**
- * Status badge style — rubber-stamp treatment with case-file palette.
- * No gradient backgrounds. Flat, monochrome, bureaucratic.
+ * Badge style for the Disputed (flagged by admin) indicator — amber/ochre wash.
+ * Visually distinct from the clay-toned AI-Flagged and High Priority badges so
+ * the Head Admin can immediately distinguish a department-admin dispute marking.
+ */
+export function getDisputedBadgeStyle(): {
+  bg: string;
+  text: string;
+  border: string;
+  indicator: string;
+} {
+  return {
+    bg: 'bg-[#B89B5E]/12',
+    text: 'text-[#8C7422]',
+    border: 'border-[#B89B5E]/50',
+    indicator: 'bg-[#B89B5E]',
+  };
+}
+
+/**
+ * Status badge style — soft pill treatment on light surfaces.
+ * Quiet tinted washes with a matching dot, tuned for the ivory canvas.
  */
 export function getStatusBadgeStyle(status: string, urgency?: string): {
   bg: string;
@@ -179,41 +196,41 @@ export function getStatusBadgeStyle(status: string, urgency?: string): {
 
   if (isUrgent && normStatus !== 'resolved') {
     return {
-      bg: 'bg-[#A6352C]/10',
-      text: 'text-[#A6352C]',
-      border: 'border-[#A6352C]/60',
-      dot: 'bg-[#A6352C]',
+      bg: 'bg-[#BC6C56]/10',
+      text: 'text-[#A2533F]',
+      border: 'border-[#BC6C56]/50',
+      dot: 'bg-[#BC6C56]',
     };
   }
 
   switch (normStatus) {
     case 'submitted':
       return {
-        bg: 'bg-[#68707E]/10',
-        text: 'text-[#68707E]',
-        border: 'border-[#68707E]/40',
-        dot: 'bg-[#68707E]',
+        bg: 'bg-[#7A848D]/10',
+        text: 'text-[#5C6470]',
+        border: 'border-[#7A848D]/35',
+        dot: 'bg-[#7A848D]',
       };
     case 'under_review':
       return {
-        bg: 'bg-[#B59340]/10',
-        text: 'text-[#B59340]',
-        border: 'border-[#B59340]/40',
-        dot: 'bg-[#B59340]',
+        bg: 'bg-[#B3955B]/10',
+        text: 'text-[#9C7C43]',
+        border: 'border-[#B3955B]/35',
+        dot: 'bg-[#B3955B]',
       };
     case 'resolved':
       return {
-        bg: 'bg-[#5B7D5B]/10',
-        text: 'text-[#5B7D5B]',
-        border: 'border-[#5B7D5B]/40',
-        dot: 'bg-[#5B7D5B]',
+        bg: 'bg-[#5F7A66]/10',
+        text: 'text-[#47604E]',
+        border: 'border-[#5F7A66]/35',
+        dot: 'bg-[#5F7A66]',
       };
     default:
       return {
-        bg: 'bg-[#68707E]/10',
-        text: 'text-[#68707E]',
-        border: 'border-[#68707E]/40',
-        dot: 'bg-[#68707E]',
+        bg: 'bg-[#7A848D]/10',
+        text: 'text-[#5C6470]',
+        border: 'border-[#7A848D]/35',
+        dot: 'bg-[#7A848D]',
       };
   }
 }

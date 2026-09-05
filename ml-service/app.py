@@ -6,9 +6,18 @@ Response: { "urgency_score": 0.0-1.0, "label": "urgent" | "normal" }
 """
 
 import os
+import sys
 import joblib
 from flask import Flask, request, jsonify
 from train_and_evaluate import train_and_save_model
+
+# Ensure console output can encode unicode glyphs (e.g. "✓") on Windows
+# cp1252 codepages when stdout is redirected to a file/log.
+try:
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+except Exception:
+    pass
 
 app = Flask(__name__)
 MODEL_PATH = "urgency_model.joblib"

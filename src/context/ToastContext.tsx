@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+﻿import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { CheckCircle2, XCircle, X } from 'lucide-react';
+import { microTap, instantFade } from '../motion/tokens';
 
 type ToastType = 'success' | 'error';
 
@@ -55,17 +56,17 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
               if (prefersReduced) return;
               if (info.offset.x > 80 || info.velocity.x > 600) dismissToast(toast.id);
             }}
-            transition={prefersReduced ? { duration: 0.01 } : { type: 'spring', stiffness: 400, damping: 30 }}
-            className={`pointer-events-auto max-w-sm w-full border rounded-lg shadow-lg px-4 py-3 flex items-center gap-3 text-xs font-mono ${
+            transition={prefersReduced ? instantFade : microTap}
+            className={`pointer-events-auto max-w-sm w-full border rounded-xl shadow-lift px-4 py-3 flex items-center gap-3 text-xs font-mono ${
               toast.type === 'success'
-                ? 'bg-[#5B7D5B]/10 border-[#5B7D5B]/40 text-[#5B7D5B]'
-                : 'bg-[#A6352C]/10 border-[#A6352C]/40 text-[#A6352C]'
+                ? 'bg-accent/10 border-accent/40 text-accent-deep'
+                : 'bg-clay-soft border-clay/50 text-clay-deep'
             }`}
           >
             {toast.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 text-[#5B7D5B] shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-accent-deep shrink-0" />
             ) : (
-              <XCircle className="w-4 h-4 text-[#A6352C] shrink-0" />
+              <XCircle className="w-4 h-4 text-clay-deep shrink-0" />
             )}
             <span className="flex-1 font-bold">{toast.message}</span>
             <button

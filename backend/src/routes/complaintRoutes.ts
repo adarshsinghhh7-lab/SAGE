@@ -15,6 +15,10 @@ router.post('/reset', ComplaintController.reset);
 
 // Protected Admin Routes (creates entry in statusUpdates)
 router.patch('/:id/status', requireAdmin, ComplaintController.updateStatus);
+// Admin may formally flag a complaint as suspected false/malicious (audited).
+// NOTE: this flag is NOT a pre-condition for identity reveal anymore — the
+// Head Admin reveal flow is ungated (see services/firestoreService.ts).
+router.post('/:id/dispute', requireAdmin, ComplaintController.flagDisputed);
 
 // Protected Head Admin Routes (creates entry in immutable revealLogs & allows deletion)
 router.post('/:id/reveal', requireHeadAdmin, ComplaintController.revealIdentity);

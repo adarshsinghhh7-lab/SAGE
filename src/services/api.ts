@@ -26,11 +26,8 @@ import {
   EscalationSettingsDoc,
   EscalationRunReport
 } from '../types';
-import { 
-  encryptAES, 
-  decryptAES, 
-  generateEncryptedUserRef, 
-  getVoterHashedId 
+import {
+  getVoterHashedId
 } from '../utils/crypto';
 import { INITIAL_COMPLAINTS } from '../data/initialComplaints';
 
@@ -38,6 +35,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 const ML_URL = import.meta.env.VITE_ML_URL || 'http://localhost:5001/predict-urgency';
 const STORAGE_KEY = 'sage_student_grievances_v2';
 const UPVOTES_STORAGE_KEY_PREFIX = 'sage_user_upvotes_';
+const REVEAL_STORAGE_KEY = 'sage_reveal_logs_v1';
 
 // Event bus for cross-component and cross-tab real-time sync when offline
 const SYNC_EVENT_NAME = 'sage_realtime_upvote_sync';
@@ -60,7 +58,9 @@ export function normalizeComplaintData(raw: any, hasUpvoted?: boolean): Complain
   return {
     ...raw,
     complaintId,
-    encryptedUserRef: raw.encryptedUserRef || encryptAES(`ANON_${complaintId}`),
+    // Identity is never generated or stored on the client. The server seals
+    // the verified uid (encryptedUserRef) and never sends it back to us.
+    encryptedUserRef: undefined,
     category,
     description: raw.description || '',
     hostelOrLocation: location,
@@ -70,6 +70,11 @@ export function normalizeComplaintData(raw: any, hasUpvoted?: boolean): Complain
     createdAt: raw.createdAt || new Date().toISOString(),
     resolutionNotes: raw.resolutionNotes,
     resolvedAt: raw.resolvedAt,
+    disputed: raw.disputed === true,
+    disputeReason: raw.disputeReason,
+    disputedAt: raw.disputedAt,
+    disputedBy: raw.disputedBy,
+    isSandbox: raw.isSandbox === true,
     hasUpvoted: hasUpvoted !== undefined ? hasUpvoted : !!raw.hasUpvoted,
     // UI aliases
     id: complaintId,
@@ -87,7 +92,8 @@ export class ApiService {
     endpoint: string,
     options: RequestInit = {},
     activeRole: UserRole = 'student',
-    userId?: string
+    userId?: string,
+    authToken?: string | null
   ): Promise<T> {
     const voterHash = getVoterHashedId(userId);
     const headers: Record<string, string> = {
@@ -95,6 +101,9 @@ export class ApiService {
       'x-sage-role': activeRole,
       'x-sage-voter-id': voterHash,
       ...(userId ? { 'x-sage-uid': userId } : {}),
+      // Verified Firebase ID token — lets the backend seal the REAL verified
+      // uid server-side instead of trusting any client-supplied identity.
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
       ...(options.headers as Record<string, string>),
     };
 
@@ -445,7 +454,16 @@ export class ApiService {
   }
 
   /**
-   * Create an anonymous complaint with AES-encrypted identity in complaints collection
+   * Create a complaint.
+   *
+   * SEAL AT SUBMISSION: the client does NOT encrypt or fabricate any identity.
+   * It sends only complaint content plus the signed-in student's Firebase ID
+   * token; the backend AES-seals the verified uid server-side with
+   * SAGE_MASTER_KEY and stores ONLY the ciphertext.
+   *
+   * FAIL-CLOSED: if the sealing backend is unreachable, submission is rejected
+   * ("Sealing server unavailable — please retry") — we never silently drop
+   * into an unsealable local write.
    */
   static async createComplaint(
     payload: {
@@ -454,75 +472,64 @@ export class ApiService {
       hostelOrLocation?: string;
       location?: string;
       photoUrl?: string;
-      plainIdentity?: string; // Optional student roll or email that gets AES encrypted
     },
     activeRole: UserRole = 'student',
-    userId?: string
+    userId?: string,
+    authToken?: string | null
   ): Promise<Complaint> {
-    const complaintId = `SAGE-${Math.floor(1000 + Math.random() * 9000)}`;
     const effectiveLoc = payload.hostelOrLocation || payload.location || 'Campus General';
     const normCategory = payload.category.toLowerCase().replace('/', '_') as ComplaintCategory;
 
-    // Encrypt identity before storing using AES-256 (Never Plain Text)
-    const encryptedUserRef = payload.plainIdentity 
-      ? encryptAES(payload.plainIdentity)
-      : generateEncryptedUserRef();
-
-    // Evaluate ML Urgency
-    const mlResult = await this.predictUrgency(payload.description);
-
-    const newComplaint: Complaint = normalizeComplaintData({
-      complaintId,
-      encryptedUserRef,
-      category: normCategory,
-      description: payload.description.trim(),
-      hostelOrLocation: effectiveLoc.trim(),
-      status: 'submitted',
-      upvoteCount: 1,
-      urgencyScore: mlResult.urgency_score,
-      photoUrl: payload.photoUrl,
-      createdAt: new Date().toISOString(),
-      hasUpvoted: true,
-    }, true);
-
-    const voterHash = getVoterHashedId(userId);
-    const upvoteDocId = `${complaintId}_${voterHash}`;
-
-    // 1. Write to live Firestore if configured
-    if (isFirebaseConfigured && firestoreDb) {
-      try {
-        await setDoc(doc(firestoreDb, 'complaints', complaintId), newComplaint);
-        await setDoc(doc(firestoreDb, 'upvotes', upvoteDocId), {
-          upvoteId: upvoteDocId,
-          complaintId,
-          hashedVoterId: voterHash,
-          createdAt: new Date().toISOString(),
-        } as UpvoteDoc);
-      } catch (err) {
-        console.warn('[Firestore createComplaint]', err);
-      }
-    }
-
-    // 2. Try Backend API
+    // 1. Backend POST — the ONLY write path. The backend seals identity,
+    //    stores it, and returns the sanitized (identity-free) record.
+    let created: Complaint;
     try {
-      await this.request('/complaints', {
-        method: 'POST',
-        body: JSON.stringify(newComplaint),
-      }, activeRole, userId);
-    } catch {
-      // local sync
+      const response = await this.request<{ success: boolean; data: Complaint }>(
+        '/complaints',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            category: normCategory,
+            hostelOrLocation: effectiveLoc.trim(),
+            location: effectiveLoc.trim(),
+            description: payload.description.trim(),
+            photoUrl: payload.photoUrl,
+          }),
+        },
+        activeRole,
+        userId,
+        authToken
+      );
+      if (!response || !response.data) {
+        throw new Error('Backend returned no complaint record.');
+      }
+      created = normalizeComplaintData(response.data, true);
+    } catch (err: any) {
+      throw new Error(
+        err?.message?.includes('Sealing server unavailable')
+          ? 'Sealing server unavailable — please retry.'
+          : err?.message || 'Sealing server unavailable — please retry.'
+      );
     }
 
-    // 3. Update local cache & upvoted set
+    const complaintId = created.complaintId;
+
+    // 2. Update local cache & upvoted set (UI mirror only — identity never
+    //    exists here).
+    const voterHash = getVoterHashedId(userId);
     const current = await this.getComplaints({}, activeRole, userId);
-    const updated = [newComplaint, ...current.filter((c) => c.complaintId !== complaintId)];
+    const updated = [created, ...current.filter((c) => c.complaintId !== complaintId)];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
 
-    const userUpvotedIds = await this.getUserUpvotedIds(userId);
-    userUpvotedIds.add(complaintId);
-    localStorage.setItem(`${UPVOTES_STORAGE_KEY_PREFIX}${voterHash}`, JSON.stringify(Array.from(userUpvotedIds)));
+    try {
+      const userUpvotedIds = await this.getUserUpvotedIds(userId);
+      userUpvotedIds.add(complaintId);
+      localStorage.setItem(`${UPVOTES_STORAGE_KEY_PREFIX}${voterHash}`, JSON.stringify(Array.from(userUpvotedIds)));
+    } catch {
+      // ignore storage errors
+    }
 
-    return newComplaint;
+    return created;
   }
 
   /**
@@ -743,73 +750,134 @@ export class ApiService {
   }
 
   /**
-   * Trigger Identity Reveal (Head Admin only, commits to immutable revealLogs)
+   * Trigger Identity Reveal (Head Admin only, commits to immutable revealLogs).
+   *
+   * BACKEND-ONLY: decryption happens exclusively inside the backend using
+   * SAGE_MASTER_KEY. There is NO client-side decryption fallback — if the
+   * backend is unreachable or refuses, the error propagates to the caller.
    */
   static async triggerIdentityReveal(
     complaintId: string,
     reason: string,
     activeRole: UserRole = 'head_admin',
-    userId?: string
+    userId?: string,
+    revealedByLabel?: string,
+    authToken?: string | null
   ): Promise<{ decryptedIdentity: string; logId: string; timestamp: string }> {
     if (activeRole !== 'head_admin') {
       throw new Error('Unauthorized: Only Head Admin can trigger identity reveal.');
     }
 
-    // 1. Backend API
-    try {
-      const response = await this.request<{ success: boolean; data: any }>(
-        `/complaints/${complaintId}/reveal`,
-        {
-          method: 'POST',
-          body: JSON.stringify({ reason }),
-        },
-        activeRole,
-        userId
-      );
-      if (response && response.data) {
-        return {
-          decryptedIdentity: response.data.decryptedUserRef,
-          logId: response.data.auditLogId,
-          timestamp: response.data.timestamp,
-        };
-      }
-    } catch {
-      // local fallback
+    const reasonText = reason.trim();
+    // The audit ledger records the revealer by their HEAD ADMIN USER ID
+    // (mirroring what the backend commits as `revealedByAdminId`).
+    const revealedBy = userId || revealedByLabel || 'head_admin_superuser';
+
+    const response = await this.request<{ success: boolean; data: any }>(
+      `/complaints/${complaintId}/reveal`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ reason: reasonText }),
+      },
+      activeRole,
+      userId,
+      authToken
+    );
+
+    if (!response || !response.data || !response.data.auditLogId) {
+      throw new Error('Reveal protocol failed: the backend did not commit an audit record.');
     }
 
-    // 2. Client Decryption & Firestore write
-    const comp = await this.getComplaintById(complaintId, activeRole);
-    if (!comp) throw new Error('Complaint not found.');
+    const decryptedIdentity = response.data.decryptedUserRef || '';
+    const logId = response.data.auditLogId;
+    const timestamp = response.data.timestamp || new Date().toISOString();
 
-    const decrypted = decryptAES(comp.encryptedUserRef);
-    const logId = `REVEAL_${Date.now()}`;
-    const nowIso = new Date().toISOString();
-
-    if (isFirebaseConfigured && firestoreDb) {
-      try {
-        await setDoc(doc(firestoreDb, 'revealLogs', logId), {
-          logId,
-          complaintId,
-          revealedByAdminId: userId || 'head_admin_client',
-          reason,
-          timestamp: nowIso,
-        } as RevealLogDoc);
-      } catch (err) {
-        console.warn('[Firestore revealLogs write]', err);
-      }
-    }
+    // Mirror the committed audit entry into the local ledger cache (UI view
+    // of revealLogs). No decryption ever happens on the client.
+    this.upsertLocalRevealLog({
+      logId,
+      complaintId,
+      revealedByAdminId: revealedBy,
+      reason: reasonText,
+      timestamp,
+    });
 
     return {
-      decryptedIdentity: decrypted,
+      decryptedIdentity,
       logId,
-      timestamp: nowIso,
+      timestamp,
     };
+  }
+
+  /**
+   * Flag a complaint as disputed — suspected false/malicious (admin only).
+   *
+   * This is an audited administrative marking (statusUpdates entry with
+   * updatedBy). NOTE: it is NOT a pre-condition for identity reveal anymore;
+   * the Head Admin reveal flow is ungated and requires only a written
+   * justification.
+   */
+  static async flagComplaintAsDisputed(
+    complaintId: string,
+    reason: string,
+    activeRole: UserRole = 'admin',
+    userId?: string,
+    authToken?: string | null
+  ): Promise<Complaint> {
+    const reasonText = reason.trim();
+    if (reasonText.length < 10) {
+      throw new Error('A written suspicion justification (minimum 10 characters) is required.');
+    }
+
+    const response = await this.request<{ success: boolean; data: Complaint }>(
+      `/complaints/${complaintId}/dispute`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ reason: reasonText }),
+      },
+      activeRole,
+      userId,
+      authToken
+    );
+
+    if (!response || !response.data) {
+      throw new Error('Backend returned no updated complaint.');
+    }
+    return normalizeComplaintData(response.data);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Local sandbox / demo audit-cache helpers
+   * ------------------------------------------------------------------ */
+
+  /** Read the locally-cached reveal audit entries (survives refreshes offline). */
+  private static getLocalRevealLogs(): RevealLogDoc[] {
+    try {
+      const raw = localStorage.getItem(REVEAL_STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? (parsed as RevealLogDoc[]) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  /** Append or update one audit entry in the local cache (deduped by logId). */
+  private static upsertLocalRevealLog(entry: RevealLogDoc) {
+    try {
+      const logs = this.getLocalRevealLogs().filter((log) => log && log.logId !== entry.logId);
+      logs.push(entry);
+      localStorage.setItem(REVEAL_STORAGE_KEY, JSON.stringify(logs));
+    } catch {
+      // localStorage unavailable — treat as best-effort mirror only
+    }
   }
 
   /**
    * Fetch the immutable reveal audit ledger (`revealLogs` collection).
    * Strictly Head-Admin-only — the backend route and Firestore security rules
-   * reject regular `admin` / `student` roles. Returns records newest-first.
+   * reject regular `admin` / `student` roles. Returns records newest-first,
+   * merging live Firestore, the backend, and the local sandbox cache.
    */
   static async getRevealLogs(
     activeRole: UserRole = 'head_admin'
@@ -818,15 +886,18 @@ export class ApiService {
       throw new Error('Unauthorized: Only Head Admin can read the reveal audit log.');
     }
 
+    const merged = new Map<string, RevealLogDoc>();
+
     // 1. Live Firestore direct client read (enforced Head-Admin-only by rules)
     if (isFirebaseConfigured && firestoreDb) {
       try {
         const logsRef = collection(firestoreDb, 'revealLogs');
         const q = query(logsRef, orderBy('timestamp', 'desc'));
         const snapshot = await getDocs(q);
-        if (!snapshot.empty) {
-          return snapshot.docs.map((docSnap) => docSnap.data() as RevealLogDoc);
-        }
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data() as RevealLogDoc;
+          if (data && data.logId) merged.set(data.logId, data);
+        });
       } catch (err) {
         console.warn('[Firestore getRevealLogs]', err);
       }
@@ -840,15 +911,23 @@ export class ApiService {
         activeRole
       );
       if (response && Array.isArray(response.data)) {
-        return [...response.data].sort(
-          (a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime()
-        );
+        response.data.forEach((log) => {
+          if (log && log.logId) merged.set(log.logId, log);
+        });
       }
     } catch {
       // backend unavailable
     }
 
-    return [];
+    // 3. Local sandbox/demo cache — fills the gaps whenever the backend or
+    //    Firestore are offline / rules-blocked. Live sources win on conflicts.
+    for (const log of this.getLocalRevealLogs()) {
+      if (log && log.logId && !merged.has(log.logId)) merged.set(log.logId, log);
+    }
+
+    return Array.from(merged.values()).sort(
+      (a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime()
+    );
   }
 
   /**

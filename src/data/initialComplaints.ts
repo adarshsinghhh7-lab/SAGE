@@ -1,11 +1,14 @@
 import { Complaint } from '../types';
-import { encryptAES } from '../utils/crypto';
 
+// Demo/sandbox seed ledger. These records deliberately carry NO real sealed
+// identity — isSandbox: true marks them so the UI never presents them as
+// "sealed / protected" the way real server-sealed depositions are presented.
 export const INITIAL_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-2847',
     id: 'SAGE-2847',
-    encryptedUserRef: encryptAES('STUDENT_SEED_101_HASH_A871'),
+    encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
+    isSandbox: true,
     category: 'wifi',
     hostelOrLocation: 'Hostel Block B (3rd & 4th Floor)',
     location: 'Hostel Block B (3rd & 4th Floor)',
@@ -21,7 +24,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-4192',
     id: 'SAGE-4192',
-    encryptedUserRef: encryptAES('STUDENT_SEED_102_HASH_B924'),
+    encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
+    isSandbox: true,
     category: 'mess',
     hostelOrLocation: 'Central Dining Mess - South Wing',
     location: 'Central Dining Mess - South Wing',
@@ -38,7 +42,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-1083',
     id: 'SAGE-1083',
-    encryptedUserRef: encryptAES('STUDENT_SEED_103_HASH_C318'),
+    encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
+    isSandbox: true,
     category: 'infrastructure',
     hostelOrLocation: 'Girls Hostel 2, Wing A (Washroom 204)',
     location: 'Girls Hostel 2, Wing A (Washroom 204)',
@@ -56,7 +61,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-6721',
     id: 'SAGE-6721',
-    encryptedUserRef: encryptAES('STUDENT_SEED_104_HASH_D551'),
+    encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
+    isSandbox: true,
     category: 'infrastructure',
     hostelOrLocation: 'Academic Complex Block 4 - Lift 2',
     location: 'Academic Complex Block 4 - Lift 2',
@@ -74,7 +80,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-9104',
     id: 'SAGE-9104',
-    encryptedUserRef: encryptAES('STUDENT_SEED_105_HASH_E712'),
+    encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
+    isSandbox: true,
     category: 'harassment',
     hostelOrLocation: 'East Gate Campus Pathway / Bus Stop',
     location: 'East Gate Campus Pathway / Bus Stop',
@@ -91,7 +98,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-3318',
     id: 'SAGE-3318',
-    encryptedUserRef: encryptAES('STUDENT_SEED_106_HASH_F882'),
+    encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
+    isSandbox: true,
     category: 'hygiene',
     hostelOrLocation: 'Hostel Block C - Ground Floor Common Washrooms',
     location: 'Hostel Block C - Ground Floor Common Washrooms',
@@ -107,7 +115,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-5539',
     id: 'SAGE-5539',
-    encryptedUserRef: encryptAES('STUDENT_SEED_107_HASH_G991'),
+    encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
+    isSandbox: true,
     category: 'other',
     hostelOrLocation: 'Central Library 2nd Floor Silent Reading Area',
     location: 'Central Library 2nd Floor Silent Reading Area',
@@ -125,7 +134,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-7820',
     id: 'SAGE-7820',
-    encryptedUserRef: encryptAES('STUDENT_SEED_108_HASH_H102'),
+    encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
+    isSandbox: true,
     category: 'wifi',
     hostelOrLocation: 'Hostel Block A - West Wing',
     location: 'Hostel Block A - West Wing',
@@ -141,7 +151,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-8201',
     id: 'SAGE-8201',
-    encryptedUserRef: encryptAES('STUDENT_SEED_109_HASH_J203'),
+    encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
+    isSandbox: true,
     category: 'infrastructure',
     hostelOrLocation: 'Girls Hostel 1 - 1st Floor Corridor',
     location: 'Girls Hostel 1 - 1st Floor Corridor',

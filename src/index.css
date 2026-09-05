@@ -1,86 +1,430 @@
 @import "tailwindcss";
 
 @theme {
-  /* ── Custom Breakpoints ────────────────────────────── */
+  /* ── Breakpoints ─────────────────────────────── */
   --breakpoint-xs: 320px;
   --breakpoint-sm: 480px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1440px;
 
-  /* Sealed Case File palette — softened & warmed */
-  --color-ink: #151820;
-  --color-ink-light: #1D2130;
-  --color-kraft: #EBE3D0;
-  --color-kraft-dark: #DDD4BD;
-  --color-redact: #0B0C0F;
-  --color-stamp-red: #A6352C;
-  --color-seal-brass: #B59340;
-  --color-slate: #68707E;
-  --color-slate-light: #A0A9B6;
+  /* ── Surfaces ────────────────────────────────── */
+  --color-canvas: #F6F3EB;
+  --color-surface: #FFFFFF;
+  --color-surface-soft: #EFEBE1;
 
-  /* Category tab colors — softened pastels of original palette */
-  --color-tab-infra: #6A8699;
-  --color-tab-mess: #9A8350;
-  --color-tab-harass: #9A5060;
-  --color-tab-wifi: #6A7A99;
-  --color-tab-hygiene: #6A8D6A;
-  --color-tab-other: #8D8578;
+  /* ── Ink (text) ──────────────────────────────── */
+  --color-ink: #26332B;
+  --color-ink-soft: #56604F;
+  --color-ink-faint: #8A938A;
 
-  /* Status stamp colors — slightly warmer */
-  --color-stamp-submitted: #68707E;
-  --color-stamp-review: #B59340;
-  --color-stamp-resolved: #6A8D6A;
+  /* ── Deep wells ──────────────────────────────── */
+  --color-moss: #2B3A31;
+  --color-moss-deep: #212B25;
 
-  /* Legacy tokens kept for minimal migration */
-  --color-surface: #1D2130;
-  --color-surface-alt: #242A38;
-  --color-accent: #B59340;
+  /* ── Lines ───────────────────────────────────── */
+  --color-line: #E5DFD0;
+  --color-line-strong: #D4CCB6;
+
+  /* ── Brand accents ───────────────────────────── */
+  --color-accent: #5F7A66;
+  --color-accent-deep: #4A5F50;
+  --color-accent-soft: #E6ECE6;
+  --color-bronze: #AD8B5B;
+  --color-bronze-deep: #8E7043;
+  --color-bronze-soft: #F2EADB;
+  --color-clay: #BC6C56;
+  --color-clay-deep: #9B5340;
+  --color-clay-soft: #F6E6E0;
+
+  /* ── Category accents ────────────────────────── */
+  --color-cat-infra: #6F8A9C;
+  --color-cat-mess: #B3955B;
+  --color-cat-harass: #B8776C;
+  --color-cat-wifi: #818AA8;
+  --color-cat-hygiene: #6F9C83;
+  --color-cat-other: #948B7D;
+
+  /* ── Status stamps ───────────────────────────── */
+  --color-stamp-submitted: #7D868F;
+  --color-stamp-review: #B3955B;
+  --color-stamp-resolved: #5F7A66;
+  --color-stamp-urgent: #BC6C56;
+
+  /* ── Legacy aliases (kept for migration safety) ── */
+  --color-surface-alt: #EFEBE1;
+  --color-stamp-red: #BC6C56;
+  --color-seal-brass: #AD8B5B;
+
+  /* ── Typography ──────────────────────────────── */
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* ── Elevation ───────────────────────────────── */
+  --shadow-soft: 0 1px 2px rgba(38, 51, 43, 0.04), 0 6px 20px -8px rgba(38, 51, 43, 0.1);
+  --shadow-lift: 0 2px 6px rgba(38, 51, 43, 0.05), 0 18px 40px -16px rgba(38, 51, 43, 0.18);
+  --shadow-float: 0 4px 12px rgba(38, 51, 43, 0.08), 0 28px 60px -20px rgba(38, 51, 43, 0.22);
+  --shadow-moss: 0 16px 44px -12px rgba(33, 43, 37, 0.4);
+  --shadow-inset-soft: inset 0 1px 2px rgba(38, 51, 43, 0.04);
+
+  /* ── Motion ──────────────────────────────────── */
+  --animate-float-slow: float-slow 14s ease-in-out infinite;
+  --animate-float-slower: float-slower 19s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 3.2s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(12px, 18px) scale(1.05); }
+}
+@keyframes float-slower {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-16px, -10px) scale(1.06); }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   html, body {
     min-height: 100%;
   }
   body {
-    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
-    color: #EBE3D0;
-    /* Premium page-canvas gradient — warmer, softer transitions */
-    background-color: #151820;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
+    /* Soft layered washes — quiet, warm, never busy. */
     background-image:
-      url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
-      radial-gradient(ellipse 70% 50% at 75% -8%, rgba(181, 147, 64, 0.08) 0%, transparent 65%),
-      radial-gradient(ellipse 50% 40% at 20% 100%, rgba(106, 134, 153, 0.05) 0%, transparent 50%),
-      linear-gradient(180deg, #181C26 0%, #151820 35%, #12151D 70%, #0F1219 100%);
-    background-size: 256px 256px, auto, auto, auto;
-    background-repeat: repeat, no-repeat, no-repeat, no-repeat;
-    background-attachment: fixed, fixed, fixed, fixed;
+      radial-gradient(58% 42% at 88% -6%, rgba(173, 139, 91, 0.09), transparent 62%),
+      radial-gradient(46% 38% at 4% 14%, rgba(95, 122, 102, 0.07), transparent 58%),
+      radial-gradient(70% 52% at 50% 118%, rgba(111, 138, 156, 0.05), transparent 60%);
+    background-attachment: fixed;
   }
   @media (max-width: 768px) {
     body {
       background-attachment: scroll, scroll, scroll;
-      background-size: 128px 128px, auto, auto;
     }
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
   }
 
   code, kbd, samp, pre, .font-mono-editorial,
   [class*="font-mono"] {
-    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-family: var(--font-mono);
   }
 
   ::selection {
-    background-color: #B59340;
-    color: #151820;
+    background-color: var(--color-accent);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgba(95, 122, 102, 0.55);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(38, 51, 43, 0.18);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(38, 51, 43, 0.32);
+    border: 3px solid transparent;
+    background-clip: content-box;
   }
 }
 
-/* ===== Sealed Case File Utilities ===== */
+/* ─── Buttons ──────────────────────────────────────────────────────────────── */
 
-/* Paper-grain texture overlay via SVG feTurbulence at very low opacity */
+.s-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.72rem 1.4rem;
+  border-radius: 0.85rem;
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+.s-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.s-btn:active {
+  transform: translateY(0) scale(0.985);
+}
+.s-btn-primary {
+  background: var(--color-accent);
+  color: #fff;
+  box-shadow: var(--shadow-soft);
+}
+.s-btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-deep);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lift);
+}
+.s-btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border-color: var(--color-line-strong);
+  box-shadow: var(--shadow-soft);
+}
+.s-btn-secondary:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent-deep);
+  transform: translateY(-1px);
+}
+.s-btn-ghost {
+  background: transparent;
+  color: var(--color-ink-soft);
+  border-color: var(--color-line);
+}
+.s-btn-ghost:hover:not(:disabled) {
+  border-color: var(--color-line-strong);
+  color: var(--color-ink);
+  background: var(--color-surface);
+}
+.s-btn-dark {
+  background: var(--color-moss);
+  color: #EDE7D8;
+  box-shadow: var(--shadow-soft);
+}
+.s-btn-dark:hover:not(:disabled) {
+  background: var(--color-moss-deep);
+  transform: translateY(-1px);
+}
+.s-btn-danger {
+  background: var(--color-clay);
+  color: #fff;
+}
+.s-btn-danger:hover:not(:disabled) {
+  background: var(--color-clay-deep);
+  transform: translateY(-1px);
+}
+.s-btn-sm {
+  padding: 0.45rem 0.95rem;
+  font-size: 0.78rem;
+  border-radius: 0.65rem;
+}
+
+/* ─── Cards / panels ───────────────────────────────────────────────────────── */
+
+.s-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 1.15rem;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.s-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+  border-color: rgba(95, 122, 102, 0.35);
+}
+.s-panel-dark {
+  background: var(--color-moss);
+  color: #EDE7D8;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.s-panel-soft {
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-line);
+}
+
+/* ─── Typography helpers ───────────────────────────────────────────────────── */
+
+.s-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-bronze-deep);
+}
+.s-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  margin-bottom: 0.45rem;
+}
+.s-mono-micro {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+/* ─── Inputs ───────────────────────────────────────────────────────────────── */
+
+.s-input, .s-select, .s-textarea {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line-strong);
+  border-radius: 0.75rem;
+  padding: 0.62rem 0.9rem;
+  font-size: 0.875rem;
+  color: var(--color-ink);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.s-input:focus, .s-select:focus, .s-textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(95, 122, 102, 0.16);
+}
+.s-input::placeholder, .s-textarea::placeholder {
+  color: var(--color-ink-faint);
+}
+
+/* ─── Chips / pills ────────────────────────────────────────────────────────── */
+
+.s-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-line-strong);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  background: var(--color-surface);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.s-chip:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent-deep);
+}
+.s-chip-active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+.s-chip-active:hover {
+  color: #fff;
+}
+
+.s-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-line-strong);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  background: var(--color-surface);
+}
+.s-badge-dot {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.s-divider {
+  height: 1px;
+  background: var(--color-line);
+  border: none;
+}
+
+/* ─── Orbs — soft ambient blobs behind hero sections ───────────────────────── */
+
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(72px);
+  pointer-events: none;
+}
+.orb-1 {
+  width: 340px; height: 340px;
+  background: radial-gradient(circle at 35% 30%, rgba(173, 139, 91, 0.24), rgba(173, 139, 91, 0) 65%);
+  top: -70px; right: -50px;
+  animation: float-slow 15s ease-in-out infinite;
+}
+.orb-2 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle at 60% 40%, rgba(95, 122, 102, 0.2), rgba(95, 122, 102, 0) 65%);
+  bottom: -90px; left: -70px;
+  animation: float-slower 19s ease-in-out infinite;
+}
+.orb-3 {
+  width: 230px; height: 230px;
+  background: radial-gradient(circle at 50% 50%, rgba(111, 138, 156, 0.18), rgba(111, 138, 156, 0) 65%);
+  top: 24%; left: 40%;
+  animation: float-slow 17s ease-in-out infinite reverse;
+}
+.orb-4 {
+  width: 260px; height: 260px;
+  background: radial-gradient(circle at 50% 50%, rgba(188, 108, 86, 0.12), rgba(188, 108, 86, 0) 65%);
+  top: -40px; left: 10%;
+  animation: float-slower 21s ease-in-out infinite;
+}
+
+/* ─── Legacy motifs — restyled for the light canvas ────────────────────────── */
+
+.case-file-card,
+.flat-paper {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 1.15rem;
+  box-shadow: var(--shadow-soft);
+}
+.kraft-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 1.15rem;
+}
+.ink-panel {
+  background: var(--color-moss);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1.15rem;
+  color: #EDE7D8;
+}
+
 .paper-grain {
   position: relative;
 }
@@ -88,277 +432,64 @@
   content: '';
   position: absolute;
   inset: 0;
-  opacity: 0.035;
+  opacity: 0.018;
   pointer-events: none;
   border-radius: inherit;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E");
   background-size: 256px 256px;
 }
 
-/* Stamp noise overlay — for rubber-stamp treatments */
-.stamp-grain {
-  position: relative;
-}
-.stamp-grain::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0.08;
-  pointer-events: none;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='stamp'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23stamp)'/%3E%3C/svg%3E");
-  background-size: 128px 128px;
-  border-radius: inherit;
-}
-
-/* Redaction bar motif */
-.redaction-bar {
-  background-color: #0B0C0F;
+.identity-sealed-bar {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.25rem 0.75rem;
-  color: #EBE3D0;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  line-height: 1;
-  position: relative;
-}
-.redaction-bar::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0.06;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)'/%3E%3C/svg%3E");
-  background-size: 64px 64px;
-}
-
-/* Case-file card base */
-.case-file-card {
-  background: #EBE3D0;
-  border: 1px solid #DDD4BD;
-  position: relative;
-  overflow: visible;
-}
-
-/* Rubber-stamp treatment for status labels */
-.rubber-stamp {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.25rem 0.625rem;
-  border: 1.5px solid currentColor;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
+  padding: 0.42rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(95, 122, 102, 0.08);
+  border: 1px solid rgba(95, 122, 102, 0.25);
+  color: var(--color-accent-deep);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  position: relative;
-  line-height: 1.4;
 }
 
-/* Folder tab shape on cards */
-.folder-tab {
-  position: relative;
-}
-.folder-tab::before {
-  content: '';
-  position: absolute;
-  top: 12px;
-  left: -10px;
-  width: 10px;
-  height: 28px;
-  border-radius: 3px 0 0 3px;
-  z-index: 1;
+.rubber-stamp {
+  display: inline-block;
+  border: 1.5px solid currentColor;
+  border-radius: 0.5rem;
+  padding: 0.22rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-/* Slashed gradient replacement — kraft paper panel */
-.kraft-panel {
-  background: #EBE3D0;
-  border: 1px solid #DDD4BD;
-}
-
-/* Ink surface panel */
-.ink-panel {
-  background: #1D2130;
-  border: 1px solid #2A2F3E;
-}
-
-/* Simple 1px border card — no SaaS shadows */
-.flat-paper {
-  background: #EBE3D0;
-  border: 1px solid #DDD4BD;
-}
-
-/* Subtle hover lift — restrained, not SaaS-like */
-.flat-paper:hover {
-  border-color: #B59340;
-}
-
-/* ── Mobile Responsive Utilities ──────────────────────── */
-
-/* Reduce grain complexity on mobile for performance */
-@media (max-width: 768px) {
-  .paper-grain::after,
-  .stamp-grain::after,
-  body {
-    background-size: 128px 128px;
-  }
-  .stamp-grain::after {
-    background-size: 64px 64px;
-  }
-}
-
-/* Ensure interactive elements meet 44px minimum tap target */
-@media (pointer: coarse) {
-  .tap-target {
-    min-height: 44px;
-    min-width: 44px;
-  }
-}
-
-/* Force vertical stepper layout below sm */
-.stepper-vertical {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.5rem;
-}
-.stepper-vertical > li {
-  flex: none;
-  width: 100%;
-}
-
-/* Hide scrollbar for horizontal-scroll areas on mobile */
+/* Scrollbar helpers */
 .scrollbar-none {
-  -ms-overflow-style: none;
   scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
 
-/* Full-screen modal treatment on mobile */
-@media (max-width: 768px) {
-  .modal-mobile-full {
-    max-width: 100% !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    min-height: 100dvh;
+/* Reduced motion — keep the experience calm and accessible */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-}
-
-/* Identity sealed motif bar */
-.identity-sealed-bar {
-  background: #0F1219;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  color: #EBE3D0;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  border: 1px solid #2A2F3E;
-}
-
-/* ── Elevation / Depth System ────────────────────────────────────────────────
-   4 levels — all shadows use a warm-tinted rgba derived from --redact (#0B0C0F).
-   Elevation is hierarchical: cards, stamps, modals get shadows.
-   Buttons, badges, and inputs stay flat by default (inputs get raised on focus).
-   ─────────────────────────────────────────────────────────────────────────── */
-
-:root {
-  --elev-flat: none;
-  --elev-resting: 0 1px 2px rgba(11,12,15,0.12), 0 1px 1px rgba(11,12,15,0.08);
-  --elev-raised: 0 4px 10px rgba(11,12,15,0.18), 0 2px 4px rgba(11,12,15,0.10);
-  --elev-lifted: 0 12px 28px rgba(11,12,15,0.28), 0 4px 10px rgba(11,12,15,0.14);
-}
-
-/* Explicitly flat — redaction bars must never inherit shadows */
-.redaction-bar {
-  box-shadow: var(--elev-flat) !important;
-}
-
-/* ── Stacked Paper Effect ──────────────────────────────────────────────────
-   Two thin offset edges (::before / ::after) peeking out behind a card,
-   reinforcing the case-file stack metaphor. More felt than seen.
-   ────────────────────────────────────────────────────────────────────────── */
-.stacked-papers {
-  position: relative;
-}
-.stacked-papers::before,
-.stacked-papers::after {
-  content: '';
-  position: absolute;
-  pointer-events: none;
-  border: 1px solid #C5BCA5;
-  z-index: -1;
-}
-/* Bottom-right "page" edge */
-.stacked-papers::before {
-  bottom: -3px;
-  right: -2px;
-  width: 100%;
-  height: 100%;
-  background: #DDD4BD;
-  opacity: 0.3;
-}
-/* Top-left "page" edge */
-.stacked-papers::after {
-  top: -2px;
-  left: -2px;
-  width: 100%;
-  height: 100%;
-  background: #E5DDD0;
-  opacity: 0.18;
-}
-
-/* ── Layered Page Background (Desktop Only) ───────────────────────────────
-   A barely-visible second "page" edge peeking at the viewport edges,
-   reinforcing the stacked-documents metaphor on wider screens.
-   ────────────────────────────────────────────────────────────────────────── */
-@media (min-width: 769px) {
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    box-shadow:
-      inset 6px 0 0 rgba(221,212,189,0.04),
-      inset -6px 0 0 rgba(221,212,189,0.04),
-      inset 0 -6px 0 rgba(221,212,189,0.03),
-      inset 0 6px 0 rgba(221,212,189,0.02);
+  .orb,
+  .orb-1, .orb-2, .orb-3, .orb-4 {
+    animation: none !important;
   }
-}
-
-/* ── Form Field Focus Elevation ───────────────────────────────────────────
-   Textareas and inputs get raised elevation ONLY on focus.
-   They stay flat at rest to avoid scattered shadows.
-   ────────────────────────────────────────────────────────────────────────── */
-textarea:focus,
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="url"]:focus,
-input[type="search"]:focus,
-input[type="number"]:focus,
-select:focus {
-  box-shadow: var(--elev-raised);
-  transition: box-shadow 0.2s ease;
-}
-
-/* ── Modal Backdrop Depth Enhancement ────────────────────────────────────
-   Slightly deeper backdrop overlay + blur for dialogs that sit at
-   the "lifted" elevation level.
-   ────────────────────────────────────────────────────────────────────────── */
-.modal-depth-backdrop {
-  background: rgba(11,12,15,0.78);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
+  }
 }

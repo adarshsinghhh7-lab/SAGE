@@ -9,6 +9,7 @@ import healthRoutes from './routes/healthRoutes';
 import { FirestoreService } from './services/firestoreService';
 import { startHourlyEscalationScheduler } from './services/escalationService';
 import { isFirebaseLive, initMessage } from './config/firebaseAdmin';
+import { SAGE_MASTER_KEY } from './utils/crypto';
 import settingsRoutes from './routes/settingsRoutes';
 
 dotenv.config();
@@ -21,7 +22,7 @@ app.use(
   cors({
     origin: '*',
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-sage-role', 'x-sage-uid'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-sage-role', 'x-sage-uid', 'x-sage-voter-id'],
   })
 );
 
@@ -49,6 +50,9 @@ app.get('/', (req, res) => {
       complaintDetail: 'GET /api/complaints/:id',
       upvote: 'POST /api/complaints/:id/upvote',
       updateStatus: 'PATCH /api/complaints/:id/status',
+      flagDisputed: 'POST /api/complaints/:id/dispute',
+      revealIdentity: 'POST /api/complaints/:id/reveal',
+      revealLogs: 'GET /api/complaints/reveal-logs',
       analytics: 'GET /api/analytics',
       escalationSettings: 'GET/PUT /api/settings/escalation[/threshold]',
       runEscalationNow: 'POST /api/settings/escalation/run',
@@ -76,6 +80,8 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(`  S.A.G.E. Backend Server running on port ${PORT}`);
     console.log(`  Health Check : http://localhost:${PORT}/api/health`);
     console.log(`  Firebase     : ${initMessage}`);
+    const isProd = process.env.NODE_ENV === 'production';
+    console.log(`  Sealing Key  : ${isProd ? 'SAGE_MASTER_KEY (server-only, production)' : `DEV-ONLY fallback (${String(SAGE_MASTER_KEY).slice(0, 8)}…) — set SAGE_MASTER_KEY for real deployments`}`);
     console.log(`=======================================================`);
   });
 }

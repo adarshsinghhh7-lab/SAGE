@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   MapPin,
   Clock,
@@ -12,9 +12,9 @@ import { TallyMarks, ComplaintIdStamp, PriorityStamp } from './CaseFileComponent
 import { paperSpring, microTap, instantFade } from '../motion/tokens';
 import { useCanHover } from '../hooks/useMediaQuery';
 
-/* Warm-tinted shadow values for framer-motion animation (can't interpolate CSS vars) */
-const RESTING_SHADOW = '0 1px 2px rgba(11,12,15,0.12), 0 1px 1px rgba(11,12,15,0.08)';
-const RAISED_SHADOW = '0 4px 10px rgba(11,12,15,0.18), 0 2px 4px rgba(11,12,15,0.10)';
+/* Warm soft shadows for framer-motion animation (can't interpolate CSS vars) */
+const RESTING_SHADOW = '0 1px 2px rgba(38, 51, 43, 0.04), 0 6px 20px -8px rgba(38, 51, 43, 0.10)';
+const RAISED_SHADOW = '0 2px 6px rgba(38, 51, 43, 0.05), 0 18px 40px -16px rgba(38, 51, 43, 0.18)';
 
 interface ComplaintCardProps {
   complaint: Complaint;
@@ -33,15 +33,15 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
   const prefersReduced = useReducedMotion();
   const canHover = useCanHover();
 
-  // 3D tilt â€” cursor position drives a subtle rotateX/rotateY via spring physics
+  // 3D tilt - cursor position drives a subtle rotateX/rotateY via spring physics
   const tiltX = useMotionValue(0);
   const tiltY = useMotionValue(0);
   const rotateX = useSpring(
-    useTransform(tiltY, [-0.5, 0.5], [(prefersReduced || !canHover) ? 0 : 4, (prefersReduced || !canHover) ? 0 : -4]),
+    useTransform(tiltY, [-0.5, 0.5], [(prefersReduced || !canHover) ? 0 : 3, (prefersReduced || !canHover) ? 0 : -3]),
     { stiffness: 300, damping: 30 },
   );
   const rotateY = useSpring(
-    useTransform(tiltX, [-0.5, 0.5], [(prefersReduced || !canHover) ? 0 : -4, (prefersReduced || !canHover) ? 0 : 4]),
+    useTransform(tiltX, [-0.5, 0.5], [(prefersReduced || !canHover) ? 0 : -3, (prefersReduced || !canHover) ? 0 : 3]),
     { stiffness: 300, damping: 30 },
   );
 
@@ -104,15 +104,15 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
         visible: { opacity: 1, y: 0, transition: prefersReduced ? instantFade : paperSpring },
         exit: { opacity: 0, transition: prefersReduced ? instantFade : { duration: 0.15 } },
       }}
-      whileHover={{ borderColor: '#B59340', boxShadow: RAISED_SHADOW, transition: prefersReduced ? instantFade : paperSpring }}
+      whileHover={prefersReduced ? {} : { borderColor: 'rgba(95, 122, 102, 0.35)', boxShadow: RAISED_SHADOW, transition: prefersReduced ? instantFade : paperSpring }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       animate={{ boxShadow: isHovered ? RAISED_SHADOW : RESTING_SHADOW }}
       transition={prefersReduced ? instantFade : paperSpring}
-      className="relative bg-[#EBE3D0] border border-[#DDD4BD] p-5 sm:p-6 cursor-pointer group paper-grain stacked-papers"
+      className="relative bg-surface border border-line rounded-2xl p-5 sm:p-6 cursor-pointer group paper-grain"
       style={{
-        borderLeftWidth: '10px',
+        borderLeftWidth: '4px',
         borderLeftColor: getCategoryTabColor(complaint.category),
         rotateX,
         rotateY,
@@ -123,11 +123,12 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
 
       <div className="flex items-start justify-between gap-3 mb-4">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className={`inline-flex items-center gap-1 px-2.5 py-1 text-[9px] font-mono font-bold uppercase tracking-wider border ${catStyle.bg} ${catStyle.text} ${catStyle.border}`}>
+          <span className={`inline-flex items-center gap-1 px-2.5 py-1 text-[9px] font-mono font-bold uppercase tracking-wider rounded-full border ${catStyle.bg} ${catStyle.text} ${catStyle.border}`}>
             {formatCategoryLabel(complaint.category)}
           </span>
           {isUrgent && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-mono font-bold uppercase tracking-[0.1em] border-[1.5px] border-[#A6352C] text-[#A6352C]" style={{ transform: 'rotate(-1deg)' }}>
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[9px] font-mono font-bold uppercase tracking-[0.12em] rounded-full bg-clay-soft border border-clay/40 text-clay-deep">
+              <span className="w-1 h-1 rounded-full bg-clay animate-pulse-soft" aria-hidden="true" />
               URGENT
             </span>
           )}
@@ -135,11 +136,11 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
         <ComplaintIdStamp id={compId} />
       </div>
 
-      <p className="text-sm text-[#151820]/80 leading-relaxed mb-4 line-clamp-3" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
+      <p className="text-[0.95rem] leading-relaxed mb-4 text-ink line-clamp-3" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
         {descriptionPreview}
       </p>
 
-      <div className="flex items-center gap-3 text-[10px] text-[#68707E] font-mono mb-4">
+      <div className="flex items-center gap-3 text-[10px] text-ink-faint font-mono mb-4">
         <span className="inline-flex items-center gap-1">
           <MapPin className="w-3 h-3" />
           {location}
@@ -150,17 +151,17 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
         </span>
       </div>
 
-      <div className="pt-4 border-t border-[#DDD4BD] flex items-center justify-between gap-3">
+      <div className="pt-4 border-t border-line flex items-center justify-between gap-3">
         <motion.button
           id={`upvote-btn-${compId}`}
           type="button"
           disabled={complaint.hasUpvoted}
           whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
           onClick={handleUpvoteClick}
-          className={`inline-flex items-center gap-2 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer border ${
             complaint.hasUpvoted
-              ? 'bg-[#5B7D5B] text-[#EBE3D0] border-[#5B7D5B]'
-              : 'bg-transparent text-[#68707E] border-[#DDD4BD] hover:border-[#B59340] hover:text-[#151820]'
+              ? 'bg-accent text-white border-accent'
+              : 'bg-surface text-ink-soft border-line-strong hover:border-bronze hover:text-bronze-deep'
           }`}
         >
           <TallyMarks count={upvoteCount} />
@@ -171,10 +172,10 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           <button
             type="button"
             onClick={handleCopyLink}
-            className={`inline-flex items-center gap-1 px-2 py-1 text-[9px] font-mono font-bold uppercase tracking-wider border transition-all cursor-pointer ${
+            className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider border transition-all cursor-pointer ${
               linkCopied
-                ? 'bg-[#5B7D5B] text-[#EBE3D0] border-[#5B7D5B]'
-                : 'bg-transparent text-[#68707E] border-[#DDD4BD] hover:border-[#B59340]'
+                ? 'bg-accent text-white border-accent'
+                : 'bg-surface text-ink-faint border-line-strong hover:border-bronze hover:text-bronze-deep'
             }`}
             title="Copy public tracking link"
           >
@@ -182,7 +183,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
             <span>{linkCopied ? 'Copied' : 'Share'}</span>
           </button>
 
-          <div className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase text-[#68707E] group-hover:text-[#B59340] transition-colors">
+          <div className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase text-ink-soft group-hover:text-accent-deep transition-colors">
             <span>View Deposition</span>
             <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
           </div>

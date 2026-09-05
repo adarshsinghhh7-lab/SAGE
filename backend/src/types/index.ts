@@ -36,7 +36,13 @@ export interface UserDoc {
 // 2. complaints collection
 export interface Complaint {
   complaintId: string; // e.g. "SAGE-2847"
-  encryptedUserRef: string; // AES-256 encrypted reference to submitter
+  /**
+   * AES-256 ciphertext of the verified submitter Firebase uid, sealed
+   * SERVER-ONLY with SAGE_MASTER_KEY at deposit time. Never stored or sent as
+   * plaintext. Omitted from client-facing API responses (see controller
+   * sanitization) so nothing in the browser can ever resolve or decrypt it.
+   */
+  encryptedUserRef?: string;
   category: ComplaintCategory;
   description: string;
   hostelOrLocation: string;
@@ -48,6 +54,19 @@ export interface Complaint {
   createdAt: string;
   resolutionNotes?: string;
   resolvedAt?: string;
+  /**
+   * Disputed marking — set to true after an admin formally flags the
+   * complaint as a suspected false/malicious deposition (see statusUpdates
+   * ledger entry with updatedBy). This is an audited administrative
+   * annotation only; it does NOT gate the Head Admin reveal flow (ungated).
+   */
+  disputed?: boolean;
+  disputeReason?: string; // admin's written suspicion justification
+  disputedAt?: string;
+  disputedBy?: string;
+  /** True only for demo/seed records. Such records are explicitly NOT real
+   * sealed identities and carry no guarantee of protection. */
+  isSandbox?: boolean;
   // UI helpers
   hasUpvoted?: boolean;
   id?: string;

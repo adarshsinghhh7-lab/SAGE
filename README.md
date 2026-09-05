@@ -4,7 +4,7 @@
 
 ### **Student Anonymous Grievance & Escalation System**
 
-*A privacy-first campus complaint platform with ML-powered urgency scoring and end-to-end encryption*
+*A privacy-first campus complaint platform with ML-powered urgency scoring and server-sealed identity*
 
 ---
 
@@ -26,7 +26,8 @@
 S.A.G.E. is a full-stack web application that enables **anonymous** reporting of campus grievances — from infrastructure issues to harassment — while keeping student identities cryptographically protected.
 
 **Key principles:**
-- 🔐 **Zero-knowledge anonymity** — Identities are AES-256 encrypted client-side; no plain-text PII touches the database
+-  **Server-sealed anonymity** - The backend AES-encrypts each verified uid with SAGE_MASTER_KEY at deposit; no plaintext identity ever touches the browser, API responses, or the database
+-  **Audited Head-Admin reveal** - Identity is decrypted ONLY by the Head Admin (HTTP 403 for every other role) on any complaint at any time, with a mandatory written justification; every reveal is written to a permanent immutable audit ledger
 - 🤖 **ML-driven triage** — A TF-IDF + Logistic Regression model scores urgency in real time
 - 📊 **Community-powered** — An anonymous upvote system surfaces the most impactful issues
 - 🛡️ **Dual-layer security** — Firestore rules *and* UI-level routing enforce role-based access
@@ -58,7 +59,7 @@ S.A.G.E. is a full-stack web application that enables **anonymous** reporting of
 │  │   (port 5000)    │     │  TF-IDF + LogReg          │  │
 │  └──────────────────┘     └───────────────────────────┘  │
 ├──────────────────────────────────────────────────────────┤
-│              Firebase Firestore · Firebase Auth · Gemini  │
+│              Firebase Firestore · Firebase Auth           │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -90,7 +91,6 @@ cp .env.example .env
 ```
 
 ```env
-GEMINI_API_KEY="your-gemini-api-key"
 APP_URL="http://localhost:3000"
 ```
 

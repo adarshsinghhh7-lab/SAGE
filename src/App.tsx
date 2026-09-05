@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { paperSpring, instantFade } from './motion/tokens';
 import { Complaint, ComplaintStatus, PageView } from './types';
@@ -232,7 +232,7 @@ function MainApp() {
   }, [complaints, selectedComplaintId]);
 
   return (
-    <div className="min-h-screen flex flex-col text-[#EBE3D0]">
+    <div className="min-h-screen flex flex-col text-ink">
       {/* Header / Navbar */}
       <Navbar
         currentView={currentView}
@@ -358,16 +358,16 @@ function MainApp() {
 
         {currentView === 'detail' && !activeComplaint && (
           <div className="max-w-md mx-auto py-16 px-4 text-center">
-            <h2 className="text-2xl font-bold text-[#EBE3D0] mb-2">
+            <h2 className="text-2xl font-bold text-ink mb-2">
               Deposition Not Found
             </h2>
-            <p className="text-xs font-mono text-[#EBE3D0]/70 mb-6">
+            <p className="text-xs font-mono text-ink-soft mb-6">
               The requested complaint record could not be retrieved from the ledger.
             </p>
             <button
               type="button"
               onClick={() => setCurrentView('feed')}
-              className="px-4 py-2 bg-[#0B0C0F] text-[#EBE3D0] text-xs font-mono font-bold uppercase rounded-lg border border-[#2A2F3E] cursor-pointer shadow-sm hover:bg-[#1D2130] transition-colors"
+              className="px-4 py-2 bg-ink text-surface text-xs font-mono font-bold uppercase rounded-xl border border-line-strong cursor-pointer shadow-soft hover:bg-moss-deep transition-colors"
             >
               Return to Public Ledger
             </button>
@@ -378,19 +378,19 @@ function MainApp() {
       </main>
 
             {/* Footer */}
-      <footer className="border-t border-[#2A2F3E] bg-[#1D2130] py-10 px-4 text-center text-xs">
+      <footer className="border-t border-line-strong bg-moss-deep py-10 px-4 text-center text-xs">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-[#EBE3D0]/70">
-            <strong className="text-[#B59340]">S.A.G.E.</strong> — Student Anonymous Grievance & Escalation System
+          <p className="text-sm text-surface/70">
+            <strong className="text-bronze-soft">S.A.G.E.</strong> — Student Anonymous Grievance & Escalation System
           </p>
-          <div className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest text-[#A0A9B6] flex-wrap justify-center">
-            <button type="button" onClick={() => { setCurrentView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-[#B59340] underline cursor-pointer">How It Works & FAQ</button>
+          <div className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest text-surface/60 flex-wrap justify-center">
+            <button type="button" onClick={() => { setCurrentView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-bronze-soft underline cursor-pointer">How It Works & FAQ</button>
             <span>·</span>
-            <button type="button" onClick={() => { setCurrentView('admin'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-[#B59340] underline cursor-pointer">Administrative Portal</button>
+            <button type="button" onClick={() => { setCurrentView('admin'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-bronze-soft underline cursor-pointer">Administrative Portal</button>
             <span>·</span>
-            <button type="button" onClick={handleResetToDefaultSeed} className="hover:text-[#B59340] underline cursor-pointer">Reset Seed Ledger</button>
+            <button type="button" onClick={handleResetToDefaultSeed} className="hover:text-bronze-soft underline cursor-pointer">Reset Seed Ledger</button>
             <span>·</span>
-            <span className="text-[#5B7D5B] font-bold">100% Cryptographic Anonymity</span>
+            <span className="text-accent-soft font-bold">100% Cryptographic Anonymity</span>
           </div>
         </div>
       </footer>

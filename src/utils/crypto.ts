@@ -1,31 +1,12 @@
 import CryptoJS from 'crypto-js';
 
-// Default Master Encryption Key (can be overridden via VITE_SAGE_MASTER_KEY in production)
-const DEFAULT_KEY = 'SAGE_CAMPUS_AES_KEY_2026_DECOUPLED_IDENTITY_SEC';
-
-/**
- * AES-256 Encryption for Student Identity & User Reference
- * Ensures plain text student information is never stored directly in Firestore.
- */
-export function encryptAES(plainText: string, secretKey: string = DEFAULT_KEY): string {
-  if (!plainText) return '';
-  return CryptoJS.AES.encrypt(plainText, secretKey).toString();
-}
-
-/**
- * AES-256 Decryption
- * Restricted to verified head_admin audit queries.
- */
-export function decryptAES(cipherText: string, secretKey: string = DEFAULT_KEY): string {
-  if (!cipherText) return '';
-  try {
-    const bytes = CryptoJS.AES.decrypt(cipherText, secretKey);
-    const originalText = bytes.toString(CryptoJS.enc.Utf8);
-    return originalText || '[DECRYPTION FAILED - INVALID KEY]';
-  } catch (error) {
-    return '[DECRYPTION ERROR]';
-  }
-}
+// IMPORTANT SECURITY NOTE:
+// Client-side AES encryption/decryption of student identity has been REMOVED.
+// Identity sealing/decryption now happens ONLY on the backend with the
+// server-only SAGE_MASTER_KEY. Nothing on this module (or anywhere in the
+// browser bundle) can encrypt or decrypt a submitter reference anymore.
+// This file only keeps the SHA-256 one-way voter helpers, which never
+// reveal identity.
 
 /**
  * SHA-256 One-Way Hash for Anonymous Voter Identity
@@ -34,16 +15,6 @@ export function decryptAES(cipherText: string, secretKey: string = DEFAULT_KEY):
 export function hashSHA256(input: string): string {
   if (!input) return '';
   return CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);
-}
-
-/**
- * Generates an untraceable pseudo-identity token for the submitter
- * Encrypts an ephemeral timestamped identity blob with AES.
- */
-export function generateEncryptedUserRef(prefix: string = 'ANON_STUDENT'): string {
-  const randomEntropy = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  const rawIdentity = `${prefix}_${Date.now()}_${randomEntropy}`;
-  return encryptAES(rawIdentity);
 }
 
 /**

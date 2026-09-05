@@ -1,12 +1,13 @@
-import React, { useState, useMemo } from 'react';
-import { 
-  Search, 
-  PlusCircle, 
-  RotateCcw, 
-  Inbox, 
-  Lock 
+﻿import React, { useState, useMemo } from 'react';
+import {
+  Search,
+  PlusCircle,
+  RotateCcw,
+  Inbox,
+  Lock
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { paperSpring, instantFade } from '../motion/tokens';
 import { Complaint } from '../types';
 import { ComplaintCard } from './ComplaintCard';
 import { formatCategoryLabel } from '../utils/formatters';
@@ -118,23 +119,23 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 sm:py-10 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       {/* Header Banner */}
-      <div className="mb-10 border-b border-[#2A2F3E] pb-7 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="mb-10 border-b border-line pb-7 flex flex-col md:flex-row md:items-end justify-between gap-5">
         <div>
-          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest bg-[#0B0C0F] text-[#EBE3D0] px-2 py-0.5 border border-[#2A2F3E]">
+          <div className="flex items-center gap-2 mb-2.5 flex-wrap">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-[0.14em] bg-accent-soft text-accent-deep border border-accent/30">
               Live Public Ledger (Firestore)
             </span>
-            <span className="text-[10px] font-mono text-[#A0A9B6] uppercase tracking-wider flex items-center gap-1">
-              <Lock className="w-3 h-3 text-[#B59340]" />
-              Cryptographically Blinded · SHA-256 Voter Registry
+            <span className="text-[10px] font-mono text-ink-faint uppercase tracking-wider flex items-center gap-1.5">
+              <Lock className="w-3 h-3 text-bronze" />
+              Blinded Voter Registry / SHA-256
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#EBE3D0] tracking-tight">
+          <h1 className="font-display text-[2rem] sm:text-5xl font-semibold text-ink tracking-tight leading-[1.05]">
             Campus Grievance Ledger
           </h1>
-          <p className="text-sm sm:text-base text-[#EBE3D0]/70 mt-1 max-w-2xl">
+          <p className="text-sm sm:text-base text-ink-soft mt-2 max-w-2xl leading-relaxed">
             Community-prioritized grievances across student housing, academic facilities, and campus infrastructure.
           </p>
         </div>
@@ -143,7 +144,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           id="feed-lodge-grievance-btn"
           type="button"
           onClick={onGoToSubmit}
-          className="px-5 py-3 bg-[#B59340] hover:bg-[#C09E4F] text-[#151820] text-xs font-mono font-bold uppercase tracking-wider border border-[#B59340] transition-all cursor-pointer flex items-center justify-center gap-2 self-start md:self-auto shrink-0"
+          className="s-btn s-btn-primary self-start md:self-auto shrink-0"
         >
           <PlusCircle className="w-4 h-4" />
           <span>Lodge Grievance</span>
@@ -151,54 +152,57 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
       </div>
 
       {/* Top Status & Summary Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
-        <div className="bg-[#1D2130] border border-[#2A2F3E] p-3.5">
-          <div className="text-[10px] font-mono font-bold uppercase text-[#A0A9B6]">Total Depositions</div>
-          <div className="text-2xl font-mono font-bold text-[#EBE3D0] mt-0.5">{stats.total}</div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-10">
+        <div className="bg-surface border border-line rounded-xl p-4 shadow-soft">
+          <div className="s-mono-micro mb-1">Total Depositions</div>
+          <div className="text-2xl font-mono font-bold text-ink mt-0.5">{stats.total}</div>
         </div>
-        <div className="bg-[#1D2130] border border-[#B59340]/40 p-3.5">
-          <div className="text-[10px] font-mono font-bold uppercase text-[#B59340]">Under Review</div>
-          <div className="text-2xl font-mono font-bold text-[#B59340] mt-0.5">{stats.underReview}</div>
+        <div className="bg-surface border border-line border-t-[3px] border-t-bronze rounded-xl p-4 shadow-soft">
+          <div className="s-mono-micro mb-1 text-bronze-deep">Under Review</div>
+          <div className="text-2xl font-mono font-bold text-bronze-deep mt-0.5">{stats.underReview}</div>
         </div>
-        <div className="bg-[#1D2130] border border-[#5B7D5B]/40 p-3.5">
-          <div className="text-[10px] font-mono font-bold uppercase text-[#5B7D5B]">Resolved</div>
-          <div className="text-2xl font-mono font-bold text-[#5B7D5B] mt-0.5">{stats.resolved}</div>
+        <div className="bg-surface border border-line border-t-[3px] border-t-accent rounded-xl p-4 shadow-soft">
+          <div className="s-mono-micro mb-1 text-accent-deep">Resolved</div>
+          <div className="text-2xl font-mono font-bold text-accent-deep mt-0.5">{stats.resolved}</div>
         </div>
-        <div className="bg-[#1D2130] border border-[#A6352C]/40 p-3.5">
-          <div className="text-[10px] font-mono font-bold uppercase text-[#A6352C]">High Priority</div>
-          <div className="text-2xl font-mono font-bold text-[#A6352C] mt-0.5">{stats.highPriority}</div>
+        <div className="bg-surface border border-line border-t-[3px] border-t-clay rounded-xl p-4 shadow-soft">
+          <div className="s-mono-micro mb-1 text-clay-deep">High Priority</div>
+          <div className="text-2xl font-mono font-bold text-clay-deep mt-0.5">{stats.highPriority}</div>
         </div>
       </div>
 
       {/* Filter & Search Controls */}
-      <div className="bg-[#1D2130] border border-[#2A2F3E] p-6 sm:p-7 mb-10 paper-grain">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-40px' }}
+        transition={prefersReduced ? instantFade : paperSpring}
+        className="bg-surface border border-line rounded-2xl p-5 sm:p-6 mb-10 shadow-soft"
+      >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="relative">
-            <label htmlFor="feed-search-input" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#A0A9B6] mb-1">
-              Search Grievances
-            </label>
+          <div>
+            <label htmlFor="feed-search-input" className="s-label">Search Grievances</label>
             <div className="relative">
-              <Search className="w-4 h-4 text-[#68707E] absolute left-3 top-2.5 pointer-events-none" />
+              <Search className="w-4 h-4 text-ink-faint absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 id="feed-search-input"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search ID, issue, or keyword..."
-                className="w-full bg-[#0B0C0F] border border-[#2A2F3E] pl-9 pr-3 py-2 text-xs font-mono text-[#EBE3D0] placeholder:text-[#68707E] focus:outline-none focus:border-[#B59340]"
+                className="s-input text-sm"
+                style={{ paddingLeft: '2.5rem' }}
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="feed-cat-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#A0A9B6] mb-1">
-              Category
-            </label>
+            <label htmlFor="feed-cat-select" className="s-label">Category</label>
             <select
               id="feed-cat-select"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full bg-[#0B0C0F] border border-[#2A2F3E] p-2 text-xs font-mono text-[#EBE3D0] focus:outline-none cursor-pointer"
+              className="s-select text-sm cursor-pointer"
             >
               <option value="All">All Categories</option>
               {CATEGORIES.map((cat) => <option key={cat} value={cat}>{formatCategoryLabel(cat)}</option>)}
@@ -206,14 +210,12 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           </div>
 
           <div>
-            <label htmlFor="feed-status-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#A0A9B6] mb-1">
-              Status
-            </label>
+            <label htmlFor="feed-status-select" className="s-label">Status</label>
             <select
               id="feed-status-select"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full bg-[#0B0C0F] border border-[#2A2F3E] p-2 text-xs font-mono text-[#EBE3D0] focus:outline-none cursor-pointer"
+              className="s-select text-sm cursor-pointer"
             >
               <option value="All">All Statuses</option>
               <option value="under_review">Under Review</option>
@@ -224,14 +226,12 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           </div>
 
           <div>
-            <label htmlFor="feed-loc-select" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[#A0A9B6] mb-1">
-              Hostel / Location
-            </label>
+            <label htmlFor="feed-loc-select" className="s-label">Hostel / Location</label>
             <select
               id="feed-loc-select"
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="w-full bg-[#0B0C0F] border border-[#2A2F3E] p-2 text-xs font-mono text-[#EBE3D0] focus:outline-none cursor-pointer truncate"
+              className="s-select text-sm cursor-pointer truncate"
             >
               <option value="All">All Locations</option>
               {uniqueHostelLocations.map((loc) => <option key={loc} value={loc}>{loc}</option>)}
@@ -239,38 +239,37 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           </div>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-[#2A2F3E] flex flex-wrap items-center gap-1.5">
-          <span className="text-[10px] font-mono uppercase text-[#A0A9B6] font-bold mr-1">Filter Chips:</span>
+        <div className="mt-5 pt-4 border-t border-line flex flex-wrap items-center gap-2">
+          <span className="s-mono-micro mr-1">Filter:</span>
           <button
             type="button"
             onClick={() => setSelectedCategory('All')}
-            className={`text-[10px] font-mono uppercase px-2 py-0.5 border transition-all cursor-pointer ${selectedCategory === 'All' ? 'bg-[#B59340] text-[#151820] border-[#B59340] font-bold' : 'bg-transparent text-[#EBE3D0]/70 border-[#2A2F3E] hover:border-[#68707E]'}`}
+            className={`s-chip ${selectedCategory === 'All' ? 's-chip-active' : ''}`}
           >All</button>
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               type="button"
               onClick={() => setSelectedCategory(selectedCategory === cat ? 'All' : cat)}
-              className={`text-[10px] font-mono uppercase px-2 py-0.5 border transition-all cursor-pointer ${selectedCategory === cat ? 'bg-[#B59340] text-[#151820] border-[#B59340] font-bold' : 'bg-transparent text-[#EBE3D0]/70 border-[#2A2F3E] hover:border-[#68707E]'}`}
+              className={`s-chip ${selectedCategory === cat ? 's-chip-active' : ''}`}
             >
               {formatCategoryLabel(cat)}
             </button>
           ))}
         </div>
 
-        {/* Sort controls */}
-        <div className="mt-4 pt-3 border-t border-[#2A2F3E] flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-4 pt-4 border-t border-line flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase text-[#A0A9B6] font-bold mr-1">Sort:</span>
+            <span className="s-mono-micro mr-1">Sort:</span>
             <button
               type="button"
               onClick={() => setSortBy('upvotes')}
-              className={`px-3 py-1 text-[10px] uppercase font-bold border transition-colors cursor-pointer ${sortBy === 'upvotes' ? 'bg-[#B59340] text-[#151820] border-[#B59340]' : 'bg-transparent text-[#EBE3D0]/70 border-[#2A2F3E]'}`}
+              className={`s-chip ${sortBy === 'upvotes' ? 's-chip-active' : ''}`}
             >Most Upvoted</button>
             <button
               type="button"
               onClick={() => setSortBy('newest')}
-              className={`px-3 py-1 text-[10px] uppercase font-bold border transition-colors cursor-pointer ${sortBy === 'newest' ? 'bg-[#B59340] text-[#151820] border-[#B59340]' : 'bg-transparent text-[#EBE3D0]/70 border-[#2A2F3E]'}`}
+              className={`s-chip ${sortBy === 'newest' ? 's-chip-active' : ''}`}
             >Most Recent</button>
           </div>
 
@@ -279,23 +278,22 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="font-bold text-[#B59340] hover:underline cursor-pointer flex items-center gap-1 text-xs"
+                className="font-mono font-bold text-bronze-deep hover:underline cursor-pointer flex items-center gap-1 text-xs uppercase tracking-wide"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>Reset Filters</span>
               </button>
             )}
-            <span className="text-[#A0A9B6] text-[11px]">
-              Showing <strong className="text-[#EBE3D0]">{filteredComplaints.length}</strong> of <strong className="text-[#EBE3D0]">{complaints.length}</strong> complaints
+            <span className="text-ink-faint text-[11px]">
+              Showing <strong className="text-ink">{filteredComplaints.length}</strong> of <strong className="text-ink">{complaints.length}</strong> complaints
             </span>
           </div>
         </div>
-      </div>
-
+      </motion.div>
       {/* Grid of Complaints Cards */}
       {filteredComplaints.length > 0 ? (
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           initial="hidden"
           animate="visible"
           layout
@@ -314,17 +312,22 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           </AnimatePresence>
         </motion.div>
       ) : (
-        <div className="bg-[#1D2130] border border-[#2A2F3E] p-12 text-center max-w-xl mx-auto my-8 paper-grain">
-          <div className="w-12 h-12 bg-[#0B0C0F] border border-[#2A2F3E] flex items-center justify-center mx-auto mb-4">
-            <Inbox className="w-6 h-6 text-[#B59340]" />
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={prefersReduced ? instantFade : paperSpring}
+          className="bg-surface border border-line rounded-2xl p-12 text-center max-w-xl mx-auto my-8 shadow-soft paper-grain"
+        >
+          <div className="w-12 h-12 rounded-2xl bg-accent-soft border border-accent/20 flex items-center justify-center mx-auto mb-4">
+            <Inbox className="w-6 h-6 text-accent-deep" />
           </div>
-          <h3 className="text-2xl font-bold text-[#EBE3D0] mb-2">No Matching Grievances Found</h3>
-          <p className="text-sm text-[#EBE3D0]/70 mb-6">There are currently no reported issues matching your filter parameters.</p>
+          <h3 className="font-display text-2xl font-semibold text-ink mb-2">No Matching Grievances Found</h3>
+          <p className="text-sm text-ink-soft mb-6">There are currently no reported issues matching your filter parameters.</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <button type="button" onClick={handleResetFilters} className="px-4 py-2 bg-[#B59340] text-[#151820] text-xs font-mono font-bold uppercase cursor-pointer">Reset Filters</button>
-            <button type="button" onClick={onGoToSubmit} className="px-4 py-2 bg-transparent text-[#EBE3D0] text-xs font-mono font-bold uppercase border border-[#2A2F3E] hover:border-[#68707E] cursor-pointer">Lodge New Grievance</button>
+            <button type="button" onClick={handleResetFilters} className="s-btn s-btn-sm s-btn-primary">Reset Filters</button>
+            <button type="button" onClick={onGoToSubmit} className="s-btn s-btn-sm s-btn-secondary">Lodge New Grievance</button>
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
   );

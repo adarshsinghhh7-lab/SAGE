@@ -3,42 +3,43 @@
  *
  * Every physical interaction (cards, stamps, modals, buttons) should use one
  * of these named configs instead of ad-hoc duration-based easing. This keeps
- * the motion vocabulary cohesive and physically plausible.
+ * the motion vocabulary cohesive and physically plausible. Springs are tuned
+ * toward a soft, premium feel — responsive but never bouncy-for-show.
  */
 
 import type { Transition } from 'motion/react';
 
 /* ─── Spring Tokens ────────────────────────────────────────────────────────── */
 
-/** Light paper settling — cards, panels, layout shifts */
+/** Soft settling — cards, panels, layout shifts. Gentle, understated. */
 export const paperSpring: Transition = {
   type: 'spring',
-  stiffness: 300,
-  damping: 30,
-  mass: 0.8,
+  stiffness: 220,
+  damping: 28,
+  mass: 0.9,
 };
 
-/** Rubber-stamp strike — fast hit, overshoot/bounce, thud settle */
-export const stampImpact: Transition = {
-  type: 'spring',
-  stiffness: 500,
-  damping: 15,
-  mass: 1.2,
-};
-
-/** Weighty drawer / case-file opening — modals, reveal panels */
-export const heavyDrawer: Transition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 26,
-  mass: 1.5,
-};
-
-/** Button press / small interactive tap */
+/** Hover / tap micro-feedback — quick but quiet. */
 export const microTap: Transition = {
   type: 'spring',
-  stiffness: 400,
-  damping: 25,
+  stiffness: 380,
+  damping: 26,
+  mass: 0.7,
+};
+
+/** Weighty drawer / panel opening — modals, reveal panels, confirmation. */
+export const heavyDrawer: Transition = {
+  type: 'spring',
+  stiffness: 160,
+  damping: 26,
+  mass: 1.35,
+};
+
+/** Soft entry ease used for fades/dips that shouldn't feel mechanical. */
+export const softEase: Transition = {
+  type: 'tween',
+  ease: [0.22, 1, 0.36, 1],
+  duration: 0.55,
 };
 
 /* ─── Reduced-Motion Fallback ──────────────────────────────────────────────── */

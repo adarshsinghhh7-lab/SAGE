@@ -3,7 +3,7 @@ import { AuthenticatedRequest } from '../middleware/authMiddleware';
 import { FirestoreService } from '../services/firestoreService';
 import { MLService } from '../services/mlService';
 import { ComplaintCategory, ComplaintStatus } from '../types';
-import { generateEncryptedUserRef } from '../utils/crypto';
+import { encryptAES } from '../utils/crypto';
 
 export class ComplaintController {
   /**
@@ -25,7 +25,7 @@ export class ComplaintController {
       res.status(200).json({
         success: true,
         count: complaints.length,
-        data: complaints,
+        data: complaints.map((c) => ComplaintController.sanitizeComplaint(c)),
       });
     } catch (error: any) {
       res.status(500).json({
@@ -55,7 +55,7 @@ export class ComplaintController {
 
       res.status(200).json({
         success: true,
-        data: complaint,
+        data: ComplaintController.sanitizeComplaint(complaint),
       });
     } catch (error: any) {
       res.status(500).json({
@@ -79,8 +79,9 @@ export class ComplaintController {
         description, 
         photoUrl, 
         complaintId,
-        id,
-        encryptedUserRef 
+        id
+        // NOTE: `encryptedUserRef` is deliberately NOT accepted from the body.
+        // Identity sealing is a server-only responsibility (SAGE_MASTER_KEY).
       } = req.body;
 
       const effectiveLoc = hostelOrLocation || location;
@@ -123,7 +124,7 @@ export class ComplaintController {
       }
 
       // Strict Anonymity: Reject plain student identity fields
-      const forbiddenFields = ['studentName', 'studentEmail', 'studentId', 'rollNumber', 'userId', 'plainIdentity'];
+      const forbiddenFields = ['studentName', 'studentEmail', 'studentId', 'rollNumber', 'userId', 'plainIdentity', 'encryptedUserRef'];
       for (const field of forbiddenFields) {
         if (req.body[field]) {
           res.status(400).json({
@@ -134,11 +135,45 @@ export class ComplaintController {
         }
       }
 
+      // REQUIRED: a verified signed-in account. Filing a complaint is not
+      // anonymous-by-default — the backend seals the verified Firebase uid so
+      // an accountability path exists for fake/malicious complaints. Firebase
+      // anonymous sign-in is therefore rejected.
+      if (!req.user?.uid) {
+        res.status(401).json({
+          success: false,
+          error: 'Authentication Required',
+          message: 'Filing a complaint requires a verified college account.',
+        });
+        return;
+      }
+      if (req.user.isAnonymous === true) {
+        res.status(401).json({
+          success: false,
+          error: 'Verified Account Required',
+          message: 'Anonymous sign-in cannot deposit complaints. Sign in with your verified college account so the system can protect you and hold deliberately false complaints accountable.',
+        });
+        return;
+      }
+
       // 1. Run ML Urgency Classification
       const mlPrediction = await MLService.predictUrgency(descTrimmed);
 
-      // 2. Ensure identity is encrypted before storing (AES encrypted token)
-      const userRefEncrypted = encryptedUserRef || generateEncryptedUserRef(req.user?.uid || 'ANON');
+      // 2. SEAL AT SUBMISSION (server-only): AES-encrypt the verified Firebase
+      //    uid with SAGE_MASTER_KEY. This ciphertext is the only identity the
+      //    ledger ever stores. It never exists in the browser, is never
+      //    generated client-side, and cannot be decrypted by any client code.
+      let sealedUserRef = '';
+      try {
+        sealedUserRef = encryptAES(req.user.uid);
+      } catch (sealErr: any) {
+        res.status(503).json({
+          success: false,
+          error: 'Sealing server unavailable — please retry.',
+          details: sealErr?.message,
+        });
+        return;
+      }
 
       // 3. Save to complaints collection
       const newComplaint = await FirestoreService.createComplaint({
@@ -148,14 +183,14 @@ export class ComplaintController {
         description: descTrimmed,
         photoUrl: photoUrl ? String(photoUrl) : undefined,
         urgencyScore: mlPrediction.urgency_score,
-        encryptedUserRef: userRefEncrypted,
+        encryptedUserRef: sealedUserRef,
       });
 
       res.status(201).json({
         success: true,
-        message: 'Grievance successfully deposited onto anonymous ledger.',
+        message: 'Grievance successfully deposited. Your identity is sealed server-side and remains invisible to everyone unless a suspicion-of-fraud review is formally opened.',
         mlPrediction,
-        data: newComplaint,
+        data: ComplaintController.sanitizeComplaint(newComplaint),
       });
     } catch (error: any) {
       res.status(500).json({
@@ -190,7 +225,7 @@ export class ComplaintController {
         message: result.alreadyUpvoted 
           ? 'You have already endorsed this complaint.' 
           : 'Complaint successfully endorsed in upvotes ledger.',
-        data: result.complaint,
+        data: ComplaintController.sanitizeComplaint(result.complaint),
         alreadyUpvoted: result.alreadyUpvoted,
       });
     } catch (error: any) {
@@ -250,7 +285,7 @@ export class ComplaintController {
       res.status(200).json({
         success: true,
         message: `Ledger record '${id}' updated to status '${normStatus}'.`,
-        data: updated,
+        data: ComplaintController.sanitizeComplaint(updated),
       });
     } catch (error: any) {
       res.status(500).json({
@@ -262,8 +297,58 @@ export class ComplaintController {
   }
 
   /**
+   * POST /api/complaints/:id/dispute
+   * An admin formally flags a complaint as "disputed — suspected
+   * false/malicious". This writes the `disputed` flag plus an auditable
+   * statusUpdates entry with updatedBy. NOTE: this flag is NOT a pre-condition
+   * for identity reveal anymore — the Head Admin reveal flow is ungated.
+   */
+  static async flagDisputed(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { reason } = req.body;
+
+      if (!reason || String(reason).trim().length < 10) {
+        res.status(400).json({
+          success: false,
+          error: 'A written suspicion justification (minimum 10 characters) is required to flag a complaint as disputed.',
+        });
+        return;
+      }
+
+      const adminId = req.user?.uid || 'admin-officer';
+
+      const updated = await FirestoreService.flagComplaintAsDisputed(id, adminId, String(reason).trim());
+
+      if (!updated) {
+        res.status(404).json({
+          success: false,
+          error: `Complaint '${id}' not found.`,
+        });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        message: `Complaint '${id}' formally flagged as disputed (suspected false/malicious). This audit flag is reported on the complaint; identity reveal itself is a separate, ungated Head Admin action.`,
+        data: ComplaintController.sanitizeComplaint(updated),
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        error: 'Failed to flag complaint as disputed',
+        details: error?.message,
+      });
+    }
+  }
+
+  /**
    * POST /api/complaints/:id/reveal
-   * Head Admin exclusive identity decryption trigger with immutable revealLogs write
+   * Head Admin exclusive identity decryption trigger with immutable revealLogs write.
+   *
+   * Head Admin may reveal any complaint's identity at any time — there is no
+   * "must be disputed first" pre-condition. Non-head_admin roles are still
+   * rejected by the `requireHeadAdmin` middleware with HTTP 403.
    */
   static async revealIdentity(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
@@ -372,5 +457,20 @@ export class ComplaintController {
         details: error?.message,
       });
     }
+  }
+
+  /**
+   * Sanitize a complaint before it leaves the API.
+   *
+   * The AES ciphertext of the submitter's identity (`encryptedUserRef`) is
+   * STRICTLY server-only — it must never reach the browser. The reveal
+   * endpoint is the ONLY route that intentionally returns the decrypted
+   * reference, and it does so through its own dedicated response shape, not
+   * through this sanitizer. Everything else that serializes a complaint
+   * strips the seal so no client code can ever resolve or decrypt it.
+   */
+  private static sanitizeComplaint<T extends Record<string, any>>(complaint: T): Omit<T, 'encryptedUserRef'> {
+    const { encryptedUserRef: _omitted, ...safe } = complaint as T;
+    return safe;
   }
 }
