@@ -46,7 +46,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               </details>
             )}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <button type="button" onClick={this.handleRetry} className="w-full sm:w-auto px-6 py-3 bg-bronze text-moss-deep hover:bg-bronze-deep text-xs font-mono font-bold uppercase tracking-wider rounded-xl border border-bronze cursor-pointer flex items-center justify-center gap-2 transition-all shadow-soft"><RefreshCw className="w-4 h-4" /><span>Try Again</span></button>
+              <button type="button" onClick={this.handleRetry} className="w-full sm:w-auto px-6 py-3 bg-bronze text-ink hover:bg-bronze-deep text-xs font-mono font-bold uppercase tracking-wider rounded-xl border border-bronze cursor-pointer flex items-center justify-center gap-2 transition-all shadow-soft"><RefreshCw className="w-4 h-4" /><span>Try Again</span></button>
               <button type="button" onClick={() => { window.location.hash = ''; window.location.reload(); }} className="w-full sm:w-auto px-6 py-3 bg-transparent text-ink-soft hover:text-ink text-xs font-mono font-bold uppercase tracking-wider rounded-xl border border-line-strong hover:border-ink-soft transition-colors cursor-pointer flex items-center justify-center gap-2"><span>Reload Application</span></button>
             </div>
           </div>

@@ -131,7 +131,7 @@ export const AdminComplaintModal: React.FC<AdminComplaintModalProps> = ({ compla
               <div className="pt-3 flex items-center justify-between gap-3 border-t border-line-strong">
                 <button type="button" onClick={onClose} className="px-5 py-2.5 text-xs font-mono font-bold uppercase tracking-wider border border-line-strong bg-transparent hover:border-ink-soft text-ink-soft transition-colors cursor-pointer">Cancel</button>
                 <button id="admin-save-complaint-btn" type="submit" className="px-6 py-2.5 text-xs font-mono font-bold uppercase tracking-wider border border-ink bg-ink text-surface hover:bg-moss-deep transition-all flex items-center gap-2 cursor-pointer">
-                  {saveSuccess ? (<><Check className="w-4 h-4 text-accent-deep" /><span>Ledger Updated!</span></>) : (<><Save className="w-4 h-4" /><span>Save Disposition</span></>)}
+                  {saveSuccess ? (<><Check className="w-4 h-4 text-accent-soft" /><span>Ledger Updated!</span></>) : (<><Save className="w-4 h-4" /><span>Save Disposition</span></>)}
                 </button>
               </div>
             </form>

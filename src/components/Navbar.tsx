@@ -10,6 +10,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { paperSpring, instantFade } from '../motion/tokens';
 import { PageView } from '../types';
 import { useAuth } from '../context/AuthContext';
+import { SageLogo } from './SageLogo';
 
 interface NavbarProps {
   currentView: PageView;
@@ -44,9 +45,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onNavigate('landing')}
             title="Return to S.A.G.E. Overview"
           >
-            <div className="w-10 h-10 rounded-xl bg-accent text-white font-display italic text-xl font-semibold flex items-center justify-center shadow-soft group-hover:scale-105 group-hover:bg-accent-deep transition-all">
-              S
-            </div>
+            <SageLogo size={40} className="transition-transform duration-300 group-hover:scale-105 drop-shadow-md" />
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-[1.4rem] leading-none font-semibold tracking-tight text-ink" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>

@@ -16,6 +16,7 @@ import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform } fr
 import { PageView } from '../types';
 import { paperSpring, microTap, instantFade } from '../motion/tokens';
 import { useCanHover } from '../hooks/useMediaQuery';
+import { SageLogo } from './SageLogo';
 
 interface LandingPageProps {
   onNavigate: (view: PageView) => void;
@@ -84,6 +85,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           animate="visible"
           style={{ y: heroY }}
         >
+          {/* Brand Emblem */}
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            transition={prefersReduced ? instantFade : paperSpring}
+            className="flex justify-center mb-8"
+          >
+            <SageLogo size={72} className="drop-shadow-md animate-float-slow" />
+          </motion.div>
+
           {/* Trust Pill */}
           <motion.div
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
@@ -432,7 +442,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 onClick={() => onNavigate('submit')}
                 whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
                 whileHover={prefersReduced ? {} : { y: -2, transition: paperSpring }}
-                className="w-full sm:w-auto px-8 py-4 bg-bronze text-[#1E2721] hover:bg-bronze-deep hover:text-[#EDE7D8] text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                className="w-full sm:w-auto px-8 py-4 bg-bronze text-ink hover:bg-bronze-deep hover:text-[#EDE7D8] text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
               >
                 <PlusCircle className="w-4 h-4" />
                 <span>Submit a Complaint</span>

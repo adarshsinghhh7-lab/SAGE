@@ -399,7 +399,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setIsFlagModalOpen(false);
       setFlagComplaint(null);
     } catch (err: any) {
-      setFlagError(err?.message || 'Failed to flag complaint as disputed. Please retry.');
+      const raw = err?.message || '';
+      setFlagError(
+        /failed to fetch|networkerror|load failed|sealing server/i.test(raw)
+          ? 'Cannot reach the Sealing Server (backend on port 5000), so the dispute flag was not persisted server-side. Please start the backend and retry.'
+          : raw || 'Failed to flag complaint as disputed. Please retry.'
+      );
     } finally {
       setFlagSubmitting(false);
     }
@@ -428,7 +433,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setThresholdInput(String(updated.threshold));
       setEscalationStatus({ type: 'success', text: `Live escalation threshold updated to ${updated.threshold} upvotes.` });
     } catch (err: any) {
-      setEscalationStatus({ type: 'error', text: err?.message || 'Failed to update escalation threshold.' });
+      const raw = err?.message || '';
+      setEscalationStatus({
+        type: 'error',
+        text: /failed to fetch|networkerror|load failed|sealing server/i.test(raw)
+          ? 'Cannot reach the Sealing Server (backend on port 5000), so the threshold was not persisted server-side. Please start the backend and retry.'
+          : raw || 'Failed to update escalation threshold.',
+      });
     } finally {
       setEscalationSaving(false);
     }
@@ -446,10 +457,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       }
       setEscalationStatus({
         type: 'success',
-        text: `Sweep complete: ${report.escalated.length} complaint(s) escalated, ${report.emailsSent} email(s) sent, ${report.emailsFailed} failed.`,
+        text: report.emailsSent > 0
+          ? `Sweep complete: ${report.escalated.length} complaint(s) escalated, ${report.emailsSent} email(s) sent, ${report.emailsFailed} failed.`
+          : `Sweep complete: ${report.escalated.length} complaint(s) escalated. Department emails not sent — start the backend to deliver notifications.`,
       });
     } catch (err: any) {
-      setEscalationStatus({ type: 'error', text: err?.message || 'Manual escalation sweep failed.' });
+      const raw = err?.message || '';
+      setEscalationStatus({
+        type: 'error',
+        text: /failed to fetch|networkerror|load failed|sealing server/i.test(raw)
+          ? 'Cannot reach the Sealing Server and Firestore — no complaints were escalated. Please start the backend and retry.'
+          : raw || 'Manual escalation sweep failed.',
+      });
     } finally {
       setEscalationRunning(false);
     }
@@ -879,7 +898,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 className={`mt-4 px-3 py-2 border text-xs font-mono font-bold ${
                   escalationStatus.type === 'success'
                     ? 'bg-accent/10 border-accent text-accent-deep'
-                    : 'bg-bronze-soft border-line-strong text-bronze-deep'
+                    : 'bg-clay-soft border-clay/40 text-clay-deep'
                 }`}
               >
                 {escalationStatus.type === 'success' ? '✓ ' : '✕ '}
@@ -908,7 +927,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         {disputeStatus && (
           <div
-            className={"mb-4 px-3 py-2 border text-xs font-mono font-bold flex items-center gap-2 rounded-lg " + (disputeStatus.type === 'success' ? 'bg-accent/10 border-accent/40 text-accent-deep' : 'bg-bronze-soft border-line-strong text-bronze-deep')}
+            className={"mb-4 px-3 py-2 border text-xs font-mono font-bold flex items-center gap-2 rounded-lg " + (disputeStatus.type === 'success' ? 'bg-accent/10 border-accent/40 text-accent-deep' : 'bg-clay-soft border-clay/40 text-clay-deep')}
             role="alert"
           >
             <AlertTriangle className="w-3.5 h-3.5 shrink-0" />

@@ -36,6 +36,28 @@ const ML_URL = import.meta.env.VITE_ML_URL || 'http://localhost:5001/predict-urg
 const STORAGE_KEY = 'sage_student_grievances_v2';
 const UPVOTES_STORAGE_KEY_PREFIX = 'sage_user_upvotes_';
 const REVEAL_STORAGE_KEY = 'sage_reveal_logs_v1';
+const ESCALATION_SETTINGS_STORAGE_KEY = 'sage_escalation_settings_v1';
+
+// Mirrors backend DEFAULT_ESCALATION_THRESHOLD (backend/src/config/escalationConfig.ts).
+const DEFAULT_ESCALATION_THRESHOLD = 20;
+
+// Mirrors backend DEPARTMENT_EMAIL_MAP (backend/src/config/escalationConfig.ts) for
+// report display when the sweep falls back to Firestore-direct (no real webhooks).
+const DEPARTMENT_EMAIL_MAP: Record<string, { department: string; email: string }> = {
+  wifi: { department: 'IT Department', email: 'it-support@campus.edu' },
+  internet: { department: 'IT Department', email: 'it-support@campus.edu' },
+  wifi_internet: { department: 'IT Department', email: 'it-support@campus.edu' },
+  mess: { department: 'Hostel Warden (Mess)', email: 'hostel-warden@campus.edu' },
+  mess_food: { department: 'Hostel Warden (Mess)', email: 'hostel-warden@campus.edu' },
+  harassment: { department: 'Disciplinary Committee', email: 'disciplinary@campus.edu' },
+  infrastructure: { department: 'Estate & Maintenance', email: 'estate-maintenance@campus.edu' },
+  hygiene: { department: 'Campus Hygiene & Housekeeping', email: 'hygiene@campus.edu' },
+  other: { department: 'Administrative Office', email: 'admin-office@campus.edu' },
+};
+const resolveDepartmentEmail = (category: string | null | undefined): string => {
+  const key = String(category || 'other').toLowerCase().replace('/', '_').trim();
+  return (DEPARTMENT_EMAIL_MAP[key] || DEPARTMENT_EMAIL_MAP.other).email;
+};
 
 // Event bus for cross-component and cross-tab real-time sync when offline
 const SYNC_EVENT_NAME = 'sage_realtime_upvote_sync';
@@ -829,21 +851,97 @@ export class ApiService {
       throw new Error('A written suspicion justification (minimum 10 characters) is required.');
     }
 
-    const response = await this.request<{ success: boolean; data: Complaint }>(
-      `/complaints/${complaintId}/dispute`,
-      {
-        method: 'POST',
-        body: JSON.stringify({ reason: reasonText }),
-      },
-      activeRole,
-      userId,
-      authToken
-    );
+    const nowIso = new Date().toISOString();
+    const flaggedBy = userId || activeRole;
+    const fallbackErrorMessage = `Failed to flag complaint '${complaintId}' as disputed.`;
 
-    if (!response || !response.data) {
-      throw new Error('Backend returned no updated complaint.');
+    // 1. Live Firestore — mirrors the backend FirestoreService.flagComplaintAsDisputed:
+    //    update the complaint doc and append the immutable statusUpdates ledger entry
+    //    in one atomic batch.
+    if (isFirebaseConfigured && firestoreDb) {
+      try {
+        const complaintRef = doc(firestoreDb, 'complaints', complaintId);
+        const currentSnap = await getDoc(complaintRef);
+
+        if (currentSnap.exists()) {
+          const currentRaw = currentSnap.data() as Record<string, any>;
+          const updatePayload = {
+            disputed: true,
+            disputeReason: reasonText,
+            disputedAt: nowIso,
+            disputedBy: flaggedBy,
+          };
+
+          const updateId = `STATUS_UPD_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+          const statusUpdateDoc: StatusUpdateDoc = {
+            updateId,
+            complaintId,
+            updatedBy: flaggedBy,
+            oldStatus: currentRaw.status || 'submitted',
+            newStatus: 'flagged_disputed',
+            timestamp: nowIso,
+          };
+
+          const batch = writeBatch(firestoreDb);
+          batch.update(complaintRef, updatePayload);
+          batch.set(doc(firestoreDb, 'statusUpdates', updateId), statusUpdateDoc);
+          await batch.commit();
+
+          return normalizeComplaintData({ ...currentRaw, ...updatePayload, complaintId }, false);
+        }
+      } catch (err) {
+        console.warn('[Firestore flagComplaintAsDisputed]', err);
+      }
     }
-    return normalizeComplaintData(response.data);
+
+    // 2. Backend API
+    try {
+      const response = await this.request<{ success: boolean; data: Complaint }>(
+        `/complaints/${complaintId}/dispute`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ reason: reasonText }),
+        },
+        activeRole,
+        userId,
+        authToken
+      );
+
+      if (response && response.data) {
+        return normalizeComplaintData(response.data);
+      }
+    } catch (err: any) {
+      // A backend 404 means the record genuinely doesn't exist — never fabricate
+      // a dispute flag for it locally. Any network failure, however, degrades
+      // gracefully to the local cache path below (same tiering as updateStatus).
+      if (/not found|404/i.test(err?.message || '')) {
+        throw err;
+      }
+    }
+
+    // 3. Local cache fallback (offline-consistent with status updates).
+    try {
+      const current = await this.getComplaints({}, activeRole, userId);
+      const comp = current.find((c) => c.complaintId === complaintId);
+      if (comp) {
+        const updatedComplaint: Complaint = {
+          ...comp,
+          disputed: true,
+          disputeReason: reasonText,
+          disputedAt: nowIso,
+          disputedBy: flaggedBy,
+        };
+        const updatedList = current.map((c) =>
+          c.complaintId === complaintId ? updatedComplaint : c
+        );
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedList));
+        return updatedComplaint;
+      }
+    } catch (err) {
+      console.warn('[Local flagComplaintAsDisputed]', err);
+    }
+
+    throw new Error(fallbackErrorMessage);
   }
 
   /* ------------------------------------------------------------------ *
@@ -1020,17 +1118,67 @@ export class ApiService {
    * Admin-only backend endpoint: GET /api/settings/escalation
    */
   static async getEscalationSettings(activeRole: UserRole = 'admin'): Promise<EscalationSettingsDoc | null> {
+    // 1. Live Firestore direct read (mirrors backend FirestoreService.getEscalationSettings)
+    if (isFirebaseConfigured && firestoreDb) {
+      try {
+        const settingsRef = doc(firestoreDb, 'settings', 'escalation');
+        const snap = await getDoc(settingsRef);
+        if (snap.exists()) {
+          const data = snap.data() as Partial<EscalationSettingsDoc>;
+          const normalized: EscalationSettingsDoc = {
+            settingsId: 'escalation',
+            threshold: typeof data.threshold === 'number' ? data.threshold : DEFAULT_ESCALATION_THRESHOLD,
+            defaultThreshold: DEFAULT_ESCALATION_THRESHOLD,
+            updatedBy: data.updatedBy || 'system',
+            updatedAt: data.updatedAt || new Date().toISOString(),
+            lastRunAt: data.lastRunAt ?? null,
+            lastRun: data.lastRun ?? null,
+          };
+          try {
+            localStorage.setItem(ESCALATION_SETTINGS_STORAGE_KEY, JSON.stringify(normalized));
+          } catch {
+            // ignore storage errors
+          }
+          return normalized;
+        }
+      } catch (err) {
+        console.warn('[Firestore getEscalationSettings]', err);
+      }
+    }
+
+    // 2. Backend API
     try {
       const response = await this.request<{ success: boolean; data: EscalationSettingsDoc }>(
         '/settings/escalation',
         { method: 'GET' },
         activeRole
       );
-      return response?.data ?? null;
+      if (response?.data) {
+        try {
+          localStorage.setItem(ESCALATION_SETTINGS_STORAGE_KEY, JSON.stringify(response.data));
+        } catch {
+          // ignore storage errors
+        }
+        return response.data;
+      }
     } catch (err) {
       console.warn('[getEscalationSettings] Backend unavailable:', err);
-      return null;
     }
+
+    // 3. Local cache fallback (offline-friendly)
+    try {
+      const saved = localStorage.getItem(ESCALATION_SETTINGS_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved) as EscalationSettingsDoc;
+        if (parsed && typeof parsed.threshold === 'number') {
+          return { ...parsed, settingsId: 'escalation' };
+        }
+      }
+    } catch {
+      // ignore storage errors
+    }
+
+    return null;
   }
 
   /**
@@ -1041,18 +1189,91 @@ export class ApiService {
     threshold: number,
     activeRole: UserRole = 'admin'
   ): Promise<EscalationSettingsDoc> {
-    const response = await this.request<{ success: boolean; data: EscalationSettingsDoc }>(
-      '/settings/escalation/threshold',
-      {
-        method: 'PUT',
-        body: JSON.stringify({ threshold }),
-      },
-      activeRole
-    );
-    if (!response?.data) {
-      throw new Error('Backend returned no escalation settings.');
+    const clamped = Math.min(500, Math.max(1, Math.round(Number(threshold) || DEFAULT_ESCALATION_THRESHOLD)));
+    const nowIso = new Date().toISOString();
+    const updatedBy = activeRole === 'head_admin' ? 'head_admin' : activeRole;
+
+    // 1. Live Firestore (mirrors backend FirestoreService.setEscalationThreshold:
+    //    merge the new threshold onto the settings/escalation doc).
+    if (isFirebaseConfigured && firestoreDb) {
+      try {
+        const settingsRef = doc(firestoreDb, 'settings', 'escalation');
+        const snap = await getDoc(settingsRef);
+        const current = snap.exists() ? (snap.data() as Partial<EscalationSettingsDoc>) : {};
+        const merged: EscalationSettingsDoc = {
+          settingsId: 'escalation',
+          threshold: clamped,
+          defaultThreshold: DEFAULT_ESCALATION_THRESHOLD,
+          updatedBy,
+          updatedAt: nowIso,
+          lastRunAt: current.lastRunAt ?? null,
+          lastRun: current.lastRun ?? null,
+        };
+        await setDoc(settingsRef, merged, { merge: true });
+        try {
+          localStorage.setItem(ESCALATION_SETTINGS_STORAGE_KEY, JSON.stringify(merged));
+        } catch {
+          // ignore storage errors
+        }
+        return merged;
+      } catch (err) {
+        console.warn('[Firestore setEscalationThreshold]', err);
+      }
     }
-    return response.data;
+
+    // 2. Backend API
+    try {
+      const response = await this.request<{ success: boolean; data: EscalationSettingsDoc }>(
+        '/settings/escalation/threshold',
+        {
+          method: 'PUT',
+          body: JSON.stringify({ threshold: clamped }),
+        },
+        activeRole
+      );
+      if (response?.data) {
+        try {
+          localStorage.setItem(ESCALATION_SETTINGS_STORAGE_KEY, JSON.stringify(response.data));
+        } catch {
+          // ignore storage errors
+        }
+        return response.data;
+      }
+      throw new Error('Backend returned no escalation settings.');
+    } catch (err: any) {
+      // A backend error means the record wasn't persisted server-side — but a
+      // broken network is not a reason to block the admin console, so degrade
+      // gracefully to the local cache below (same tiering as updateStatus).
+      console.warn('[setEscalationThreshold] Backend unavailable:', err);
+    }
+
+    // 3. Local cache fallback (offline-friendly)
+    let previous: EscalationSettingsDoc | null = null;
+    try {
+      const saved = localStorage.getItem(ESCALATION_SETTINGS_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved) as EscalationSettingsDoc;
+        if (parsed && typeof parsed.threshold === 'number') previous = parsed;
+      }
+    } catch {
+      // ignore storage errors
+    }
+
+    const localDoc: EscalationSettingsDoc = {
+      settingsId: 'escalation',
+      threshold: clamped,
+      defaultThreshold: previous?.defaultThreshold ?? DEFAULT_ESCALATION_THRESHOLD,
+      updatedBy,
+      updatedAt: nowIso,
+      lastRunAt: previous?.lastRunAt ?? null,
+      lastRun: previous?.lastRun ?? null,
+    };
+    try {
+      localStorage.setItem(ESCALATION_SETTINGS_STORAGE_KEY, JSON.stringify(localDoc));
+    } catch {
+      // storage unavailable — still return the value so the UI can update
+    }
+    return localDoc;
   }
 
   /**
@@ -1060,16 +1281,157 @@ export class ApiService {
    * Admin-only backend endpoint: POST /api/settings/escalation/run
    */
   static async runEscalationSweep(activeRole: UserRole = 'admin'): Promise<EscalationRunReport> {
-    const response = await this.request<{ success: boolean; data: EscalationRunReport }>(
-      '/settings/escalation/run',
-      { method: 'POST', body: JSON.stringify({}) },
-      activeRole
-    );
-    if (!response?.data) {
-      throw new Error('Backend returned no escalation report.');
+    // 1. Backend API (preferred — it also sends real department emails)
+    try {
+      const response = await this.request<{ success: boolean; data: EscalationRunReport }>(
+        '/settings/escalation/run',
+        { method: 'POST', body: JSON.stringify({}) },
+        activeRole
+      );
+      if (response?.data) {
+        try {
+          const cachedSettings = await this.getEscalationSettings(activeRole);
+          if (cachedSettings) localStorage.setItem(ESCALATION_SETTINGS_STORAGE_KEY, JSON.stringify(cachedSettings));
+        } catch {
+          // ignore cache refresh
+        }
+        return response.data;
+      }
+    } catch (err) {
+      console.warn('[runEscalationSweep] Backend unavailable:', err);
     }
-    return response.data;
+
+    // 2. Firestore-direct client sweep (offline fallback)
+    const settings = await this.getEscalationSettings(activeRole);
+    const threshold = settings?.threshold ?? DEFAULT_ESCALATION_THRESHOLD;
+    const nowIso = new Date().toISOString();
+    const report: EscalationRunReport = {
+      ranAt: nowIso,
+      trigger: 'manual',
+      threshold,
+      checked: 0,
+      escalated: [],
+      emailsSent: 0,
+      emailsFailed: 0,
+      errors: [],
+    };
+
+    if (isFirebaseConfigured && firestoreDb) {
+      try {
+        // Collect eligible complaints: status submitted && upvoteCount >= threshold
+        const complaintsRef = collection(firestoreDb, 'complaints');
+        let eligible: Complaint[] = [];
+        try {
+          const q = query(
+            complaintsRef,
+            where('status', '==', 'submitted'),
+            where('upvoteCount', '>=', threshold)
+          );
+          const snap = await getDocs(q);
+          eligible = snap.docs.map((d) => normalizeComplaintData({ ...d.data(), complaintId: d.id }));
+        } catch {
+          // Composite index / connectivity issue -> fall back to an unfiltered scan
+          const allSnap = await getDocs(complaintsRef);
+          eligible = allSnap.docs
+            .map((d) => normalizeComplaintData({ ...d.data(), complaintId: d.id }))
+            .filter((c) => c.status === 'submitted' && c.upvoteCount >= threshold);
+        }
+        report.checked = eligible.length;
+
+        for (const complaint of eligible) {
+          try {
+            const complaintRef = doc(firestoreDb, 'complaints', complaint.complaintId);
+            const currentSnap = await getDoc(complaintRef);
+            if (!currentSnap.exists()) continue;
+            const current = normalizeComplaintData({ ...currentSnap.data(), complaintId: complaint.complaintId });
+            if (current.status !== 'submitted') continue; // moved since query -> skip
+
+            const updateId = `STATUS_UPD_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+            const statusUpdateDoc: StatusUpdateDoc = {
+              updateId,
+              complaintId: complaint.complaintId,
+              updatedBy: 'system-auto-escalation',
+              oldStatus: current.status,
+              newStatus: 'under_review',
+              timestamp: nowIso,
+            };
+
+            const batch = writeBatch(firestoreDb);
+            batch.update(complaintRef, { status: 'under_review', highPriority: true });
+            batch.set(doc(firestoreDb, 'statusUpdates', updateId), statusUpdateDoc);
+            await batch.commit();
+
+            report.escalated.push({
+              complaintId: complaint.complaintId,
+              category: current.category,
+              upvoteCount: current.upvoteCount,
+              oldStatus: current.status,
+              newStatus: 'under_review',
+              highPriority: true,
+              notifiedEmail: resolveDepartmentEmail(current.category),
+              emailDelivered: false,
+              emailChannel: undefined,
+              error: 'Email notification requires the backend Sealing Server.',
+            });
+          } catch (err: any) {
+            report.errors.push(`Escalation failed for ${complaint.complaintId}: ${err?.message || 'unknown error'}`);
+          }
+        }
+
+        report.emailsFailed = report.escalated.length;
+
+        // Persist the run report back to settings/escalation (mirrors recordEscalationRun)
+        try {
+          const settingsRef = doc(firestoreDb, 'settings', 'escalation');
+          const snap = await getDoc(settingsRef);
+          const existing = snap.exists() ? (snap.data() as Partial<EscalationSettingsDoc>) : {};
+          const updatedSettings: EscalationSettingsDoc = {
+            settingsId: 'escalation',
+            threshold: typeof existing.threshold === 'number' ? existing.threshold : threshold,
+            defaultThreshold: DEFAULT_ESCALATION_THRESHOLD,
+            updatedBy: 'system-auto-escalation',
+            updatedAt: nowIso,
+            lastRunAt: nowIso,
+            lastRun: report,
+          };
+          await setDoc(settingsRef, updatedSettings, { merge: true });
+          try {
+            localStorage.setItem(ESCALATION_SETTINGS_STORAGE_KEY, JSON.stringify(updatedSettings));
+          } catch {
+            // ignore storage errors
+          }
+        } catch (err: any) {
+          console.warn('[Firestore recordEscalationRun]', err?.message);
+          // Still persist the report locally so the dashboard can render it.
+          try {
+            const localUpdated: EscalationSettingsDoc = {
+              settingsId: 'escalation',
+              threshold: settings?.threshold ?? threshold,
+              defaultThreshold: DEFAULT_ESCALATION_THRESHOLD,
+              updatedBy: 'system-auto-escalation',
+              updatedAt: nowIso,
+              lastRunAt: nowIso,
+              lastRun: report,
+            };
+            localStorage.setItem(ESCALATION_SETTINGS_STORAGE_KEY, JSON.stringify(localUpdated));
+          } catch {
+            // ignore storage errors
+          }
+        }
+
+        return report;
+      } catch (err: any) {
+        report.errors.push(`Sweep failed: ${err?.message || 'unknown error'}`);
+        return report;
+      }
+    }
+
+    // 3. Hard offline with no Firestore: still surface a meaningful report
+    report.errors.push('Cannot reach Firestore or the Sealing Server. No complaints were escalated.');
+    return report;
   }
+
+
 
   /**
    * Reset to initial seed

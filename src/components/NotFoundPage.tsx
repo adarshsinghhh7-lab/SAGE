@@ -23,7 +23,7 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({
         <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-ink mb-3">404 — Deposition Not Located</h1>
         <p className="text-sm sm:text-base text-ink-soft max-w-xl mx-auto mb-8">{message}</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <button type="button" onClick={() => onNavigate('landing')} className="w-full sm:w-auto px-6 py-3 bg-bronze text-moss-deep hover:bg-bronze-deep text-xs font-mono font-bold uppercase tracking-wider rounded-xl border border-bronze cursor-pointer flex items-center justify-center gap-2 transition-all shadow-soft">
+          <button type="button" onClick={() => onNavigate('landing')} className="w-full sm:w-auto px-6 py-3 bg-bronze text-ink hover:bg-bronze-deep text-xs font-mono font-bold uppercase tracking-wider rounded-xl border border-bronze cursor-pointer flex items-center justify-center gap-2 transition-all shadow-soft">
             <Home className="w-4 h-4" /><span>Return Home</span>
           </button>
           <button type="button" onClick={() => onNavigate('feed')} className="w-full sm:w-auto px-6 py-3 bg-transparent text-ink-soft hover:text-ink text-xs font-mono font-bold uppercase tracking-wider rounded-xl border border-line-strong hover:border-ink-soft transition-colors cursor-pointer flex items-center justify-center gap-2">
