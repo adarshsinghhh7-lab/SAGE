@@ -1,7 +1,7 @@
-import { FirestoreService } from './firestoreService';
-import { sendEscalationEmail } from './emailService';
-import { resolveDepartmentRecipient, DEFAULT_ESCALATION_THRESHOLD } from '../config/escalationConfig';
-import { EscalationRunReport, EscalationResultEntry, EscalationTrigger } from '../types';
+﻿import { FirestoreService } from './firestoreService.js';
+import { sendEscalationEmail } from './emailService.js';
+import { resolveDepartmentRecipient, DEFAULT_ESCALATION_THRESHOLD } from '../config/escalationConfig.js';
+import { EscalationRunReport, EscalationResultEntry, EscalationTrigger } from '../types/index.js';
 
 export interface EscalationRunOptions {
   /** How the sweep was triggered: 'scheduled' (hourly) or 'manual' (admin/test). */
@@ -20,7 +20,7 @@ let hourlyTimer: NodeJS.Timeout | null = null;
  *  1. Read the live escalation threshold (admin-tunable).
  *  2. Find every complaint with `upvoteCount >= threshold` still in `submitted`.
  *  3. For each one:
- *       a. FirestoreService.autoEscalate → status `under_review` + `highPriority: true`
+ *       a. FirestoreService.autoEscalate â†’ status `under_review` + `highPriority: true`
  *          + statusUpdates ledger entry by 'system-auto-escalation'.
  *       b. Resolve the department recipient from the complaint category.
  *       c. sendEscalationEmail to the department admin (webhook or console sandbox).
@@ -53,7 +53,7 @@ export async function runAutoEscalation(
 
   if (!silent) {
     console.log(
-      `\n[SAGE Auto-Escalation] Sweep @ ${nowIso} · trigger=${trigger} · threshold=${threshold} · eligible=${eligible.length}`
+      `\n[SAGE Auto-Escalation] Sweep @ ${nowIso} Â· trigger=${trigger} Â· threshold=${threshold} Â· eligible=${eligible.length}`
     );
   }
 
@@ -63,7 +63,7 @@ export async function runAutoEscalation(
       const escalated = await FirestoreService.autoEscalate(complaint.complaintId);
 
       if (!escalated) {
-        // Complaint was concurrently moved out of 'submitted' — skip silently.
+        // Complaint was concurrently moved out of 'submitted' â€” skip silently.
         continue;
       }
 
@@ -99,8 +99,8 @@ export async function runAutoEscalation(
 
       if (!silent) {
         console.log(
-          `[SAGE Auto-Escalation] ${entry.complaintId} (${entry.category}, ${entry.upvoteCount} upvotes) → ` +
-            `under_review · notifying ${assigned.department} <${assigned.email}> · ` +
+          `[SAGE Auto-Escalation] ${entry.complaintId} (${entry.category}, ${entry.upvoteCount} upvotes) â†’ ` +
+            `under_review Â· notifying ${assigned.department} <${assigned.email}> Â· ` +
             `email=${emailResult.delivered ? 'delivered' : 'FAILED'} (${emailResult.channel})`
         );
       }
@@ -116,8 +116,8 @@ export async function runAutoEscalation(
 
   if (!silent) {
     console.log(
-      `[SAGE Auto-Escalation] Sweep complete · escalated=${report.escalated.length} · ` +
-        `emailsSent=${report.emailsSent} · emailsFailed=${report.emailsFailed} · errors=${report.errors.length}\n`
+      `[SAGE Auto-Escalation] Sweep complete Â· escalated=${report.escalated.length} Â· ` +
+        `emailsSent=${report.emailsSent} Â· emailsFailed=${report.emailsFailed} Â· errors=${report.errors.length}\n`
     );
   }
 

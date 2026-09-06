@@ -1,6 +1,6 @@
-import { Router } from 'express';
-import { AuthController } from '../controllers/authController';
-import { requireHeadAdmin } from '../middleware/authMiddleware';
+﻿import { Router } from 'express';
+import { AuthController } from '../controllers/authController.js';
+import { requireHeadAdmin } from '../middleware/authMiddleware.js';
 
 const router = Router();
 

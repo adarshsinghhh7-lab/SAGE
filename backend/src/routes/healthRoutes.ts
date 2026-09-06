@@ -1,5 +1,5 @@
-import { Router, Request, Response } from 'express';
-import { isFirebaseLive, initMessage } from '../config/firebaseAdmin';
+﻿import { Router, Request, Response } from 'express';
+import { isFirebaseLive, initMessage } from '../config/firebaseAdmin.js';
 
 const router = Router();
 

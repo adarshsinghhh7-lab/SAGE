@@ -1,9 +1,9 @@
-import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
-import { FirestoreService } from '../services/firestoreService';
-import { runAutoEscalation } from '../services/escalationService';
-import { DEFAULT_ESCALATION_THRESHOLD } from '../config/escalationConfig';
-import { EscalationRunReport } from '../types';
+﻿import { Response } from 'express';
+import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
+import { FirestoreService } from '../services/firestoreService.js';
+import { runAutoEscalation } from '../services/escalationService.js';
+import { DEFAULT_ESCALATION_THRESHOLD } from '../config/escalationConfig.js';
+import { EscalationRunReport } from '../types/index.js';
 
 export class EscalationSettingsController {
   /**
@@ -70,7 +70,7 @@ export class EscalationSettingsController {
 
   /**
    * POST /api/settings/escalation/run
-   * Manually trigger an auto-escalation sweep (admin-only) — handy for demos
+   * Manually trigger an auto-escalation sweep (admin-only) â€” handy for demos
    * and verifying the hourly job without waiting for the scheduler.
    */
   static async runSweepNow(req: AuthenticatedRequest, res: Response): Promise<void> {

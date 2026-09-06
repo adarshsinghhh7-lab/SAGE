@@ -1,7 +1,7 @@
-import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
-import { auth, isFirebaseLive } from '../config/firebaseAdmin';
-import { UserRole } from '../types';
+﻿import { Response } from 'express';
+import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
+import { auth, isFirebaseLive } from '../config/firebaseAdmin.js';
+import { UserRole } from '../types/index.js';
 
 export class AuthController {
   /**

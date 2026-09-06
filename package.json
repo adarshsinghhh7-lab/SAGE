@@ -7,6 +7,7 @@
     "dev": "node \"%npm_config_local_prefix%\\node_modules\\vite\\bin\\vite.js\" --port=3000 --host=0.0.0.0",
     "dev:backend": "node \"%npm_config_local_prefix%\\node_modules\\tsx\\dist\\cli.mjs\" watch backend/src/server.ts",
     "build": "vite build",
+    "start": "node backend/dist/server.js",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"

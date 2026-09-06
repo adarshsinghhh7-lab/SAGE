@@ -1,7 +1,7 @@
-import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
-import { FirestoreService } from '../services/firestoreService';
-import { ComplaintCategory } from '../types';
+﻿import { Response } from 'express';
+import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
+import { FirestoreService } from '../services/firestoreService.js';
+import { ComplaintCategory } from '../types/index.js';
 
 const CATEGORIES: ComplaintCategory[] = [
   'Infrastructure',

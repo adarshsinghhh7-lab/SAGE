@@ -1,6 +1,6 @@
-import { Router } from 'express';
-import { ComplaintController } from '../controllers/complaintController';
-import { requireAdmin, requireHeadAdmin } from '../middleware/authMiddleware';
+﻿import { Router } from 'express';
+import { ComplaintController } from '../controllers/complaintController.js';
+import { requireAdmin, requireHeadAdmin } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
@@ -16,7 +16,7 @@ router.post('/reset', ComplaintController.reset);
 // Protected Admin Routes (creates entry in statusUpdates)
 router.patch('/:id/status', requireAdmin, ComplaintController.updateStatus);
 // Admin may formally flag a complaint as suspected false/malicious (audited).
-// NOTE: this flag is NOT a pre-condition for identity reveal anymore — the
+// NOTE: this flag is NOT a pre-condition for identity reveal anymore â€” the
 // Head Admin reveal flow is ungated (see services/firestoreService.ts).
 router.post('/:id/dispute', requireAdmin, ComplaintController.flagDisputed);
 

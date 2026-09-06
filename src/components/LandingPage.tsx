@@ -8,7 +8,8 @@ import {
   CheckCircle2,
   ChevronDown,
   Shield,
-  Activity
+  Activity,
+  AlertTriangle
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { PageView } from '../types';
@@ -56,7 +57,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     },
     {
       question: "How does anonymity work, and is there any exception?",
-      answer: "Your identity is completely encrypted and hidden by default. In standard campus grievances (such as bad mess food, broken fans, slow internet, hygiene problems, or staff complaints), student identity is never collected or viewable by anyone. A strictly audited reveal protocol exists exclusively as a legal safeguard against verified criminal misuse (such as bomb threats or severe personal extortion). This procedure requires unanimous dual-authorization from both university proctors and legal counsel, and every single query is logged permanently to a public transparency audit record."
+      answer: "Your identity is completely encrypted and hidden by default. In standard campus grievances (such as bad mess food, broken fans, slow internet, hygiene problems, or staff complaints), student identity is never collected or viewable by anyone. A strictly audited reveal protocol exists as the only way a complaint can ever be traced back to you: if a case is flagged as deliberately false, the Head Admin can unlock the sealed identity with a recorded written justification, and every single query is logged permanently to a public transparency audit record. Genuine complaints never trigger this — honest reporters stay completely anonymous."
     },
     {
       question: "How does upvoting help my issue get resolved faster?",
@@ -252,7 +253,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   Audited Misuse Safeguards
                 </h3>
                 <p className="text-xs sm:text-sm text-ink-soft leading-relaxed">
-                  To prevent abuse, a reveal option exists strictly for verified extreme criminal offenses (e.g. violent threats or extortion). This requires formal dual-authorization from proctorial and legal boards.
+                  To prevent abuse, a strictly audited reveal option exists: only the Head Admin can ever unlock a sealed identity, every query requires a recorded written justification, and every unlock is written permanently to a public audit record.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-line flex items-center gap-2 text-xs font-mono font-bold text-clay-deep">
@@ -287,6 +288,115 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </div>
             </motion.div>
           </div>
+          {/* Fair-Use Accountability: how fake complaints are traced vs. how genuine ones stay hidden */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={prefersReduced ? instantFade : { ...paperSpring, delay: 0.1 }}
+            className="mt-14"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Warning panel — a fake case can be traced back to its owner */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={prefersReduced ? instantFade : { ...paperSpring, delay: 0 }}
+                whileHover={prefersReduced ? {} : { y: -4 }}
+                className="flat-paper p-6 flex flex-col justify-between border-t-[3px] border-t-clay"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className="w-10 h-10 bg-clay-soft text-clay-deep flex items-center justify-center rounded-xl">
+                      <AlertTriangle className="w-5 h-5" />
+                    </div>
+                    <span className="font-mono text-[10px] font-bold tracking-widest uppercase text-ink-faint">
+                      Read Before You Submit
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-ink mb-2">
+                    Fake Complaints Carry Real Consequences
+                  </h3>
+                  <p className="text-xs sm:text-sm text-ink-soft leading-relaxed">
+                    Anonymity is a shield, not an invisibility cloak. Every complaint is invisibly tied to your verified college sign-in, and the seal never destroys that link. Fabricated cases waste campus resources, defame innocent staff, and bury genuine emergencies — and you can be held accountable for them.
+                  </p>
+                  <div className="mt-5 space-y-3">
+                    {[
+                      {
+                        step: '01',
+                        text: 'An administrator formally flags the case as Disputed (suspected false/malicious) with a recorded reason.'
+                      },
+                      {
+                        step: '02',
+                        text: 'The Head Admin invokes the audited reveal protocol to unlock the sealed identity — every reveal is written to a permanent, immutable audit log.'
+                      },
+                      {
+                        step: '03',
+                        text: 'Your identity is handed over for disciplinary action under the institute\u2019s code of conduct.'
+                      }
+                    ].map((row) => (
+                      <div key={row.step} className="flex items-start gap-3 rounded-xl border border-clay/30 bg-clay-soft/50 px-3 py-2.5">
+                        <span className="mt-0.5 w-6 h-6 shrink-0 bg-clay text-white flex items-center justify-center font-mono font-bold text-[10px] rounded-lg">
+                          {row.step}
+                        </span>
+                        <p className="text-[11px] sm:text-xs text-ink-soft leading-relaxed">
+                          {row.text}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-6 pt-4 border-t border-line flex items-center gap-2 text-xs font-mono font-bold text-clay-deep">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Misuse Is Audited, Logged Forever, and Punishable</span>
+                </div>
+              </motion.div>
+
+              {/* Assurance panel — a genuine case can never be traced back to its owner */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={prefersReduced ? instantFade : { ...paperSpring, delay: 0.15 }}
+                whileHover={prefersReduced ? {} : { y: -4 }}
+                className="flat-paper p-6 flex flex-col justify-between border-t-[3px] border-t-accent"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className="w-10 h-10 bg-accent-soft text-accent-deep flex items-center justify-center rounded-xl">
+                      <EyeOff className="w-5 h-5" />
+                    </div>
+                    <span className="font-mono text-[10px] font-bold tracking-widest uppercase text-ink-faint">
+                      Your Protection Promise
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-ink mb-2">
+                    Genuine Complaints Are Never Traced Back to You
+                  </h3>
+                  <p className="text-xs sm:text-sm text-ink-soft leading-relaxed">
+                    If your complaint is honest and real, your identity stays sealed — permanently. Wardens, contractors, faculty, and even campus administrators can never see who filed it. The reveal protocol applies only to verified cases of deliberate misuse; everyday grievances about mess, maintenance, Wi-Fi, or hygiene can never be exposed.
+                  </p>
+                  <div className="mt-5 space-y-2">
+                    {[
+                      'No IP address, device ID, or browser metadata is stored with your report',
+                      'No one — wardens, contractors, faculty, or admins — can view your identity',
+                      'Reveal applies only to verified false or criminal misuse, never to genuine complaints'
+                    ].map((point) => (
+                      <div key={point} className="flex items-start gap-2.5 text-[11px] sm:text-xs text-ink-soft leading-relaxed">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0 text-accent-deep" />
+                        <span>{point}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-6 pt-4 border-t border-line flex items-center gap-2 text-xs font-mono font-bold text-accent-deep">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>100% Anonymous for the Honest Reporter</span>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
         </div>
       </section>
 

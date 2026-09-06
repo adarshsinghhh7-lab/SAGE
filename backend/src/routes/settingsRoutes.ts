@@ -1,6 +1,6 @@
-import { Router } from 'express';
-import { EscalationSettingsController } from '../controllers/escalationSettingsController';
-import { requireAdmin } from '../middleware/authMiddleware';
+﻿import { Router } from 'express';
+import { EscalationSettingsController } from '../controllers/escalationSettingsController.js';
+import { requireAdmin } from '../middleware/authMiddleware.js';
 
 const router = Router();
 

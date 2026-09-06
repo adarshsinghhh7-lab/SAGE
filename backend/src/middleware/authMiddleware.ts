@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { auth, isFirebaseLive } from '../config/firebaseAdmin';
-import { UserRole, AuthUser } from '../types';
+﻿import { Request, Response, NextFunction } from 'express';
+import { auth, isFirebaseLive } from '../config/firebaseAdmin.js';
+import { UserRole, AuthUser } from '../types/index.js';
 
 export interface AuthenticatedRequest extends Request {
   user?: AuthUser;

@@ -1,0 +1,31 @@
+# Render Blueprint — deploys the ENTIRE S.A.G.E. application as a single web
+# service: the Express Sealing Server (/api) also serves the built React app
+# (dist/) when SERVE_STATIC=true, so both share one origin and the frontend's
+# default VITE_API_URL=/api just works (no proxy, no CORS).
+#
+# Required dashboard secrets (set after first deploy — the app fails closed
+# without SAGE_MASTER_KEY by design):
+#   - SAGE_MASTER_KEY  (server-only AES key; generate a 64-char hex string)
+#   - FIREBASE_SERVICE_ACCOUNT_KEY  (service-account JSON for live Firestore/Auth)
+# Without Firestore credentials the backend boots in an in-memory sandbox that
+# loses all data on restart — never use that for real student grievances.
+services:
+  - type: web
+    name: sage
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build && cd backend && npm install && npm run build
+    startCommand: node backend/dist/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SERVE_STATIC
+        value: "true"
+      - key: SAGE_MASTER_KEY
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_KEY
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: VITE_API_URL
+        value: /api

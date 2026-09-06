@@ -1,9 +1,9 @@
-import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
-import { FirestoreService } from '../services/firestoreService';
-import { MLService } from '../services/mlService';
-import { ComplaintCategory, ComplaintStatus } from '../types';
-import { encryptAES } from '../utils/crypto';
+﻿import { Response } from 'express';
+import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
+import { FirestoreService } from '../services/firestoreService.js';
+import { MLService } from '../services/mlService.js';
+import { ComplaintCategory, ComplaintStatus } from '../types/index.js';
+import { encryptAES } from '../utils/crypto.js';
 
 export class ComplaintController {
   /**
@@ -137,7 +137,7 @@ export class ComplaintController {
       }
 
       // REQUIRED: a verified signed-in account. Filing a complaint is not
-      // anonymous-by-default — the backend seals the verified Firebase uid so
+      // anonymous-by-default â€” the backend seals the verified Firebase uid so
       // an accountability path exists for fake/malicious complaints. Firebase
       // anonymous sign-in is therefore rejected.
       if (!req.user?.uid) {
@@ -170,7 +170,7 @@ export class ComplaintController {
       } catch (sealErr: any) {
         res.status(503).json({
           success: false,
-          error: 'Sealing server unavailable — please retry.',
+          error: 'Sealing server unavailable â€” please retry.',
           details: sealErr?.message,
         });
         return;
@@ -300,10 +300,10 @@ export class ComplaintController {
 
   /**
    * POST /api/complaints/:id/dispute
-   * An admin formally flags a complaint as "disputed — suspected
+   * An admin formally flags a complaint as "disputed â€” suspected
    * false/malicious". This writes the `disputed` flag plus an auditable
    * statusUpdates entry with updatedBy. NOTE: this flag is NOT a pre-condition
-   * for identity reveal anymore — the Head Admin reveal flow is ungated.
+   * for identity reveal anymore â€” the Head Admin reveal flow is ungated.
    */
   static async flagDisputed(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
@@ -348,7 +348,7 @@ export class ComplaintController {
    * POST /api/complaints/:id/reveal
    * Head Admin exclusive identity decryption trigger with immutable revealLogs write.
    *
-   * Head Admin may reveal any complaint's identity at any time — there is no
+   * Head Admin may reveal any complaint's identity at any time â€” there is no
    * "must be disputed first" pre-condition. Non-head_admin roles are still
    * rejected by the `requireHeadAdmin` middleware with HTTP 403.
    */
@@ -465,7 +465,7 @@ export class ComplaintController {
    * Sanitize a complaint before it leaves the API.
    *
    * The AES ciphertext of the submitter's identity (`encryptedUserRef`) is
-   * STRICTLY server-only — it must never reach the browser. The reveal
+   * STRICTLY server-only â€” it must never reach the browser. The reveal
    * endpoint is the ONLY route that intentionally returns the decrypted
    * reference, and it does so through its own dedicated response shape, not
    * through this sanitizer. Everything else that serializes a complaint

@@ -1,8 +1,8 @@
-import { Complaint } from '../types';
+﻿import { Complaint } from '../types/index.js';
 import {
   EMAIL_WEBHOOK_URL,
   SAGE_NO_REPLY_EMAIL,
-} from '../config/escalationConfig';
+} from '../config/escalationConfig.js';
 
 export interface EscalationEmailPayload {
   to: string;
@@ -53,7 +53,7 @@ function buildHtml(complaint: Complaint, threshold: number, department: string):
     String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   return [
     `<!DOCTYPE html><html><body style="font-family:Arial,Helvetica,sans-serif;line-height:1.5;color:#0F172A;">`,
-    `<h2 style="margin-bottom:4px;">S.A.G.E. — High Priority Escalation</h2>`,
+    `<h2 style="margin-bottom:4px;">S.A.G.E. â€” High Priority Escalation</h2>`,
     `<p style="margin-top:0;color:#666;">A complaint was automatically escalated to the ${safe(department)}.</p>`,
     `<table style="border-collapse:collapse;font-size:13px;">`,
     `<tr><td style="padding:2px 12px 2px 0;font-weight:bold;">Complaint ID</td><td>${safe(complaint.complaintId)}</td></tr>`,
@@ -73,8 +73,8 @@ function buildHtml(complaint: Complaint, threshold: number, department: string):
  * Deliver an escalation notification to a department admin.
  *
  * Channel resolution order:
- *   1. `EMAIL_WEBHOOK_URL` env var → HTTP POST JSON payload (2xx = delivered).
- *   2. Otherwise → pretty console output (dev sandbox mode) so integrations can
+ *   1. `EMAIL_WEBHOOK_URL` env var â†’ HTTP POST JSON payload (2xx = delivered).
+ *   2. Otherwise â†’ pretty console output (dev sandbox mode) so integrations can
  *      later be plugged in (e.g. nodemailer/SMTP, SendGrid, Cloud Functions
  *      `functions.firestore` extension, etc.) without changing this service.
  */

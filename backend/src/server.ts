@@ -1,16 +1,18 @@
-import express from 'express';
+﻿import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
 import dotenv from 'dotenv';
-import { authenticate } from './middleware/authMiddleware';
-import complaintRoutes from './routes/complaintRoutes';
-import authRoutes from './routes/authRoutes';
-import analyticsRoutes from './routes/analyticsRoutes';
-import healthRoutes from './routes/healthRoutes';
-import { FirestoreService } from './services/firestoreService';
-import { startHourlyEscalationScheduler } from './services/escalationService';
-import { isFirebaseLive, initMessage } from './config/firebaseAdmin';
-import { SAGE_MASTER_KEY } from './utils/crypto';
-import settingsRoutes from './routes/settingsRoutes';
+import { authenticate } from './middleware/authMiddleware.js';
+import complaintRoutes from './routes/complaintRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
+import healthRoutes from './routes/healthRoutes.js';
+import { FirestoreService } from './services/firestoreService.js';
+import { startHourlyEscalationScheduler } from './services/escalationService.js';
+import { isFirebaseLive, initMessage } from './config/firebaseAdmin.js';
+import { SAGE_MASTER_KEY } from './utils/crypto.js';
+import settingsRoutes from './routes/settingsRoutes.js';
 
 dotenv.config();
 
@@ -28,9 +30,27 @@ app.use(
 
 // Body limit must accommodate the largest allowed evidence upload: a 25MB
 // video encoded as a base64 data-URI inflates to ~33MB of JSON, so we allow
-// 35MB (was 10mb — large video submissions were being rejected with 413).
+// 35MB (was 10mb â€” large video submissions were being rejected with 413).
 app.use(express.json({ limit: '35mb' }));
 app.use(express.urlencoded({ extended: true, limit: '35mb' }));
+
+// Optional single-service production hosting: when SERVE_STATIC=true the
+// backend also serves the built React app (dist/) plus an SPA fallback, so the
+// UI and /api share ONE origin. The browser's default API base ('/api') then
+// works exactly as it does through the dev proxy — no VITE_API_URL, no CORS.
+// Mounted before the API routes on purpose: express.static only answers for
+// real files in dist/, so every /api request still flows to the controllers.
+if (process.env.SERVE_STATIC === 'true') {
+  const distDir = path.resolve(process.cwd(), 'dist');
+  if (fs.existsSync(distDir)) {
+    app.use(express.static(distDir));
+    console.log(`  Single-service: serving React UI from ${distDir}`);
+  } else {
+    console.warn(
+      `[SERVE_STATIC] No dist/ found at ${distDir} — run "npm run build" first. Serving API routes only.`
+    );
+  }
+}
 
 // Global authentication & role extraction middleware
 app.use(authenticate);
@@ -66,6 +86,15 @@ app.get('/', (req, res) => {
   });
 });
 
+// SPA fallback: in single-service mode any unmatched non-/api GET is a
+// client-side route, so hand index.html to React Router.
+if (process.env.SERVE_STATIC === 'true') {
+  const distDir = path.resolve(process.cwd(), 'dist');
+  app.get(/^\/(?!api([\/]|$)).*/, (req, res) => {
+    res.sendFile(path.join(distDir, 'index.html'));
+  });
+}
+
 // Seed data on startup
 FirestoreService.seedIfEmpty().catch((err: any) => {
   console.warn(`[Startup Seeding] ${err?.message}`);
@@ -84,7 +113,7 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(`  Health Check : http://localhost:${PORT}/api/health`);
     console.log(`  Firebase     : ${initMessage}`);
     const isProd = process.env.NODE_ENV === 'production';
-    console.log(`  Sealing Key  : ${isProd ? 'SAGE_MASTER_KEY (server-only, production)' : `DEV-ONLY fallback (${String(SAGE_MASTER_KEY).slice(0, 8)}…) — set SAGE_MASTER_KEY for real deployments`}`);
+    console.log(`  Sealing Key  : ${isProd ? 'SAGE_MASTER_KEY (server-only, production)' : `DEV-ONLY fallback (${String(SAGE_MASTER_KEY).slice(0, 8)}â€¦) â€” set SAGE_MASTER_KEY for real deployments`}`);
     console.log(`=======================================================`);
   });
 }

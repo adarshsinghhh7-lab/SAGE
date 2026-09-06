@@ -1,4 +1,4 @@
-import { db, isFirebaseLive } from '../config/firebaseAdmin';
+﻿import { db, isFirebaseLive } from '../config/firebaseAdmin.js';
 import { 
   Complaint, 
   ComplaintCategory, 
@@ -10,16 +10,16 @@ import {
   UserRole,
   EscalationSettingsDoc,
   EscalationRunReport
-} from '../types';
-import { encryptAES, decryptAES, hashSHA256 } from '../utils/crypto';
-import { DEFAULT_ESCALATION_THRESHOLD } from '../config/escalationConfig';
+} from '../types/index.js';
+import { encryptAES, decryptAES, hashSHA256 } from '../utils/crypto.js';
+import { DEFAULT_ESCALATION_THRESHOLD } from '../config/escalationConfig.js';
 
 // Seed initial complaints conforming to exact schema
 const SEED_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-2847',
     encryptedUserRef: encryptAES('STUDENT_SEED_101_HASH_A871'),
-    isSandbox: true, // demo seed — simulated identity, NOT a real sealed record
+    isSandbox: true, // demo seed â€” simulated identity, NOT a real sealed record
     category: 'infrastructure',
     hostelOrLocation: 'Hostel Block A - 2nd Floor Corridor',
     description: 'Exposed live electrical wiring hanging near the water cooler outside Room 204. Sparks observed during heavy evening usage. Immediate safety hazard for passing students.',
@@ -32,7 +32,7 @@ const SEED_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-6721',
     encryptedUserRef: encryptAES('STUDENT_SEED_102_HASH_B924'),
-    isSandbox: true, // demo seed — simulated identity, NOT a real sealed record
+    isSandbox: true, // demo seed â€” simulated identity, NOT a real sealed record
     category: 'infrastructure',
     hostelOrLocation: 'Academic Complex Block 2 - Lift 3',
     description: 'Elevator stops unexpectedly between 3rd and 4th floors with emergency call button unresponsive. Multiple students experienced sudden drops.',
@@ -46,7 +46,7 @@ const SEED_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-9104',
     encryptedUserRef: encryptAES('STUDENT_SEED_103_HASH_C318'),
-    isSandbox: true, // demo seed — simulated identity, NOT a real sealed record
+    isSandbox: true, // demo seed â€” simulated identity, NOT a real sealed record
     category: 'harassment',
     hostelOrLocation: 'East Gate Pathway towards Girls Hostel 1',
     description: 'Pathway streetlights have been completely non-functional for past 5 nights. Repeated instances of unknown outsiders loitering and passing hostile remarks after 9:00 PM.',
@@ -59,7 +59,7 @@ const SEED_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-3318',
     encryptedUserRef: encryptAES('STUDENT_SEED_104_HASH_D551'),
-    isSandbox: true, // demo seed — simulated identity, NOT a real sealed record
+    isSandbox: true, // demo seed â€” simulated identity, NOT a real sealed record
     category: 'mess',
     hostelOrLocation: 'Central Mess Hall - Counter 2',
     description: 'Undercooked lentils and sour milk supplied during Monday morning breakfast. Multiple students in Block B reported acute abdominal cramps.',
@@ -71,7 +71,7 @@ const SEED_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-5512',
     encryptedUserRef: encryptAES('STUDENT_SEED_105_HASH_E712'),
-    isSandbox: true, // demo seed — simulated identity, NOT a real sealed record
+    isSandbox: true, // demo seed â€” simulated identity, NOT a real sealed record
     category: 'hygiene',
     hostelOrLocation: 'Hostel Block C - Ground Floor Washrooms',
     description: 'Severe sewage drain blockage causing water backup across three stalls. Extreme odor permeating into adjacent ground floor study rooms.',
@@ -83,7 +83,7 @@ const SEED_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-4409',
     encryptedUserRef: encryptAES('STUDENT_SEED_106_HASH_F882'),
-    isSandbox: true, // demo seed — simulated identity, NOT a real sealed record
+    isSandbox: true, // demo seed â€” simulated identity, NOT a real sealed record
     category: 'wifi',
     hostelOrLocation: 'Central Library - 1st Floor Quiet Study Area',
     description: 'Access Point AP-CL-04 dropping packets with 80% loss rate. DNS resolution failing continuously during mid-semester paper submissions.',
@@ -97,10 +97,10 @@ const SEED_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-4192',
     encryptedUserRef: encryptAES('STUDENT_SEED_107_HASH_G771'),
-    isSandbox: true, // demo seed — simulated identity, NOT a real sealed record
+    isSandbox: true, // demo seed â€” simulated identity, NOT a real sealed record
     category: 'mess',
     hostelOrLocation: 'Central Dining Mess - South Wing',
-    description: 'Undercooked lentils and sour milk served during today’s breakfast batch. Multiple students have reported stomach cramps. Requesting immediate food safety inspection by the student mess council.',
+    description: 'Undercooked lentils and sour milk served during todayâ€™s breakfast batch. Multiple students have reported stomach cramps. Requesting immediate food safety inspection by the student mess council.',
     location: 'Central Dining Mess - South Wing',
     status: 'submitted',
     upvoteCount: 68,
@@ -110,7 +110,7 @@ const SEED_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-1083',
     encryptedUserRef: encryptAES('STUDENT_SEED_108_HASH_H913'),
-    isSandbox: true, // demo seed — simulated identity, NOT a real sealed record
+    isSandbox: true, // demo seed â€” simulated identity, NOT a real sealed record
     category: 'infrastructure',
     hostelOrLocation: 'Girls Hostel 2, Wing A (Washroom 204)',
     description: 'Severe water leakage in the ceiling overhead causing electric switchboard sparks when light switches are pressed. Needs urgent electrician dispatch before an accident occurs.',
@@ -124,7 +124,7 @@ const SEED_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-5539',
     encryptedUserRef: encryptAES('STUDENT_SEED_109_HASH_J421'),
-    isSandbox: true, // demo seed — simulated identity, NOT a real sealed record
+    isSandbox: true, // demo seed â€” simulated identity, NOT a real sealed record
     category: 'other',
     hostelOrLocation: 'Central Library 2nd Floor Silent Reading Area',
     description: 'AC unit #3 rattling loudly with a screeching fan bearing noise for the past week, making quiet study in the examination zone impossible.',
@@ -139,7 +139,7 @@ const SEED_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-7820',
     encryptedUserRef: encryptAES('STUDENT_SEED_110_HASH_K118'),
-    isSandbox: true, // demo seed — simulated identity, NOT a real sealed record
+    isSandbox: true, // demo seed â€” simulated identity, NOT a real sealed record
     category: 'wifi',
     hostelOrLocation: 'Hostel Block A - West Wing',
     description: 'Bandwidth throttling dropping ping spikes to 800ms during online lab assessments. Router in corridor 2 repeatedly rebooting.',
@@ -152,7 +152,7 @@ const SEED_COMPLAINTS: Complaint[] = [
   {
     complaintId: 'SAGE-8201',
     encryptedUserRef: encryptAES('STUDENT_SEED_111_HASH_L192'),
-    isSandbox: true, // demo seed — simulated identity, NOT a real sealed record
+    isSandbox: true, // demo seed â€” simulated identity, NOT a real sealed record
     category: 'infrastructure',
     hostelOrLocation: 'Girls Hostel 1 - 1st Floor Corridor',
     description: 'Broken corridor window pane shattered by heavy monsoon gusts. Glass shards on walkway pose risk of foot injuries.',
@@ -411,7 +411,7 @@ export class FirestoreService {
    * FAIL-CLOSED: identity sealing happens ONLY here / in the controller, never
    * on the client. `encryptedUserRef` MUST already be the AES ciphertext of
    * the verified submitter uid produced by the backend with SAGE_MASTER_KEY.
-   * If it is missing we refuse to deposit — we never fabricate an anonymous
+   * If it is missing we refuse to deposit â€” we never fabricate an anonymous
    * pseudo-identity token, because anonymous-by-default submissions that are
    * immune to accountability are no longer permitted.
    */
@@ -426,7 +426,7 @@ export class FirestoreService {
     complaintId?: string;
   }): Promise<Complaint> {
     if (!data.encryptedUserRef) {
-      throw new Error('Sealing server unavailable — please retry.');
+      throw new Error('Sealing server unavailable â€” please retry.');
     }
 
     const complaintId = data.complaintId || `SAGE-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -573,11 +573,11 @@ export class FirestoreService {
   /**
    * 4.5 Fair-use dispute flagging.
    *
-   * An admin flags a complaint as "disputed — suspected false/malicious".
+   * An admin flags a complaint as "disputed â€” suspected false/malicious".
    * This writes `disputed: true` (+ written justification and the flagging
    * admin's id) onto the complaint AND commits an immutable statusUpdates
    * ledger entry with updatedBy. NOTE: this flag is NOT a pre-condition for
-   * identity reveal anymore — the Head Admin reveal flow is ungated.
+   * identity reveal anymore â€” the Head Admin reveal flow is ungated.
    */
   static async flagComplaintAsDisputed(
     complaintId: string,
@@ -632,7 +632,7 @@ export class FirestoreService {
    * 5. revealLogs Collection: Strictly for Head Admin to decrypt submitter
    * reference with immutable audit log.
    *
-   * Head Admin may reveal the submitter identity on any complaint at any time —
+   * Head Admin may reveal the submitter identity on any complaint at any time â€”
    * there is no "must be disputed first" pre-condition. The only requirement is
    * a written justification (min 10 chars) for the audit record. Null-complaints
    * return null for 404 handling.
@@ -759,7 +759,7 @@ export class FirestoreService {
           }
         });
       } catch (err: any) {
-        // Composite index or connectivity issue → fall back to an unfiltered scan
+        // Composite index or connectivity issue â†’ fall back to an unfiltered scan
         console.warn(`[Firestore escalation query (fallback to scan)] ${err?.message}`);
         try {
           const scanned = await this.getComplaints({ status: 'submitted' });
