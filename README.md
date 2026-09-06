@@ -440,6 +440,9 @@ works — no cross-origin calls, no proxy, no rebuild magic.
    # Start:   node backend/dist/server.js
    # Env:     NODE_ENV=production, SERVE_STATIC=true
    ```
+   The blueprint names the service `sage-grievance-backend` (the obvious
+   `sage.onrender.com` URL is already taken by an unrelated app), so the
+   service URL is **`https://sage-grievance-backend.onrender.com`**.
    The same build/start commands work on Railway, Fly.io, Heroku (`Procfile`
    provided), or any Node VPS.
 3. Visit the service URL and submit a grievance end-to-end. Done.
@@ -450,40 +453,35 @@ If you want to keep the frontend on Vercel / Netlify / GitHub Pages and run the
 backend separately:
 
 1. **Deploy the backend** to Render, Railway, Fly.io, or a VPS (same build/start
-   commands as Option A, but leave `SERVE_STATIC` unset). Confirm it is alive:
+   commands as Option A, but leave `SERVE_STATIC` unset). With the included
+   `render.yaml` (service name `sage-grievance-backend`), confirm it is alive:
    ```bash
-   curl https://<your-backend-url>/api/health   # → 200 JSON
+   curl https://sage-grievance-backend.onrender.com/api/health   # → 200 JSON
    ```
 2. **Rebuild the frontend pointing at the live backend.** The value must end
    with `/api` — the client appends endpoint paths directly:
    ```bash
    # PowerShell
-   $env:VITE_API_URL="https://<your-backend-url>/api"; npm run build
+   $env:VITE_API_URL="https://sage-grievance-backend.onrender.com/api"; npm run build
    # bash/zsh
-   VITE_API_URL="https://<your-backend-url>/api" npm run build
+   VITE_API_URL="https://sage-grievance-backend.onrender.com/api" npm run build
    ```
 3. Redeploy `dist/` to your static host.
-4. **No-rebuild alternative (Vercel / Netlify):** you can skip step 2 and proxy
-   `/api` through your static host instead. Both hosts forward custom headers
-   (`x-sage-role`, `x-sage-uid`, `Authorization`) that S.A.G.E. requires:
-   - **Vercel** — create `vercel.json`:
-     ```json
-     { "rewrites": [{ "source": "/api/:path*", "destination": "https://<your-backend-url>/api/:path*" }] }
-     ```
-   - **Netlify** — create `netlify.toml`:
-     ```toml
-     [[redirects]]
-       from = "/api/*"
-       to = "https://<your-backend-url>/api/:splat"
-       status = 200
-     ```
+4. **No-rebuild alternative (Vercel):** skip step 2 and proxy `/api` through
+   your static host instead. **A `vercel.json` doing this is already committed
+   in this repo** and points at `https://sage-grievance-backend.onrender.com`
+   — just redeploy the project from the Vercel dashboard. Vercel forwards the
+   custom headers (`x-sage-role`, `x-sage-uid`, `Authorization`) S.A.G.E.
+   requires, and API calls stay same-origin so there are no CORS issues. If
+   you ever change the backend URL, update `vercel.json` and push.
 
 ### Pre-flight checklist
 
-- [ ] `GET https://<backend>/api/health` returns 200.
+- [ ] `GET https://sage-grievance-backend.onrender.com/api/health` returns 200.
 - [ ] `SAGE_MASTER_KEY` is set — a missing key crashes the backend at startup (fail-closed, by design).
 - [ ] A Firestore service account is configured — otherwise data is in-memory only and lost on restart.
-- [ ] `VITE_API_URL` is `/api` (single-service) or `https://…/api` (split) at **build time**.
+- [ ] Frontend wiring: `vercel.json` rewrite (already committed) **or**
+      `VITE_API_URL=https://sage-grievance-backend.onrender.com/api` at **build time**.
 
 ---
 ## 🤝 Contributing

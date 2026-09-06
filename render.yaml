@@ -11,7 +11,10 @@
 # loses all data on restart — never use that for real student grievances.
 services:
   - type: web
-    name: sage
+    # "sage" is taken by an unrelated app (https://sage.onrender.com), so this
+    # service registers https://sage-grievance-backend.onrender.com. Keep this
+    # name in sync with the Vercel rewrite destination (vercel.json).
+    name: sage-grievance-backend
     runtime: node
     plan: free
     buildCommand: npm ci && npm run build && cd backend && npm install && npm run build
