@@ -422,66 +422,80 @@ curl -X POST http://localhost:5001/predict-urgency \
 > process, so every `/api` call fails (see the fail-closed guard in
 > `src/services/api.ts`). The fix is to deploy the Express Sealing Server too.
 
-### Option A — Single service (recommended, simplest)
+### Option A — Vercel serverless (recommended, single project)
 
-The backend can serve the built React app itself (`SERVE_STATIC=true`). The UI
-and `/api` then share **one origin**, so the default `VITE_API_URL=/api` just
-works — no cross-origin calls, no proxy, no rebuild magic.
+The repo ships with an `api/index.ts` serverless entry point that wraps the
+Express app with `serverless-http`, plus a `vercel.json` that routes every
+`/api/*` request to that function while serving the built React app. One Vercel
+project = frontend **and** backend on the same origin — free tier included, no
+credit card required.
 
-1. **Set secrets in your host's dashboard** (the app fails closed without them):
+1. **Set secrets** in *Project Settings → Environment Variables* (the app fails
+   closed without them):
    - `SAGE_MASTER_KEY` — required; the backend refuses to start without it.
    - `FIREBASE_SERVICE_ACCOUNT_KEY` + `FIREBASE_PROJECT_ID` — required for live
      Firestore/Auth; without them the backend runs an in-memory sandbox that
      **loses all data on restart**.
-2. **Deploy with the included `render.yaml`** (Render, free tier supported):
+2. **Push the repo to GitHub**, then in the Vercel dashboard choose
+   *Add New Project → Import* and select the repository. Vercel auto-detects
+   Vite for the frontend and the `api/` directory for functions.
+3. Click **Deploy**, then verify the API:
    ```bash
-   # Inside your repo, push to GitHub and "New Web Service" → "Blueprint".
-   # Build:   npm ci && npm run build && cd backend && npm install && npm run build
-   # Start:   node backend/dist/server.js
-   # Env:     NODE_ENV=production, SERVE_STATIC=true
+   curl https://<your-project>.vercel.app/api/health   # → 200 JSON
    ```
-   The blueprint names the service `sage-grievance-backend` (the obvious
-   `sage.onrender.com` URL is already taken by an unrelated app), so the
-   service URL is **`https://sage-grievance-backend.onrender.com`**.
-   The same build/start commands work on Railway, Fly.io, Heroku (`Procfile`
-   provided), or any Node VPS.
-3. Visit the service URL and submit a grievance end-to-end. Done.
+4. Open the site and submit a grievance end-to-end. Done.
 
-### Option B — Static frontend + separate API (keep your current host)
+**How it works:** `vercel.json` rewrites `/api/*` → `/api/index`, and
+`api/index.ts` imports the Express app from `backend/src/server.ts` via
+`serverless-http`. The direct-run guard in `server.ts` means `app.listen()`
+only fires when the file is executed directly (e.g. `node backend/dist/server.js`);
+under the Vercel runtime the function is imported, so no port is ever bound.
 
-If you want to keep the frontend on Vercel / Netlify / GitHub Pages and run the
-backend separately:
+**Limitations:** the Vercel Hobby (free) tier caps request bodies at **~4.5 MB**,
+so very large video evidence uploads may fail. Upgrade to Pro, or store large
+media in Firebase Storage and reference it by URL, if this is a concern.
+
+### Option B — Render / Railway / Fly.io (long-running Node)
+
+The included `render.yaml` blueprint still works on container PaaS hosts:
+
+```bash
+# Build:   npm ci && npm run build && cd backend && npm install && npm run build
+# Start:   node backend/dist/server.js
+# Env:     NODE_ENV=production, SERVE_STATIC=true
+```
+
+> **Heads up:** Render's free tier requires a credit card on file — without one,
+> new services are quickly suspended and the API returns a 503 until a card is
+> added. If you hit that, prefer Option A. The same build/start commands work on
+> Railway, Fly.io, Heroku (`Procfile` provided), or any Node VPS.
+
+### Option C — Static frontend + separate API (keep your current host)
+
+If you keep the frontend on a static host and run the backend separately:
 
 1. **Deploy the backend** to Render, Railway, Fly.io, or a VPS (same build/start
-   commands as Option A, but leave `SERVE_STATIC` unset). With the included
-   `render.yaml` (service name `sage-grievance-backend`), confirm it is alive:
+   commands as Option B, but leave `SERVE_STATIC` unset). Confirm it is alive:
    ```bash
-   curl https://sage-grievance-backend.onrender.com/api/health   # → 200 JSON
+   curl https://<your-backend-host>/api/health   # → 200 JSON
    ```
 2. **Rebuild the frontend pointing at the live backend.** The value must end
    with `/api` — the client appends endpoint paths directly:
    ```bash
    # PowerShell
-   $env:VITE_API_URL="https://sage-grievance-backend.onrender.com/api"; npm run build
+   $env:VITE_API_URL="https://<your-backend-host>/api"; npm run build
    # bash/zsh
-   VITE_API_URL="https://sage-grievance-backend.onrender.com/api" npm run build
+   VITE_API_URL="https://<your-backend-host>/api" npm run build
    ```
 3. Redeploy `dist/` to your static host.
-4. **No-rebuild alternative (Vercel):** skip step 2 and proxy `/api` through
-   your static host instead. **A `vercel.json` doing this is already committed
-   in this repo** and points at `https://sage-grievance-backend.onrender.com`
-   — just redeploy the project from the Vercel dashboard. Vercel forwards the
-   custom headers (`x-sage-role`, `x-sage-uid`, `Authorization`) S.A.G.E.
-   requires, and API calls stay same-origin so there are no CORS issues. If
-   you ever change the backend URL, update `vercel.json` and push.
 
 ### Pre-flight checklist
 
-- [ ] `GET https://sage-grievance-backend.onrender.com/api/health` returns 200.
+- [ ] `GET https://<your-host>/api/health` returns `200` with `"status": "healthy"`.
 - [ ] `SAGE_MASTER_KEY` is set — a missing key crashes the backend at startup (fail-closed, by design).
 - [ ] A Firestore service account is configured — otherwise data is in-memory only and lost on restart.
-- [ ] Frontend wiring: `vercel.json` rewrite (already committed) **or**
-      `VITE_API_URL=https://sage-grievance-backend.onrender.com/api` at **build time**.
+- [ ] Frontend wiring: `vercel.json` rewrite (works out of the box on Vercel) **or**
+      `VITE_API_URL=https://<your-backend-host>/api` at **build time**.
 
 ---
 ## 🤝 Contributing

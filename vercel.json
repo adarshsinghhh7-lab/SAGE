@@ -1,9 +1,1 @@
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://sage-grievance-backend.onrender.com/api/:path*"
-    }
-  ]
-}
+{"$schema":"https://openapi.vercel.sh/vercel.json","rewrites":[{"source":"/api/:path*","destination":"/api/index"},{"source":"/((?!api).*)","destination":"/index.html"}]}

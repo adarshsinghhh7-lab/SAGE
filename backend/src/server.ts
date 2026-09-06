@@ -2,6 +2,7 @@
 import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath, pathToFileURL } from 'url';
 import dotenv from 'dotenv';
 import { authenticate } from './middleware/authMiddleware.js';
 import complaintRoutes from './routes/complaintRoutes.js';
@@ -106,14 +107,25 @@ if (process.env.NODE_ENV !== 'test') {
   startHourlyEscalationScheduler();
 }
 
-if (process.env.NODE_ENV !== 'test') {
+// Direct-run guard: when this module is the entry point (node backend/dist/server.js
+// or tsx backend/src/server.ts) we start the HTTP listener. When it is imported
+// as an app factory (e.g. by the Vercel serverless wrapper in api/index.ts), we
+// only export the app and let the platform handle invocation — so a serverless
+// function never tries to bind a port.
+const isDirectRun =
+  typeof process !== 'undefined' &&
+  typeof process.argv[1] !== 'undefined' &&
+  (typeof import.meta.url === 'undefined' ||
+    import.meta.url === pathToFileURL(process.argv[1]).href);
+
+if (isDirectRun && process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     console.log(`=======================================================`);
     console.log(`  S.A.G.E. Backend Server running on port ${PORT}`);
     console.log(`  Health Check : http://localhost:${PORT}/api/health`);
     console.log(`  Firebase     : ${initMessage}`);
     const isProd = process.env.NODE_ENV === 'production';
-    console.log(`  Sealing Key  : ${isProd ? 'SAGE_MASTER_KEY (server-only, production)' : `DEV-ONLY fallback (${String(SAGE_MASTER_KEY).slice(0, 8)}â€¦) â€” set SAGE_MASTER_KEY for real deployments`}`);
+    console.log(`  Sealing Key  : ${isProd ? 'SAGE_MASTER_KEY (server-only, production)' : `DEV-ONLY fallback (${String(SAGE_MASTER_KEY).slice(0, 8)}…) — set SAGE_MASTER_KEY for real deployments`}`);
     console.log(`=======================================================`);
   });
 }
