@@ -33,6 +33,18 @@ function MainApp() {
   const [selectedComplaintId, setSelectedComplaintId] = useState<string | null>(null);
   const [routeComplaintId, setRouteComplaintId] = useState<string | null>(null);
 
+  // Admins never see student-facing flows: force them out of the
+  // "How It Works" landing page and the lodge-grievance form.
+  useEffect(() => {
+    if (isAdminRole && (currentView === 'landing' || currentView === 'submit' || currentView === 'confirmation')) {
+      setCurrentView('admin');
+      if (window.location.hash.startsWith('#/complaint/')) {
+        window.location.hash = '';
+        setRouteComplaintId(null);
+      }
+    }
+  }, [isAdminRole, currentView]);
+
   // Modal for zoomed image inspection
   const [activeImageModal, setActiveImageModal] = useState<{
     isOpen: boolean;
@@ -384,8 +396,10 @@ function MainApp() {
             <strong className="text-bronze-soft">S.A.G.E.</strong> — Student Anonymous Grievance & Escalation System
           </p>
           <div className="flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest text-surface/60 flex-wrap justify-center">
-            <button type="button" onClick={() => { setCurrentView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-bronze-soft underline cursor-pointer">How It Works & FAQ</button>
-            <span>·</span>
+            {!isAdminRole && (
+              <button type="button" onClick={() => { setCurrentView('landing'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-bronze-soft underline cursor-pointer">How It Works & FAQ</button>
+            )}
+            {!isAdminRole && <span>·</span>}
             <button type="button" onClick={() => { setCurrentView('admin'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-bronze-soft underline cursor-pointer">Administrative Portal</button>
             <span>·</span>
             <button type="button" onClick={handleResetToDefaultSeed} className="hover:text-bronze-soft underline cursor-pointer">Reset Seed Ledger</button>

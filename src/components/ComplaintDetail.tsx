@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Copy,
   Image as ImageIcon,
+  Video as VideoIcon,
   ExternalLink,
   ShieldAlert,
 } from 'lucide-react';
@@ -51,6 +52,7 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
   const catColor = getCategoryTabColor(complaint.category);
   const normStatus = (complaint.status || '').toLowerCase().replace(' ', '_');
   const isHeadAdmin = activeRole === 'head_admin';
+  const isAdminRole = activeRole === 'admin' || activeRole === 'head_admin';
   const isResolved = normStatus === 'resolved';
 
   const statusColor = isResolved ? '#5F7A66' : normStatus === 'under_review' ? '#AD8B5B' : '#7D868F';
@@ -161,6 +163,25 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
               </div>
             </div>
           )}
+
+          {/* Event evidence video */}
+          {complaint.videoUrl && (
+            <div className="mt-7">
+              <h2 className="s-mono-micro mb-2">Attached Video Evidence</h2>
+              <div className="group bg-moss border border-moss rounded-xl p-3 overflow-hidden max-w-lg shadow-soft">
+                <video
+                  src={complaint.videoUrl}
+                  controls
+                  preload="metadata"
+                  className="max-h-72 w-full object-contain mx-auto rounded-lg group-hover:opacity-90 transition-opacity"
+                />
+                <div className="mt-2.5 text-center text-xs font-mono text-[#EDE7D8] flex items-center justify-center gap-1.5">
+                  <VideoIcon className="w-3.5 h-3.5 text-bronze" />
+                  <span>Video evidence · use the player to review the clip</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Status timeline */}
@@ -232,7 +253,9 @@ export const ComplaintDetail: React.FC<ComplaintDetailProps> = ({
 
           <div className="flex items-center gap-2.5">
             <button type="button" onClick={onBackToFeed} className="s-btn s-btn-ghost font-mono text-xs font-bold uppercase tracking-wider cursor-pointer">Back to Ledger</button>
-            <button type="button" onClick={onGoToSubmit} className="s-btn s-btn-ghost font-mono text-xs font-bold uppercase tracking-wider cursor-pointer">Lodge Another</button>
+            {!isAdminRole && (
+              <button type="button" onClick={onGoToSubmit} className="s-btn s-btn-ghost font-mono text-xs font-bold uppercase tracking-wider cursor-pointer">Lodge Another</button>
+            )}
           </div>
         </div>
       </div>

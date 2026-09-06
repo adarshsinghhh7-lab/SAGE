@@ -39,16 +39,38 @@ export class AnalyticsController {
         let hostelKey = 'Campus General';
         const loc = c.location.toLowerCase();
 
-        if (loc.includes('hostel block a') || loc.includes('block a')) {
-          hostelKey = 'Block A';
-        } else if (loc.includes('hostel block b') || loc.includes('block b')) {
-          hostelKey = 'Block B';
-        } else if (loc.includes('hostel block c') || loc.includes('block c')) {
-          hostelKey = 'Block C';
-        } else if (loc.includes('girls hostel 1') || loc.includes('gh1')) {
-          hostelKey = 'Girls H-1';
-        } else if (loc.includes('girls hostel 2') || loc.includes('gh2')) {
-          hostelKey = 'Girls H-2';
+        // Official hostels (checked before loose 'block' matches so a bhavan
+        // name never gets mis-bucketed as a campus building).
+        if (loc.includes('vivekanand bhavan')) {
+          hostelKey = 'Vivekanand Bhavan';
+        } else if (loc.includes('dayanand bhavan')) {
+          hostelKey = 'Dayanand Bhavan';
+        } else if (loc.includes('chanakya bhavan')) {
+          hostelKey = 'Chanakya Bhavan';
+        } else if (loc.includes('aurobindo bhavan')) {
+          hostelKey = 'Aurobindo Bhavan';
+        } else if (loc.includes('ramakrishna bhavan')) {
+          hostelKey = 'Ramakrishna Bhavan';
+        } else if (loc.includes('fr building')) {
+          hostelKey = 'FR Building';
+        } else if (loc.includes('kasturba bhavan')) {
+          hostelKey = 'Kasturba Bhavan';
+        } else if (loc.includes('sarojini bhavan')) {
+          hostelKey = 'Sarojini Bhavan';
+        }
+        // Campus academic / administrative buildings
+        else if (loc.includes('aryabhatta block')) {
+          hostelKey = 'Aryabhatta Block';
+        } else if (loc.includes('ramanujan block')) {
+          hostelKey = 'Ramanujan Block';
+        } else if (loc.includes('bhabha block')) {
+          hostelKey = 'Bhabha Block';
+        } else if (loc.includes('raman block')) {
+          hostelKey = 'Raman Block';
+        } else if (loc.includes('vishwakarma block')) {
+          hostelKey = 'Vishwakarma Block';
+        } else if (loc.includes('business block')) {
+          hostelKey = 'Business Block';
         } else if (loc.includes('dining') || loc.includes('mess')) {
           hostelKey = 'Mess Hall';
         } else if (loc.includes('library')) {
@@ -57,6 +79,18 @@ export class AnalyticsController {
           hostelKey = 'Academic';
         } else if (loc.includes('gate') || loc.includes('pathway')) {
           hostelKey = 'Gate / Grounds';
+        }
+        // Legacy demo-seed hostel labels (kept for backwards compatibility)
+        else if (loc.includes('hostel block a')) {
+          hostelKey = 'Block A';
+        } else if (loc.includes('hostel block b')) {
+          hostelKey = 'Block B';
+        } else if (loc.includes('hostel block c')) {
+          hostelKey = 'Block C';
+        } else if (loc.includes('girls hostel 1') || loc.includes('gh1')) {
+          hostelKey = 'Girls H-1';
+        } else if (loc.includes('girls hostel 2') || loc.includes('gh2')) {
+          hostelKey = 'Girls H-2';
         } else {
           hostelKey = c.location.split('(')[0].split('-')[0].trim().slice(0, 14);
         }

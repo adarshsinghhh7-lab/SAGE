@@ -48,6 +48,7 @@ export interface Complaint {
   urgencyScore: number; // default 0, evaluated by ML microservice (0.0 to 1.0)
   highPriority?: boolean; // set to true by the auto-escalation engine (upvote-based)
   photoUrl?: string; // optional
+  videoUrl?: string; // optional evidence video clip
   createdAt: string; // ISO date timestamp string
   resolutionNotes?: string;
   resolvedAt?: string;

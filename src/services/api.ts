@@ -31,7 +31,11 @@ import {
 } from '../utils/crypto';
 import { INITIAL_COMPLAINTS } from '../data/initialComplaints';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Same-origin by default: the Vite dev server proxies /api → backend :5000
+// (see vite.config.ts), which works from localhost AND from forwarded preview
+// URLs. Set VITE_API_URL (e.g. https://api.example.com/api) for standalone
+// production deployments.
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 const ML_URL = import.meta.env.VITE_ML_URL || 'http://localhost:5001/predict-urgency';
 const STORAGE_KEY = 'sage_student_grievances_v2';
 const UPVOTES_STORAGE_KEY_PREFIX = 'sage_user_upvotes_';
@@ -92,6 +96,7 @@ export function normalizeComplaintData(raw: any, hasUpvoted?: boolean): Complain
     createdAt: raw.createdAt || new Date().toISOString(),
     resolutionNotes: raw.resolutionNotes,
     resolvedAt: raw.resolvedAt,
+    videoUrl: raw.videoUrl,
     disputed: raw.disputed === true,
     disputeReason: raw.disputeReason,
     disputedAt: raw.disputedAt,
@@ -133,8 +138,14 @@ export class ApiService {
     const res = await fetch(url, { ...options, headers });
 
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({ error: res.statusText }));
-      throw new Error(errorData.error || errorData.message || `HTTP error ${res.status}`);
+      const errorData = await res.json().catch(() => null);
+      if (errorData && (errorData.error || errorData.message)) {
+        throw new Error(errorData.error || errorData.message || `HTTP error ${res.status}`);
+      }
+      // Non-JSON error body — most commonly the Vite dev proxy returning 500
+      // because the backend process is down. Use phrasing downstream callers
+      // already understand so it maps to an actionable message.
+      throw new Error('Sealing server unavailable');
     }
 
     return res.json() as Promise<T>;
@@ -494,6 +505,7 @@ export class ApiService {
       hostelOrLocation?: string;
       location?: string;
       photoUrl?: string;
+      videoUrl?: string;
     },
     activeRole: UserRole = 'student',
     userId?: string,
@@ -516,6 +528,7 @@ export class ApiService {
             location: effectiveLoc.trim(),
             description: payload.description.trim(),
             photoUrl: payload.photoUrl,
+            videoUrl: payload.videoUrl,
           }),
         },
         activeRole,
@@ -527,10 +540,26 @@ export class ApiService {
       }
       created = normalizeComplaintData(response.data, true);
     } catch (err: any) {
+      const raw = err?.message || '';
+      // 1) Oversized submissions get their own actionable hint (server cap is
+      //    35MB for the JSON body — an ~25MB video roughly fills it).
+      if (/request entity too large|payload too large|\b413\b/i.test(raw)) {
+        throw new Error(
+          'That submission is too large for the server (35MB body cap). Keep video evidence under 25MB and photos under 5MB, then retry.'
+        );
+      }
+      // 2) Browsers report "Failed to fetch" / "NetworkError" / "Load failed"
+      //    when a request never receives an HTTP response, and the dev proxy
+      //    returns a non-JSON 500 when the backend is down. Either way the
+      //    Sealing Server is unreachable — say so plainly instead of showing
+      //    the cryptic raw fetch error.
+      const isBackendUnreachable =
+        err instanceof TypeError ||
+        /failed to fetch|networkerror|load failed|network request failed|fetch failed|err_|sealing server unavailable/i.test(raw);
       throw new Error(
-        err?.message?.includes('Sealing server unavailable')
-          ? 'Sealing server unavailable — please retry.'
-          : err?.message || 'Sealing server unavailable — please retry.'
+        isBackendUnreachable
+          ? `Cannot reach the S.A.G.E. Sealing Server (backend), which must be running to seal and store your complaint. Start it in a second terminal from the project root with: npm run dev:backend — then submit again. (API URL: ${API_BASE_URL})`
+          : raw
       );
     }
 

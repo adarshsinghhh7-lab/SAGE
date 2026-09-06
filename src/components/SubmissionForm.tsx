@@ -8,13 +8,16 @@ import {
   AlertCircle,
   CheckCircle2,
   Image as ImageIcon,
+  Video as VideoIcon,
   Lock,
   ArrowRight,
   Info
 } from 'lucide-react';
 import { Complaint, ComplaintCategory } from '../types';
+import { CAMPUS_BUILDINGS, HOSTELS, OTHER_LOCATION } from '../constants/locations';
 import { ApiService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { isFirebaseConfigured } from '../firebase/config';
 
 interface SubmissionFormProps {
   onSubmitSuccess: (newComplaint: Complaint) => void;
@@ -30,21 +33,35 @@ const CATEGORIES: ComplaintCategory[] = [
   'Other'
 ];
 
-const PRESET_LOCATIONS = [
-  'Hostel Block A',
-  'Hostel Block B',
-  'Hostel Block C',
-  'Girls Hostel 1',
-  'Girls Hostel 2',
-  'Central Mess Hall',
-  'Central Library',
-  'Academic Complex Block 1',
-  'Academic Complex Block 2',
-  'Academic Complex Block 4',
-  'Campus Sports Complex',
-  'East Gate Campus Area',
-  'Other / Custom Location'
+// Quick-select chips shown under the location dropdown (subset of the presets).
+const QUICK_LOCATIONS = [
+  'Aryabhatta Block',
+  'Ramanujan Block',
+  'Business Block',
+  'Vivekanand Bhavan',
+  'Chanakya Bhavan',
+  'Kasturba Bhavan',
 ];
+
+/**
+ * Stable sandbox submitter identity.
+ *
+ * When the app runs WITHOUT real Firebase client credentials (sandbox/dev mode),
+ * there are no verified accounts to seal server-side. We mint one persistent
+ * local demo uid per browser and send it through the `x-sage-uid` header so the
+ * backend's dev-mode authentication treats it as a verified developer identity
+ * and seals it exactly like a real account. A real (non-anonymous) Firebase
+ * sign-in always takes precedence when it exists.
+ */
+const SANDBOX_UID_KEY = 'sage_sandbox_submitter_uid';
+function getSandboxUid(): string {
+  let uid = localStorage.getItem(SANDBOX_UID_KEY);
+  if (!uid) {
+    uid = `sandbox_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+    localStorage.setItem(SANDBOX_UID_KEY, uid);
+  }
+  return uid;
+}
 
 // Staggered entrance for the form fields (top to bottom). Uses a calm easeOut
 // so the form eases into view rather than snapping in or bouncing.
@@ -71,18 +88,23 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
   const { activeRole, user, token, openAuthModal } = useAuth();
   const prefersReduced = useReducedMotion();
   const [category, setCategory] = useState<ComplaintCategory>('Infrastructure');
-  const [locationPreset, setLocationPreset] = useState<string>('Hostel Block A');
+  const [locationPreset, setLocationPreset] = useState<string>('Aryabhatta Block');
   const [customLocation, setCustomLocation] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [photoDataUrl, setPhotoDataUrl] = useState<string | undefined>(undefined);
   const [photoName, setPhotoName] = useState<string>('');
   const [photoSizeMb, setPhotoSizeMb] = useState<string>('');
+  const [videoDataUrl, setVideoDataUrl] = useState<string | undefined>(undefined);
+  const [videoName, setVideoName] = useState<string>('');
+  const [videoSizeMb, setVideoSizeMb] = useState<string>('');
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [isVideoDragging, setIsVideoDragging] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoFileInputRef = useRef<HTMLInputElement>(null);
 
   // Validate and handle photo selection (Max 5MB, JPG/PNG only)
   const handleFile = (file: File | null) => {
@@ -143,7 +165,66 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
     }
   };
 
-  const effectiveLocation = locationPreset === 'Other / Custom Location'
+  // Validate and handle video selection (Max 25MB, MP4/WebM/MOV only)
+  const handleVideoFile = (file: File | null) => {
+    if (!file) return;
+
+    const validMimeTypes = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-matroska'];
+    const lowerName = file.name.toLowerCase();
+    const isValidExtension = lowerName.endsWith('.mp4') || lowerName.endsWith('.webm') || lowerName.endsWith('.mov') || lowerName.endsWith('.mkv');
+
+    if (!validMimeTypes.includes(file.type) && !isValidExtension) {
+      setErrorMsg('Invalid video format. Please upload MP4, WebM, or MOV clips only.');
+      return;
+    }
+
+    const maxSizeBytes = 25 * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      setErrorMsg('Video exceeds 25MB size limit. Please upload a shorter clip.');
+      return;
+    }
+
+    setErrorMsg('');
+    setVideoName(file.name);
+    setVideoSizeMb((file.size / (1024 * 1024)).toFixed(2) + ' MB');
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        setVideoDataUrl(e.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleVideoDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsVideoDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleVideoFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleVideoDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsVideoDragging(true);
+  };
+
+  const handleVideoDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsVideoDragging(false);
+  };
+
+  const removeVideo = () => {
+    setVideoDataUrl(undefined);
+    setVideoName('');
+    setVideoSizeMb('');
+    if (videoFileInputRef.current) {
+      videoFileInputRef.current.value = '';
+    }
+  };
+
+  const effectiveLocation = locationPreset === OTHER_LOCATION
     ? customLocation.trim()
     : (customLocation.trim() ? `${locationPreset} - ${customLocation.trim()}` : locationPreset);
 
@@ -176,14 +257,23 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
 
     // Sealed anonymous submission: the backend refuses to seal anonymous or
     // missing uids. Only a real (non-anonymous) Firebase sign-in can be sealed
-    // server-side under SAGE_MASTER_KEY, so we gate before any network call.
-    if (!user || user.isAnonymous || !user.uid) {
+    // server-side under SAGE_MASTER_KEY. When the Firebase client is NOT
+    // configured (sandbox/dev mode) there are no real accounts at all, so the
+    // backend's dev-mode authentication seals our persistent local demo uid —
+    // keeping the ledger deposit working without real credentials.
+    const isVerifiedUser = !!user && !user.isAnonymous && !!user.uid;
+
+    if (!isFirebaseConfigured) {
+      // Sandbox mode: deposit is sealed with the persistent local demo identity.
+    } else if (!isVerifiedUser) {
       setErrorMsg(
         'A verified student sign-in is required - anonymous demo sessions cannot be sealed. Please sign in to continue.'
       );
       openAuthModal();
       return;
     }
+
+    const submitterUid = isVerifiedUser ? user.uid : getSandboxUid();
 
     setIsSubmitting(true);
 
@@ -196,10 +286,11 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
           location: effectiveLocation,
           description: description.trim(),
           photoUrl: photoDataUrl,
+          videoUrl: videoDataUrl,
         },
         activeRole,
-        user.uid,
-        token
+        submitterUid,
+        isVerifiedUser ? token : null
       );
 
       setIsSubmitting(false);
@@ -400,11 +491,23 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                   onChange={(e) => setLocationPreset(e.target.value)}
                   className="w-full bg-surface border border-line-strong rounded-lg p-3 text-xs font-mono text-ink focus:outline-none focus:border-bronze focus:ring-2 focus:ring-bronze/20 cursor-pointer shadow-inset-soft"
                 >
-                  {PRESET_LOCATIONS.map((loc) => (
-                    <option key={loc} value={loc}>
-                      {loc}
-                    </option>
-                  ))}
+                  <optgroup label="Campus Buildings">
+                    {CAMPUS_BUILDINGS.map((loc) => (
+                      <option key={loc} value={loc}>
+                        {loc}
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Hostels">
+                    {HOSTELS.map((loc) => (
+                      <option key={loc} value={loc}>
+                        {loc}
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Other">
+                    <option value={OTHER_LOCATION}>{OTHER_LOCATION}</option>
+                  </optgroup>
                 </select>
               </div>
 
@@ -415,7 +518,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                   value={customLocation}
                   onChange={(e) => setCustomLocation(e.target.value)}
                   placeholder={
-                    locationPreset === 'Other / Custom Location'
+                    locationPreset === OTHER_LOCATION
                       ? 'e.g. Mechanical Lab 3, Library 2nd Floor'
                       : 'Wing, floor, or room (e.g. Room 302, 2nd Floor)'
                   }
@@ -427,7 +530,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
             {/* Quick selector buttons */}
             <div className="flex flex-wrap items-center gap-1.5 pt-1">
               <span className="text-[10px] font-mono uppercase text-ink-faint mr-1">Quick Select:</span>
-              {['Hostel Block A', 'Hostel Block B', 'Girls Hostel 1', 'Central Mess Hall', 'Central Library'].map((loc) => (
+              {QUICK_LOCATIONS.map((loc) => (
                 <button
                   key={loc}
                   type="button"
@@ -516,6 +619,86 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                   onClick={removePhoto}
                   className="p-1 text-ink hover:text-bronze-deep cursor-pointer rounded"
                   title="Remove attachment"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </motion.div>
+
+          {/* Field 5: Optional Video Upload (Max 25MB, MP4/WebM/MOV only) */}
+          <motion.div variants={formFieldVariants} id="field-video" className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-mono font-bold uppercase tracking-wider text-ink">
+                5. Video Evidence <span className="text-[10px] font-normal text-ink-faint">(Optional — Max 25MB, MP4/WebM/MOV)</span>
+              </label>
+              {videoDataUrl && (
+                <button
+                  type="button"
+                  onClick={removeVideo}
+                  className="text-xs font-mono font-bold text-bronze-deep hover:underline cursor-pointer"
+                >
+                  [Remove Video]
+                </button>
+              )}
+            </div>
+
+            <input
+              ref={videoFileInputRef}
+              type="file"
+              id="video-file-input"
+              accept=".mp4,.webm,.mov,.mkv,video/mp4,video/webm,video/quicktime"
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  handleVideoFile(e.target.files[0]);
+                }
+              }}
+            />
+
+            {!videoDataUrl ? (
+              <div
+                id="video-dropzone"
+                onDrop={handleVideoDrop}
+                onDragOver={handleVideoDragOver}
+                onDragLeave={handleVideoDragLeave}
+                onClick={() => videoFileInputRef.current?.click()}
+                className={`border border-dashed border-line-strong rounded-xl p-6 text-center cursor-pointer transition-all ${
+                  isVideoDragging ? 'bg-bronze-soft border-bronze' : 'bg-surface hover:bg-surface-soft hover:border-bronze/50'
+                }`}
+              >
+                <div className="w-8 h-8 bg-ink text-surface flex items-center justify-center mx-auto mb-2 rounded-lg">
+                  <VideoIcon className="w-4 h-4" />
+                </div>
+                <p className="text-xs font-mono font-bold text-ink uppercase tracking-wider">
+                  Select or Drop Video Attachment
+                </p>
+                <p className="text-[10px] font-mono text-ink-faint mt-0.5">
+                  MP4, WebM or MOV · Maximum size 25MB · shorter clips recommended
+                </p>
+              </div>
+            ) : (
+              <div className="border border-line rounded-lg bg-surface-soft/70 p-3 flex items-center gap-4 shadow-soft">
+                <video
+                  src={videoDataUrl}
+                  controls
+                  preload="metadata"
+                  className="w-20 h-14 object-cover rounded-lg border border-line shrink-0 bg-surface"
+                />
+                <div className="flex-1 min-w-0 font-mono text-xs">
+                  <div className="flex items-center gap-1.5 font-bold text-ink truncate">
+                    <VideoIcon className="w-3.5 h-3.5 text-ink" />
+                    <span className="truncate">{videoName || 'attachment.mp4'}</span>
+                  </div>
+                  <p className="text-[10px] text-ink-faint mt-0.5">
+                    {videoSizeMb} · <span className="text-accent-deep font-bold">READY TO SUBMIT</span>
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={removeVideo}
+                  className="p-1 text-ink hover:text-bronze-deep cursor-pointer rounded"
+                  title="Remove video"
                 >
                   <X className="w-4 h-4" />
                 </button>

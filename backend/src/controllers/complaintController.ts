@@ -78,6 +78,7 @@ export class ComplaintController {
         hostelOrLocation, 
         description, 
         photoUrl, 
+        videoUrl,
         complaintId,
         id
         // NOTE: `encryptedUserRef` is deliberately NOT accepted from the body.
@@ -182,6 +183,7 @@ export class ComplaintController {
         hostelOrLocation: String(effectiveLoc).trim(),
         description: descTrimmed,
         photoUrl: photoUrl ? String(photoUrl) : undefined,
+        videoUrl: videoUrl ? String(videoUrl) : undefined,
         urgencyScore: mlPrediction.urgency_score,
         encryptedUserRef: sealedUserRef,
       });

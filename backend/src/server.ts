@@ -26,8 +26,11 @@ app.use(
   })
 );
 
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Body limit must accommodate the largest allowed evidence upload: a 25MB
+// video encoded as a base64 data-URI inflates to ~33MB of JSON, so we allow
+// 35MB (was 10mb — large video submissions were being rejected with 413).
+app.use(express.json({ limit: '35mb' }));
+app.use(express.urlencoded({ extended: true, limit: '35mb' }));
 
 // Global authentication & role extraction middleware
 app.use(authenticate);

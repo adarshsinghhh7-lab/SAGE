@@ -4,6 +4,7 @@ import {
   MapPin,
   Clock,
   Image as ImageIcon,
+  Video as VideoIcon,
   ExternalLink,
   Link2,
   Loader2,
@@ -224,6 +225,19 @@ export const PublicComplaintPage: React.FC<PublicComplaintPageProps> = ({
               <img src={complaint.photoUrl} alt="Complaint Evidence" className="max-h-72 w-full object-contain mx-auto group-hover:opacity-90 transition-opacity" referrerPolicy="no-referrer" />
               <div className="mt-2 text-center text-xs font-mono text-surface flex items-center justify-center gap-1.5">
                 <ImageIcon className="w-3.5 h-3.5 text-bronze" /><span>Click to inspect high-resolution evidence</span><ExternalLink className="w-3 h-3 ml-0.5 opacity-70" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Evidence Video */}
+        {complaint.videoUrl && (
+          <div className="mb-8">
+            <h2 className="s-eyebrow mb-2">Attached Video Evidence</h2>
+            <div className="group bg-ink border border-line-strong rounded-xl p-3 overflow-hidden max-w-lg shadow-lift">
+              <video src={complaint.videoUrl} controls preload="metadata" className="max-h-72 w-full object-contain mx-auto group-hover:opacity-90 transition-opacity" />
+              <div className="mt-2 text-center text-xs font-mono text-surface flex items-center justify-center gap-1.5">
+                <VideoIcon className="w-3.5 h-3.5 text-bronze" /><span>Video evidence · play to review the clip</span>
               </div>
             </div>
           </div>

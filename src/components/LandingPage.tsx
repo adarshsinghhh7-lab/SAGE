@@ -6,8 +6,6 @@ import {
   PlusCircle,
   LayoutList,
   CheckCircle2,
-  FileText,
-  Vote,
   ChevronDown,
   Shield,
   Activity
@@ -16,7 +14,9 @@ import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform } fr
 import { PageView } from '../types';
 import { paperSpring, microTap, instantFade } from '../motion/tokens';
 import { useCanHover } from '../hooks/useMediaQuery';
+import { useAuth } from '../context/AuthContext';
 import { SageLogo } from './SageLogo';
+import { AnonymityPipeline, LifecycleFlow } from './LandingGraphics';
 
 interface LandingPageProps {
   onNavigate: (view: PageView) => void;
@@ -31,6 +31,8 @@ interface FAQItem {
 export const LandingPage: React.FC<LandingPageProps> = ({
   onNavigate,
 }) => {
+  const { activeRole } = useAuth();
+  const isAdminRole = activeRole === 'admin' || activeRole === 'head_admin';
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const prefersReduced = useReducedMotion();
   const canHover = useCanHover();
@@ -91,7 +93,38 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             transition={prefersReduced ? instantFade : paperSpring}
             className="flex justify-center mb-8"
           >
-            <SageLogo size={72} className="drop-shadow-md animate-float-slow" />
+            <div className="relative w-[148px] h-[148px] sm:w-[164px] sm:h-[164px] flex items-center justify-center">
+              {/* Orbit ring A — slow clockwise rotation with a bronze berry satellite */}
+              {!prefersReduced && (
+                <motion.div
+                  className="absolute inset-0"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 90, ease: 'linear', repeat: Infinity }}
+                  aria-hidden="true"
+                >
+                  <svg viewBox="0 0 160 160" className="w-full h-full">
+                    <circle cx="80" cy="80" r="74" stroke="#AD8B5B" strokeOpacity="0.45" strokeWidth="1.2" strokeDasharray="2 10" fill="none" />
+                    <circle cx="80" cy="8" r="3.2" fill="#AD8B5B" />
+                    <circle cx="80" cy="152" r="2.2" fill="#5F7A66" />
+                  </svg>
+                </motion.div>
+              )}
+              {/* Orbit ring B — slow counter-rotation with a clay berry satellite */}
+              {!prefersReduced && (
+                <motion.div
+                  className="absolute inset-3"
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 120, ease: 'linear', repeat: Infinity }}
+                  aria-hidden="true"
+                >
+                  <svg viewBox="0 0 160 160" className="w-full h-full">
+                    <circle cx="80" cy="80" r="70" stroke="#5F7A66" strokeOpacity="0.35" strokeWidth="1" strokeDasharray="1 9" fill="none" />
+                    <circle cx="152" cy="80" r="2.6" fill="#BC6C56" />
+                  </svg>
+                </motion.div>
+              )}
+              <SageLogo size={72} className="relative drop-shadow-md animate-float-slow" />
+            </div>
           </motion.div>
 
           {/* Trust Pill */}
@@ -123,36 +156,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           >
             S.A.G.E. is a secure, anonymous reporting platform that empowers students to voice hostel, mess, hygiene, and safety concerns. Your identity remains protected, while community upvoting ensures urgent issues get the immediate administrative attention they deserve.
           </motion.p>
-
-          {/* Primary Dual Call-to-Action Buttons */}
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-            transition={prefersReduced ? instantFade : paperSpring}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto mb-12"
-          >
-            <motion.button
-              whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
-              whileHover={prefersReduced ? {} : { y: -2, transition: paperSpring }}
-              id="hero-submit-cta"
-              type="button"
-              onClick={() => onNavigate('submit')}
-              className="s-btn s-btn-primary w-full sm:w-auto px-8 py-4 text-xs font-mono font-bold uppercase tracking-wider rounded-xl shadow-lift"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Submit a Complaint</span>
-            </motion.button>
-
-            <motion.button
-              whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
-              whileHover={prefersReduced ? {} : { y: -2, transition: paperSpring }}
-              type="button"
-              onClick={() => onNavigate('feed')}
-              className="s-btn s-btn-secondary w-full sm:w-auto px-8 py-4 text-xs font-mono font-bold uppercase tracking-wider rounded-xl"
-            >
-              <LayoutList className="w-4 h-4" />
-              <span>Browse Public Ledger</span>
-            </motion.button>
-          </motion.div>
 
           {/* 3 Quick Confidence Highlights */}
           <motion.div
@@ -201,6 +204,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               We built S.A.G.E. with a strict &ldquo;safety-by-design&rdquo; principle so that no student ever hesitates to report legitimate hazards or harassment.
             </p>
           </motion.div>
+
+          {/* Visual: how a grievance is sealed before it reaches the ledger */}
+          <AnonymityPipeline />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Card 1: Default Zero-Knowledge */}
@@ -298,55 +304,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-            {/* Step 1 */}
-            <div className="flat-paper p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-mono font-bold text-xs bg-accent text-white px-2.5 py-0.5 rounded-md">
-                  STEP 01
-                </span>
-                <FileText className="w-5 h-5 text-bronze-deep" />
-              </div>
-              <h3 className="text-lg font-semibold text-ink mb-2">
-                1. Submit Anonymously
-              </h3>
-              <p className="text-xs leading-relaxed text-ink-soft">
-                Draft your complaint, select the category (Hostel, Mess, Safety, WiFi, Hygiene), specify location, and optionally attach photographic evidence.
-              </p>
-            </div>
-
-            {/* Step 2 */}
-            <div className="flat-paper p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-mono font-bold text-xs bg-clay text-white px-2.5 py-0.5 rounded-md">
-                  STEP 02
-                </span>
-                <Vote className="w-5 h-5 text-clay-deep" />
-              </div>
-              <h3 className="text-lg font-semibold text-ink mb-2">
-                2. Community Upvotes
-              </h3>
-              <p className="text-xs leading-relaxed text-ink-soft">
-                Your report appears on the public ledger. Fellow residents endorse the issue to elevate urgency on administrative dashboards.
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="flat-paper p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-mono font-bold text-xs bg-bronze text-white px-2.5 py-0.5 rounded-md">
-                  STEP 03
-                </span>
-                <CheckCircle2 className="w-5 h-5 text-accent-deep" />
-              </div>
-              <h3 className="text-lg font-semibold text-ink mb-2">
-                3. Action &amp; Public Notes
-              </h3>
-              <p className="text-xs leading-relaxed text-ink-soft">
-                Departments review, dispatch technicians, and log official resolution remarks with timestamps visible to the entire campus.
-              </p>
-            </div>
-          </div>
+          {/* Visual: 3-step lifecycle as a connected flow */}
+          <LifecycleFlow />
         </div>
       </section>
       {/* ========================================================================= */}
@@ -437,16 +396,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-              <motion.button
-                type="button"
-                onClick={() => onNavigate('submit')}
-                whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
-                whileHover={prefersReduced ? {} : { y: -2, transition: paperSpring }}
-                className="w-full sm:w-auto px-8 py-4 bg-bronze text-ink hover:bg-bronze-deep hover:text-[#EDE7D8] text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
-              >
-                <PlusCircle className="w-4 h-4" />
-                <span>Submit a Complaint</span>
-              </motion.button>
+              {!isAdminRole && (
+                <motion.button
+                  type="button"
+                  onClick={() => onNavigate('submit')}
+                  whileTap={prefersReduced ? {} : { scale: 0.97, transition: microTap }}
+                  whileHover={prefersReduced ? {} : { y: -2, transition: paperSpring }}
+                  className="w-full sm:w-auto px-8 py-4 bg-bronze text-ink hover:bg-bronze-deep hover:text-[#EDE7D8] text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Submit a Complaint</span>
+                </motion.button>
+              )}
 
               <motion.button
                 type="button"

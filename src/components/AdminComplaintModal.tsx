@@ -5,6 +5,7 @@ import {
   MapPin,
   Lock,
   Image as ImageIcon,
+  Video as VideoIcon,
   FileText,
   Save,
   Calendar,
@@ -98,6 +99,20 @@ export const AdminComplaintModal: React.FC<AdminComplaintModalProps> = ({ compla
                 </button>
               )}
             </div>
+
+            {complaint.videoUrl && (
+              <div className="mb-5">
+                <video
+                  src={complaint.videoUrl}
+                  controls
+                  preload="metadata"
+                  className="w-full max-h-72 object-contain rounded-lg border border-line-strong bg-surface-soft/60"
+                />
+                <p className="mt-1.5 text-[10px] font-mono text-ink-soft flex items-center gap-1">
+                  <VideoIcon className="w-3 h-3 text-bronze-deep" /> Attached video evidence
+                </p>
+              </div>
+            )}
 
             <div className="mb-5">
               <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-ink-soft mb-2">Description</h2>

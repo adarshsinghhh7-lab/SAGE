@@ -25,6 +25,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const { activeRole, openAuthModal } = useAuth();
   const prefersReduced = useReducedMotion();
+  const isAdminRole = activeRole === 'admin' || activeRole === 'head_admin';
 
   return (
     <motion.header
@@ -62,12 +63,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <nav className="flex items-center gap-1 overflow-x-auto max-w-full scrollbar-none -mx-1 px-1 pb-1 sm:pb-0">
-            <NavButton id="nav-landing-btn" active={currentView === 'landing'} onClick={() => onNavigate('landing')}>
-              <Info className="w-3.5 h-3.5" /><span>How It Works</span>
-            </NavButton>
-            <NavButton id="nav-submit-btn" active={currentView === 'submit' || currentView === 'confirmation'} onClick={() => onNavigate('submit')}>
-              <PlusCircle className="w-3.5 h-3.5" /><span>Lodge Grievance</span>
-            </NavButton>
+            {!isAdminRole && (
+              <NavButton id="nav-landing-btn" active={currentView === 'landing'} onClick={() => onNavigate('landing')}>
+                <Info className="w-3.5 h-3.5" /><span>How It Works</span>
+              </NavButton>
+            )}
+            {!isAdminRole && (
+              <NavButton id="nav-submit-btn" active={currentView === 'submit' || currentView === 'confirmation'} onClick={() => onNavigate('submit')}>
+                <PlusCircle className="w-3.5 h-3.5" /><span>Lodge Grievance</span>
+              </NavButton>
+            )}
             <NavButton id="nav-feed-btn" active={currentView === 'feed' || currentView === 'detail'} onClick={() => onNavigate('feed')}>
               <LayoutList className="w-3.5 h-3.5" /><span>Public Ledger</span>
               <span className="ml-0.5 rounded-full bg-accent text-white px-1.5 py-0.5 text-[9px] font-bold">{totalComplaintsCount}</span>

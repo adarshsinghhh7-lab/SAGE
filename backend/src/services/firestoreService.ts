@@ -421,6 +421,7 @@ export class FirestoreService {
     hostelOrLocation: string;
     encryptedUserRef?: string;
     photoUrl?: string;
+    videoUrl?: string;
     urgencyScore?: number;
     complaintId?: string;
   }): Promise<Complaint> {
@@ -440,6 +441,7 @@ export class FirestoreService {
       upvoteCount: 1,
       urgencyScore: data.urgencyScore || (data.category === 'harassment' ? 0.95 : 0.2),
       photoUrl: data.photoUrl,
+      videoUrl: data.videoUrl,
       createdAt: new Date().toISOString(),
     });
 

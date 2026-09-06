@@ -9,6 +9,8 @@ import {
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { paperSpring, instantFade } from '../motion/tokens';
 import { Complaint } from '../types';
+import { OFFICIAL_LOCATIONS } from '../constants/locations';
+import { useAuth } from '../context/AuthContext';
 import { ComplaintCard } from './ComplaintCard';
 import { formatCategoryLabel } from '../utils/formatters';
 
@@ -43,16 +45,8 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'upvotes' | 'newest'>('upvotes');
   const prefersReduced = useReducedMotion();
-
-  const uniqueHostelLocations = useMemo(() => {
-    const locations = new Set<string>();
-    complaints.forEach((c) => {
-      const locStr = c.hostelOrLocation || c.location || '';
-      const loc = locStr.split('-')[0].split('(')[0].trim();
-      if (loc) locations.add(loc);
-    });
-    return Array.from(locations).sort();
-  }, [complaints]);
+  const { activeRole } = useAuth();
+  const isAdminRole = activeRole === 'admin' || activeRole === 'head_admin';
 
   const stats = useMemo(() => {
     const total = complaints.length;
@@ -140,15 +134,17 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           </p>
         </div>
 
-        <button
-          id="feed-lodge-grievance-btn"
-          type="button"
-          onClick={onGoToSubmit}
-          className="s-btn s-btn-primary self-start md:self-auto shrink-0"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>Lodge Grievance</span>
-        </button>
+        {!isAdminRole && (
+          <button
+            id="feed-lodge-grievance-btn"
+            type="button"
+            onClick={onGoToSubmit}
+            className="s-btn s-btn-primary self-start md:self-auto shrink-0"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Lodge Grievance</span>
+          </button>
+        )}
       </div>
 
       {/* Top Status & Summary Bar */}
@@ -234,7 +230,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
               className="s-select text-sm cursor-pointer truncate"
             >
               <option value="All">All Locations</option>
-              {uniqueHostelLocations.map((loc) => <option key={loc} value={loc}>{loc}</option>)}
+              {OFFICIAL_LOCATIONS.map((loc) => <option key={loc} value={loc}>{loc}</option>)}
             </select>
           </div>
         </div>
@@ -324,9 +320,11 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           <h3 className="font-display text-2xl font-semibold text-ink mb-2">No Matching Grievances Found</h3>
           <p className="text-sm text-ink-soft mb-6">There are currently no reported issues matching your filter parameters.</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <button type="button" onClick={handleResetFilters} className="s-btn s-btn-sm s-btn-primary">Reset Filters</button>
-            <button type="button" onClick={onGoToSubmit} className="s-btn s-btn-sm s-btn-secondary">Lodge New Grievance</button>
-          </div>
+              <button type="button" onClick={handleResetFilters} className="s-btn s-btn-sm s-btn-primary">Reset Filters</button>
+              {!isAdminRole && (
+                <button type="button" onClick={onGoToSubmit} className="s-btn s-btn-sm s-btn-secondary">Lodge New Grievance</button>
+              )}
+            </div>
         </motion.div>
       )}
     </div>
