@@ -3,8 +3,8 @@
 # (frontend/dist/) when SERVE_STATIC=true, so both share one origin and the
 # frontend's default VITE_API_URL=/api just works (no proxy, no CORS).
 #
-# Required dashboard secrets (set after first deploy — the app fails closed
-# without SAGE_MASTER_KEY by design):
+# Required dashboard secrets (set after first deploy — sealing is disabled and
+# complaint submissions return 503 without SAGE_MASTER_KEY):
 #   - SAGE_MASTER_KEY  (server-only AES key; generate a 64-char hex string)
 #   - FIREBASE_SERVICE_ACCOUNT_KEY  (service-account JSON for live Firestore/Auth)
 # Without Firestore credentials the backend boots in an in-memory sandbox that

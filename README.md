@@ -364,7 +364,7 @@ SAGE/
 ### 1. Cryptographic Identity Decoupling (server-side)
 
 - The **backend only** seals identities: `encryptAES(uid)` with the server-only `SAGE_MASTER_KEY` at deposit time.
-- **Fail-closed**: in production the server refuses to start without `SAGE_MASTER_KEY`; in development a clearly-labelled fallback key is used with a loud warning (`DEV-ONLY fallback`).
+- **Fail-closed**: in production the backend starts even without `SAGE_MASTER_KEY` (so the deployed site shows a clear diagnostic instead of a generic 500), but identity sealing is disabled — complaint submissions return `503` with exact setup instructions, and the health endpoint reports `"masterKeyConfigured": false`.
 - Complaint bodies containing identity fields (`studentName`, `studentEmail`, `studentId`, `rollNumber`, `userId`, `plainIdentity`, `encryptedUserRef`) are **rejected** with HTTP 400.
 - The ciphertext is stripped from every API response — it exists only inside the backend ledger.
 - Decryption happens **only inside `triggerIdentityReveal()`**, guarded by `requireHeadAdmin` (HTTP 403 for every other role).
@@ -464,9 +464,12 @@ Express app with `serverless-http`, plus a `vercel.json` that routes every
 (from `frontend/dist/`). One Vercel project = frontend **and** backend on the
 same origin — free tier included, no credit card required.
 
-1. **Set secrets** in *Project Settings → Environment Variables* (the app fails
-   closed without them):
-   - `SAGE_MASTER_KEY` — required; the backend refuses to start without it.
+1. **Set secrets** in *Project Settings → Environment Variables* (the backend
+   starts without them but **identity sealing is disabled** and complaints
+   cannot be deposited):
+   - `SAGE_MASTER_KEY` — **required for the app to function**. The health
+     endpoint reports `sealing.masterKeyConfigured: false` when it is missing,
+     and complaint submissions return a clear `503` with instructions.
    - `FIREBASE_SERVICE_ACCOUNT_KEY` + `FIREBASE_PROJECT_ID` — required for live
      Firestore/Auth; without them the backend runs an in-memory sandbox that
      **loses all data on restart**.
@@ -525,9 +528,9 @@ If you keep the frontend on a static host and run the backend separately:
 
 ### Pre-flight checklist
 
-- [ ] `GET https://<your-host>/api/health` returns `200` with `"status": "healthy"`.
-- [ ] `SAGE_MASTER_KEY` is set — a missing key crashes the backend at startup (fail-closed, by design).
-- [ ] A Firestore service account is configured — otherwise data is in-memory only and lost on restart.
+- [ ] `GET https://<your-host>/api/health` returns `200` with `"status": "healthy"` **and** `"sealing" → "masterKeyConfigured": true`.
+- [ ] `SAGE_MASTER_KEY` is set — the server starts without it (no crash) but sealing is disabled: health reports `masterKeyConfigured: false`, and complaints return a `503` explaining what to do.
+- [ ] `FIREBASE_SERVICE_ACCOUNT_KEY` + `FIREBASE_PROJECT_ID` are set — otherwise data is in-memory only and lost on every Vercel cold start.
 - [ ] Frontend wiring: `vercel.json` rewrite (works out of the box on Vercel) **or**
       `VITE_API_URL=https://<your-backend-host>/api` at **build time**.
 

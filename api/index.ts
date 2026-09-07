@@ -4,6 +4,12 @@
 // Express app (defined in backend/src/server.ts) to Vercel's function invocation
 // contract. The app is built fresh for each function invocation by the runtime,
 // so the direct-run guard in server.ts correctly skips app.listen() here.
+//
+// Configuration keys (SAGE_MASTER_KEY, Firestore credentials) no longer throw at
+// module load (see utils/crypto.ts) — a missing key is reported through
+// GET /api/health and a clear 503 on complaint submission, so the deployed site
+// tells you exactly what to fix instead of returning a generic 500/502 that the
+// frontend surfaces as "Cannot reach the S.A.G.E. Sealing Server".
 import serverless from 'serverless-http';
 import app from '../backend/src/server.js';
 

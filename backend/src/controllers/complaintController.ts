@@ -3,7 +3,7 @@ import { AuthenticatedRequest } from '../middleware/authMiddleware.js';
 import { FirestoreService } from '../services/firestoreService.js';
 import { MLService } from '../services/mlService.js';
 import { ComplaintCategory, ComplaintStatus } from '../types/index.js';
-import { encryptAES } from '../utils/crypto.js';
+import { encryptAES, isMasterKeyReady } from '../utils/crypto.js';
 
 export class ComplaintController {
   /**
@@ -164,6 +164,19 @@ export class ComplaintController {
       //    uid with SAGE_MASTER_KEY. This ciphertext is the only identity the
       //    ledger ever stores. It never exists in the browser, is never
       //    generated client-side, and cannot be decrypted by any client code.
+      //    Fail-closed: if the server-provided master key is missing (common
+      //    when the deployment env var was not configured), refuse to seal and
+      //    explain exactly how to fix it.
+      if (!isMasterKeyReady) {
+        res.status(503).json({
+          success: false,
+          error: 'Sealing server unavailable — SAGE_MASTER_KEY is not configured.',
+          message:
+            'Set the SAGE_MASTER_KEY environment variable on the backend host ' +
+            '(Vercel → Project Settings → Environment Variables), then redeploy or restart.',
+        });
+        return;
+      }
       let sealedUserRef = '';
       try {
         sealedUserRef = encryptAES(req.user.uid);

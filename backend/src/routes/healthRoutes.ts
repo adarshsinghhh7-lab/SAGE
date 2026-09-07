@@ -1,9 +1,11 @@
 ﻿import { Router, Request, Response } from 'express';
 import { isFirebaseLive, initMessage } from '../config/firebaseAdmin.js';
+import { isMasterKeyReady } from '../utils/crypto.js';
 
 const router = Router();
 
 router.get('/', (req: Request, res: Response) => {
+  const masterKeyConfigured = isMasterKeyReady;
   res.status(200).json({
     status: 'healthy',
     system: 'SAGE Backend (Node.js/Express + Firebase)',
@@ -12,6 +14,12 @@ router.get('/', (req: Request, res: Response) => {
       connected: isFirebaseLive,
       status: isFirebaseLive ? 'Live Firebase Firestore Connected' : 'Synchronized In-Memory Firestore Active',
       details: initMessage,
+    },
+    sealing: {
+      masterKeyConfigured,
+      status: masterKeyConfigured
+        ? 'Identity sealing enabled (SAGE_MASTER_KEY configured)'
+        : 'DISABLED — SAGE_MASTER_KEY not configured. Set it in Vercel → Project Settings → Environment Variables and redeploy.',
     },
     collections: {
       users: true,

@@ -12,7 +12,7 @@ import healthRoutes from './routes/healthRoutes.js';
 import { FirestoreService } from './services/firestoreService.js';
 import { startHourlyEscalationScheduler } from './services/escalationService.js';
 import { isFirebaseLive, initMessage } from './config/firebaseAdmin.js';
-import { SAGE_MASTER_KEY } from './utils/crypto.js';
+import { SAGE_MASTER_KEY, isMasterKeyReady } from './utils/crypto.js';
 import settingsRoutes from './routes/settingsRoutes.js';
 
 dotenv.config();
@@ -87,6 +87,7 @@ app.get('/', (req, res) => {
       bootstrapAdmin: 'POST /api/auth/bootstrap-admin (one-time, self-disabling)',
     },
     firebaseStatus: isFirebaseLive ? 'Connected' : 'Fallback / In-Memory Sandbox',
+    sealingStatus: isMasterKeyReady ? 'Enabled' : 'DISABLED — set SAGE_MASTER_KEY',
   });
 });
 
@@ -128,7 +129,12 @@ if (isDirectRun && process.env.NODE_ENV !== 'test') {
     console.log(`  Health Check : http://localhost:${PORT}/api/health`);
     console.log(`  Firebase     : ${initMessage}`);
     const isProd = process.env.NODE_ENV === 'production';
-    console.log(`  Sealing Key  : ${isProd ? 'SAGE_MASTER_KEY (server-only, production)' : `DEV-ONLY fallback (${String(SAGE_MASTER_KEY).slice(0, 8)}…) — set SAGE_MASTER_KEY for real deployments`}`);
+    const keyDisplay = !isMasterKeyReady
+      ? 'MISSING (identity sealing DISABLED — set SAGE_MASTER_KEY)'
+      : isProd
+      ? 'SAGE_MASTER_KEY (server-only, production)'
+      : `DEV-ONLY fallback (${String(SAGE_MASTER_KEY).slice(0, 8)}…) — set SAGE_MASTER_KEY for real deployments`;
+    console.log(`  Sealing Key  : ${keyDisplay}`);
     console.log(`=======================================================`);
   });
 }
