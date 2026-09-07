@@ -27,5 +27,5 @@
     "noEmit": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "backend", "ml-service", "database"]
+  "exclude": ["node_modules", "../backend", "../ml-service", "../database"]
 }

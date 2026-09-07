@@ -36,7 +36,13 @@ function isPortOpen(port: number, host = '127.0.0.1', timeoutMs = 1200): Promise
  * the dev server start the backend itself (same command as `npm run
  * dev:backend`) whenever port 5000 is not already listening, so `npm run dev`
  * alone is always enough for local development.
+ *
+ * The frontend lives in `frontend/` (sibling of `backend/`), so the tsx CLI is
+ * resolved from the repo root's node_modules and the backend is spawned with
+ * the repo root as its working directory.
  */
+const repoRoot = path.resolve(__dirname, '..');
+
 function ensureSageBackendRunning(): Plugin {
   return {
     name: 'sage:ensure-backend',
@@ -45,9 +51,9 @@ function ensureSageBackendRunning(): Plugin {
       if (isUp) return; // backend already running (manual `npm run dev:backend`)
       console.log('[sage] Backend not detected on :5000 — auto-starting it (npm run dev:backend)...');
 
-      const cliPath = path.resolve(__dirname, 'node_modules/tsx/dist/cli.mjs');
+      const cliPath = path.resolve(repoRoot, 'node_modules/tsx/dist/cli.mjs');
       const child = spawn(process.execPath, [cliPath, 'watch', 'backend/src/server.ts'], {
-        cwd: path.resolve(__dirname, '.'),
+        cwd: repoRoot,
         stdio: 'inherit', // backend logs appear in the same terminal
         env: {...process.env},
       });
@@ -78,7 +84,7 @@ export default defineConfig(() => {
     plugins: [react(), tailwindcss(), ensureSageBackendRunning()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(__dirname, 'src'),
       },
     },
     server: {

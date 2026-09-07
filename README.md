@@ -125,7 +125,8 @@ S.A.G.E. uses **sealed anonymity** — the system does *not* throw identities aw
 ```bash
 git clone https://github.com/your-org/sage.git
 cd sage
-npm install
+npm install                            # root deps (backend, tooling, tsx)
+cd frontend && npm install && cd ..    # frontend deps (react, vite, tailwind, …)
 pip install -r requirements.txt        # ML microservice dependencies
 ```
 
@@ -182,6 +183,31 @@ Open **http://localhost:3000** 🎉
 | `POST` | `/api/settings/escalation/run` | admin / head admin | Run an escalation sweep immediately |
 | `GET` | `/api/auth/me` | signed-in | Current user + role |
 | `POST` | `/api/auth/set-role` | **head admin only** | Assign a role to a user |
+| `POST` | `/api/auth/bootstrap-admin` | signed-in (one-time) | Bootstrap the **first** Head Admin; self-disables after first use |
+
+### Bootstraping the first Head Admin (production, one-time setup)
+
+On a fresh deployment where Firebase Auth has no `head_admin` custom claim yet, the
+`POST /api/auth/set-role` endpoint is unreachable because it is itself gated by
+`requireHeadAdmin`. A dedicated one-time endpoint solves that chicken-and-egg
+problem. It works for the very first authenticated user, then permanently refuses
+further bootstrapping (a durable `settings/adminBootstrap` document is written and
+checked).
+
+```bash
+# From the browser console of the signed-in user you want to promote (F12 → Console):
+fetch('/api/auth/bootstrap-admin', { method: 'POST' }).then((r) => r.json()).then(console.log);
+
+# ...or via curl with a fresh Firebase ID token (replace <ID_TOKEN>):
+curl -X POST http://localhost:5000/api/auth/bootstrap-admin \
+  -H "Authorization: Bearer <ID_TOKEN>" \
+  -H "Content-Type: application/json"
+```
+
+After a 200 response, **refresh the auth token** so the backend reads the new
+custom claim (e.g. `await firebase.auth().currentUser.getIdToken(true)` or just
+reload the app). Then `GET /api/auth/me` shows `"role": "head_admin"` and the
+reveal flow works.
 
 ### Reveal in practice (curl sketch)
 
@@ -224,34 +250,41 @@ curl -X POST http://localhost:5000/api/complaints/SAGE-2847/reveal \
 
 ```
 SAGE/
-├── src/                          # React frontend (Vite, :3000)
-│   ├── components/               # 23 components
-│   │   ├── SubmissionForm.tsx     # Sealed-deposit wizard
-│   │   ├── FlagDisputedModal.tsx  # Admin dispute flag (10-char reason gate)
-│   │   ├── RevealIdentityModal.tsx# Head-Admin identity reveal
-│   │   ├── HeadAdminDashboard.tsx # Reveal buttons + reveal-log ledger
-│   │   └── PublicFeed.tsx, ComplaintDetail.tsx, AuthModal.tsx, ...
-│   ├── context/AuthContext.tsx   # Global auth + role state
-│   ├── services/api.ts           # API layer (proxy → :5000, sandbox fallback)
-│   ├── utils/crypto.ts           # SHA-256 voter helpers only — no client decrypt
-│   └── firebase/config.ts        # Client Firebase init
-├── backend/src/                  # Express sealing server (:5000)
-│   ├── controllers/              # complaint · auth · analytics · escalation settings
+├── frontend/                       # React frontend (Vite, :3000) — self-contained
+│   ├── src/
+│   │   ├── components/               # 23 components
+│   │   │   ├── SubmissionForm.tsx     # Sealed-deposit wizard
+│   │   │   ├── FlagDisputedModal.tsx  # Admin dispute flag (10-char reason gate)
+│   │   │   ├── RevealIdentityModal.tsx# Head-Admin identity reveal
+│   │   │   ├── HeadAdminDashboard.tsx # Reveal buttons + reveal-log ledger
+│   │   │   └── PublicFeed.tsx, ComplaintDetail.tsx, AuthModal.tsx, ...
+│   │   ├── context/AuthContext.tsx   # Global auth + role state
+│   │   ├── services/api.ts           # API layer (proxy → :5000, sandbox fallback)
+│   │   ├── utils/crypto.ts           # SHA-256 voter helpers only — no client decrypt
+│   │   └── firebase/config.ts        # Client Firebase init
+│   ├── index.html                    # Vite entry point
+│   ├── public/                       # Static assets served at / (sage-logo.svg, …)
+│   ├── vite.config.ts                # proxy /api → :5000 + backend auto-start plugin
+│   ├── tsconfig.json                 # TypeScript config (react-jsx, @/* paths)
+│   ├── package.json                  # Frontend deps (react, vite, tailwind, …)
+│   └── dist/                         # Production build output (served by backend)
+├── backend/src/                      # Express sealing server (:5000)
+│   ├── controllers/                  # complaint · auth · analytics · escalation settings
 │   ├── services/
-│   │   ├── firestoreService.ts    # create / reveal / dispute / escalate + sandbox store
-│   │   ├── mlService.ts           # ML call + NLP fallback
-│   │   └── escalationService.ts   # hourly auto-escalation scheduler
-│   ├── middleware/authMiddleware.ts # JWT verify / dev headers / requireAdmin, requireHeadAdmin
+│   │   ├── firestoreService.ts        # create / reveal / dispute / escalate + sandbox store
+│   │   ├── mlService.ts              # ML call + NLP fallback
+│   │   └── escalationService.ts       # hourly auto-escalation scheduler
+│   ├── middleware/authMiddleware.ts   # JWT verify / dev headers / requireAdmin, requireHeadAdmin
 │   ├── routes/ · types/ · utils/crypto.ts (AES seal/decrypt, SHA-256)
-│   └── config/                   # firebaseAdmin · escalationConfig
-├── ml-service/                   # Flask ML microservice (:5001)
-│   ├── app.py                    # POST /predict-urgency
-│   ├── train_and_evaluate.py     # model training script
-│   └── urgency_model.joblib      # trained TF-IDF + LogReg model
-├── database/                     # firestore.rules · firestore.indexes.json · seed.ts
-├── scripts/                      # e2e-reveal-test.mjs · diag-reveal.cjs · ...
-├── app.py · train_and_evaluate.py · requirements.txt   # legacy ML entry points
-└── vite.config.ts                # proxy /api → :5000 + backend auto-start plugin
+│   └── config/                       # firebaseAdmin · escalationConfig
+├── ml-service/                       # Flask ML microservice (:5001)
+│   ├── app.py                        # POST /predict-urgency
+│   ├── train_and_evaluate.py          # model training script
+│   └── urgency_model.joblib           # trained TF-IDF + LogReg model
+├── database/                         # firestore.rules · firestore.indexes.json · seed.ts
+├── scripts/                          # e2e-reveal-test.mjs · diag-reveal.cjs · …
+├── app.py · train_and_evaluate.py · requirements.txt  # legacy ML entry points
+└── api/index.ts                      # Vercel serverless entry (serverless-http wrapper)
 ```
 
 ---
@@ -401,12 +434,13 @@ curl -X POST http://localhost:5001/predict-urgency \
 |---------|-------------|
 | `npm run dev` | Frontend on :3000 — Vite auto-starts the backend if :5000 is free |
 | `npm run dev:backend` | Backend sealing server on :5000 (`tsx watch backend/src/server.ts`) |
-| `npm run build` | Production frontend build to `dist/` |
+| `npm run build` | Production frontend build to `frontend/dist/` |
 | `npm run preview` | Preview the production build locally |
-| `npm run lint` | TypeScript type-checking (`tsc --noEmit`) |
-| `npm run clean` | Remove build output |
+| `npm run lint` | Frontend type-checking (`cd frontend && tsc --noEmit`) |
+| `npm run clean` | Remove build output (`frontend/dist`, `backend/dist`) |
 | `cd backend && npm run dev` | Backend only (`tsx watch`) |
 | `cd backend && npm run build && npm start` | Build + run compiled backend |
+| `cd frontend && npm run dev` | Frontend only on :3000 |
 | `python ml-service/app.py` | ML microservice on :5001 |
 | `node scripts/e2e-reveal-test.mjs` | End-to-end reveal-protocol test (requires backend on :5000) |
 
@@ -420,15 +454,15 @@ curl -X POST http://localhost:5001/predict-urgency \
 > development only because the Vite dev server **proxies** `/api` → the
 > backend on `:5000`. A deployed static build has no proxy and no backend
 > process, so every `/api` call fails (see the fail-closed guard in
-> `src/services/api.ts`). The fix is to deploy the Express Sealing Server too.
+> `frontend/src/services/api.ts`). The fix is to deploy the Express Sealing Server too.
 
 ### Option A — Vercel serverless (recommended, single project)
 
 The repo ships with an `api/index.ts` serverless entry point that wraps the
 Express app with `serverless-http`, plus a `vercel.json` that routes every
-`/api/*` request to that function while serving the built React app. One Vercel
-project = frontend **and** backend on the same origin — free tier included, no
-credit card required.
+`/api/*` request to that function while serving the built React app
+(from `frontend/dist/`). One Vercel project = frontend **and** backend on the
+same origin — free tier included, no credit card required.
 
 1. **Set secrets** in *Project Settings → Environment Variables* (the app fails
    closed without them):
@@ -460,7 +494,7 @@ media in Firebase Storage and reference it by URL, if this is a concern.
 The included `render.yaml` blueprint still works on container PaaS hosts:
 
 ```bash
-# Build:   npm ci && npm run build && cd backend && npm install && npm run build
+# Build:   npm ci && cd frontend && npm ci && cd .. && npm run build && cd backend && npm ci && npm run build
 # Start:   node backend/dist/server.js
 # Env:     NODE_ENV=production, SERVE_STATIC=true
 ```
@@ -487,7 +521,7 @@ If you keep the frontend on a static host and run the backend separately:
    # bash/zsh
    VITE_API_URL="https://<your-backend-host>/api" npm run build
    ```
-3. Redeploy `dist/` to your static host.
+3. Redeploy `frontend/dist/` to your static host.
 
 ### Pre-flight checklist
 

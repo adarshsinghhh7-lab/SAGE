@@ -1,7 +1,7 @@
 # Render Blueprint — deploys the ENTIRE S.A.G.E. application as a single web
 # service: the Express Sealing Server (/api) also serves the built React app
-# (dist/) when SERVE_STATIC=true, so both share one origin and the frontend's
-# default VITE_API_URL=/api just works (no proxy, no CORS).
+# (frontend/dist/) when SERVE_STATIC=true, so both share one origin and the
+# frontend's default VITE_API_URL=/api just works (no proxy, no CORS).
 #
 # Required dashboard secrets (set after first deploy — the app fails closed
 # without SAGE_MASTER_KEY by design):
@@ -17,7 +17,7 @@ services:
     name: sage-grievance-backend
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build && cd backend && npm install && npm run build
+    buildCommand: npm ci && cd frontend && npm ci && cd .. && npm run build && cd backend && npm install && npm run build
     startCommand: node backend/dist/server.js
     envVars:
       - key: NODE_ENV

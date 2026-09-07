@@ -1,6 +1,14 @@
-import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
+// NOTE: We import from the underlying @firebase/* packages rather than the
+// firebase/* umbrella subpaths. firebase@12.18.0's published tarball omits the
+// firestore/dist/firestore/index.d.ts type file that its exports map declares,
+// which breaks type resolution for `import ... from 'firebase/firestore'`.
+// The @firebase/* packages ship complete, correct types and identical APIs.
+import { initializeApp, getApps, getApp } from '@firebase/app';
+import type { FirebaseApp } from '@firebase/app';
+import { getAuth } from '@firebase/auth';
+import type { Auth } from '@firebase/auth';
+import { getFirestore } from '@firebase/firestore';
+import type { Firestore } from '@firebase/firestore';
 
 // Client Firebase Configuration (reads from Vite env vars with safe defaults)
 const firebaseConfig = {

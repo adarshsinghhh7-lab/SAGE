@@ -36,19 +36,21 @@ app.use(express.json({ limit: '35mb' }));
 app.use(express.urlencoded({ extended: true, limit: '35mb' }));
 
 // Optional single-service production hosting: when SERVE_STATIC=true the
-// backend also serves the built React app (dist/) plus an SPA fallback, so the
-// UI and /api share ONE origin. The browser's default API base ('/api') then
-// works exactly as it does through the dev proxy — no VITE_API_URL, no CORS.
+// backend also serves the built React app (frontend/dist/) plus an SPA
+// fallback, so the UI and /api share ONE origin. The browser's default API
+// base ('/api') then works exactly as it does through the dev proxy — no
+// VITE_API_URL, no CORS.
 // Mounted before the API routes on purpose: express.static only answers for
-// real files in dist/, so every /api request still flows to the controllers.
+// real files in frontend/dist/, so every /api request still flows to the
+// controllers.
 if (process.env.SERVE_STATIC === 'true') {
-  const distDir = path.resolve(process.cwd(), 'dist');
+  const distDir = path.resolve(process.cwd(), 'frontend/dist');
   if (fs.existsSync(distDir)) {
     app.use(express.static(distDir));
     console.log(`  Single-service: serving React UI from ${distDir}`);
   } else {
     console.warn(
-      `[SERVE_STATIC] No dist/ found at ${distDir} — run "npm run build" first. Serving API routes only.`
+      `[SERVE_STATIC] No build found at ${distDir} — run "npm run build" first. Serving API routes only.`
     );
   }
 }
@@ -82,6 +84,7 @@ app.get('/', (req, res) => {
       runEscalationNow: 'POST /api/settings/escalation/run',
       authMe: 'GET /api/auth/me',
       setRole: 'POST /api/auth/set-role',
+      bootstrapAdmin: 'POST /api/auth/bootstrap-admin (one-time, self-disabling)',
     },
     firebaseStatus: isFirebaseLive ? 'Connected' : 'Fallback / In-Memory Sandbox',
   });
@@ -90,7 +93,7 @@ app.get('/', (req, res) => {
 // SPA fallback: in single-service mode any unmatched non-/api GET is a
 // client-side route, so hand index.html to React Router.
 if (process.env.SERVE_STATIC === 'true') {
-  const distDir = path.resolve(process.cwd(), 'dist');
+  const distDir = path.resolve(process.cwd(), 'frontend/dist');
   app.get(/^\/(?!api([\/]|$)).*/, (req, res) => {
     res.sendFile(path.join(distDir, 'index.html'));
   });

@@ -5,7 +5,7 @@ import {
   signOut as fbSignOut,
   User as FirebaseUser,
   getIdTokenResult
-} from 'firebase/auth';
+} from '@firebase/auth';
 import { auth, isFirebaseConfigured } from '../firebase/config';
 import { UserRole } from '../types';
 

@@ -12,7 +12,7 @@ import {
   writeBatch,
   onSnapshot,
   Unsubscribe
-} from 'firebase/firestore';
+} from '@firebase/firestore';
 import { db as firestoreDb, isFirebaseConfigured } from '../firebase/config';
 import { 
   Complaint, 
