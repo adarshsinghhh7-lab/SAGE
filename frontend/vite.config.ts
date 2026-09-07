@@ -55,7 +55,7 @@ function ensureSageBackendRunning(): Plugin {
       const child = spawn(process.execPath, [cliPath, 'watch', 'backend/src/server.ts'], {
         cwd: repoRoot,
         stdio: 'inherit', // backend logs appear in the same terminal
-        env: {...process.env},
+        env: {...process.env, SAGE_LISTEN: '1'},
       });
       child.on('error', (err) => {
         console.error('[sage] Failed to auto-start the backend:', err.message);

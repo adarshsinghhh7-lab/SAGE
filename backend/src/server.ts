@@ -105,13 +105,31 @@ if (process.env.SERVE_STATIC === 'true') {
 // as an app factory (e.g. by the Vercel serverless wrapper in api/index.ts), we
 // only export the app and let the platform handle invocation — so a serverless
 // function never tries to bind a port.
+//
+// Two triggers enable listening:
+//  1. `isDirectRun` — import.meta.url matches process.argv[1] (covers
+//     `node backend/dist/server.js` but NOT tools like tsx whose argv[1] is
+//     their own CLI).
+//  2. `SAGE_LISTEN=1` — explicit opt-in from launchers whose wrapper prevents
+//     the URL comparison from matching (Vite auto-start plugin, npm run
+//     dev:backend via tsx watch).
+//
+// NOTE: there is deliberately NO `process.env.NODE_ENV !== 'test'` guard here.
+// That clause silently disabled the server for any machine running with
+// NODE_ENV=test (AI Studio, CI sandboxes) causing every /api call to fail and
+// the browser UI to hang indefinitely. Test harnesses that import this module
+// without wanting a port should set SAGE_NO_LISTEN=1 instead.
 const isDirectRun =
   typeof process !== 'undefined' &&
   typeof process.argv[1] !== 'undefined' &&
   (typeof import.meta.url === 'undefined' ||
     import.meta.url === pathToFileURL(process.argv[1]).href);
 
-if (isDirectRun && process.env.NODE_ENV !== 'test') {
+const shouldListen =
+  (isDirectRun || process.env.SAGE_LISTEN === '1') &&
+  process.env.SAGE_NO_LISTEN !== '1';
+
+if (shouldListen) {
   // These expensive startup side-effects belong ONLY to the long-running
   // process (node backend/dist/server.js, Render, Railway, VPS). On Vercel the
   // module is imported on EVERY cold start; running a Firestore seed query or

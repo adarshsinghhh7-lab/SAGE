@@ -1,7 +1,7 @@
 // Local smoke test for the Vercel serverless handler (api/index.ts).
 // Runs in-process via tsx: imports the handler, invokes it like Vercel's
 // runtime would, and prints the status + body for /api/health and a POST.
-import { handler } from '../api/index';
+import handler from '../api/index';
 
 interface MockEvent {
   httpMethod: string;

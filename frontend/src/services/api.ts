@@ -66,6 +66,32 @@ const resolveDepartmentEmail = (category: string | null | undefined): string => 
 // Event bus for cross-component and cross-tab real-time sync when offline
 const SYNC_EVENT_NAME = 'sage_realtime_upvote_sync';
 
+// ---------------------------------------------------------------------------
+// Firestore client SDK timeout wrapper
+// ---------------------------------------------------------------------------
+// The Firebase Web SDK (`getDoc`, `getDocs`, `setDoc`, `updateDoc`,
+// `batch.commit`) performs network operations with no built-in hard deadline.
+// On a deployed site where `isFirebaseConfigured` is true but the Firestore
+// project is empty, unreachable, or has restrictive security rules, these
+// promises can hang for minutes (the SDK retries with exponential backoff),
+// which translates to infinite loading spinners in the UI.
+//
+// `withFirestoreTimeout` races every direct Firestore call against a hard
+// deadline so the caller can fall through to the backend API (which has its
+// own 20-second `request()` timeout).
+const FIRESTORE_TIMEOUT_MS = 8000; // 8 seconds — enough for a cold start
+function withFirestoreTimeout<T>(promise: Promise<T>, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject(new Error(`[Firestore ${label}] timed out after ${FIRESTORE_TIMEOUT_MS / 1000}s`)),
+        FIRESTORE_TIMEOUT_MS,
+      ),
+    ),
+  ]);
+}
+
 export function normalizeComplaintData(raw: any, hasUpvoted?: boolean): Complaint {
   const complaintId = raw.complaintId || raw.id || 'SAGE-0000';
   const location = raw.hostelOrLocation || raw.location || 'Campus General';
@@ -237,7 +263,7 @@ export class ApiService {
       try {
         const upvotesRef = collection(firestoreDb, 'upvotes');
         const q = query(upvotesRef, where('hashedVoterId', '==', hashedVoterId));
-        const snapshot = await getDocs(q);
+        const snapshot = await withFirestoreTimeout(getDocs(q), 'getUserUpvotedIds');
         snapshot.forEach((docSnap) => {
           const data = docSnap.data();
           if (data.complaintId) {
@@ -405,7 +431,7 @@ export class ApiService {
     if (isFirebaseConfigured && firestoreDb) {
       try {
         const complaintsRef = collection(firestoreDb, 'complaints');
-        const snapshot = await getDocs(complaintsRef);
+        const snapshot = await withFirestoreTimeout(getDocs(complaintsRef), 'getComplaints');
         if (!snapshot.empty) {
           const list = snapshot.docs.map((docSnap) => {
             const compId = docSnap.id;
@@ -587,19 +613,43 @@ export class ApiService {
     const complaintId = created.complaintId;
 
     // 2. Update local cache & upvoted set (UI mirror only — identity never
-    //    exists here).
+    //    exists here). Optimistic + best-effort: the user is told their
+    //    complaint was accepted immediately; the cache refresh happens in the
+    //    background and must NEVER block (or delay) the success path.
     const voterHash = getVoterHashedId(userId);
-    const current = await this.getComplaints({}, activeRole, userId);
-    const updated = [created, ...current.filter((c) => c.complaintId !== complaintId)];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-
     try {
-      const userUpvotedIds = await this.getUserUpvotedIds(userId);
-      userUpvotedIds.add(complaintId);
-      localStorage.setItem(`${UPVOTES_STORAGE_KEY_PREFIX}${voterHash}`, JSON.stringify(Array.from(userUpvotedIds)));
+      const saved = localStorage.getItem(STORAGE_KEY);
+      const parsed = saved ? JSON.parse(saved) : [];
+      const merged = Array.isArray(parsed) ? parsed : [];
+      const updated = [created, ...merged.filter((c) => c.complaintId !== complaintId)];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     } catch {
       // ignore storage errors
     }
+    this.getComplaints({}, activeRole, userId)
+      .then((current) => {
+        try {
+          const updated = [created, ...current.filter((c) => c.complaintId !== complaintId)];
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        } catch {
+          // ignore storage errors
+        }
+      })
+      .catch(() => {
+        // never degrade the successful submission because the cache refresh failed
+      });
+    this.getUserUpvotedIds(userId)
+      .then((userUpvotedIds) => {
+        try {
+          userUpvotedIds.add(complaintId);
+          localStorage.setItem(`${UPVOTES_STORAGE_KEY_PREFIX}${voterHash}`, JSON.stringify(Array.from(userUpvotedIds)));
+        } catch {
+          // ignore storage errors
+        }
+      })
+      .catch(() => {
+        // ignore storage errors
+      });
 
     return created;
   }
@@ -625,7 +675,7 @@ export class ApiService {
     if (isFirebaseConfigured && firestoreDb) {
       try {
         const upvoteRef = doc(firestoreDb, 'upvotes', upvoteDocId);
-        const upvoteSnap = await getDoc(upvoteRef);
+        const upvoteSnap = await withFirestoreTimeout(getDoc(upvoteRef), 'upvote.getDoc');
 
         if (upvoteSnap.exists()) {
           alreadyUpvotedInFirestore = true;
@@ -634,20 +684,20 @@ export class ApiService {
         }
 
         // Store anonymous upvote record in Firestore upvotes collection
-        await setDoc(upvoteRef, {
+        await withFirestoreTimeout(setDoc(upvoteRef, {
           upvoteId: upvoteDocId,
           complaintId,
           hashedVoterId,
           createdAt: new Date().toISOString(),
-        } as UpvoteDoc);
+        } as UpvoteDoc), 'upvote.setDoc');
 
         // Update upvoteCount on the complaint document in real time
         const complaintRef = doc(firestoreDb, 'complaints', complaintId);
-        await updateDoc(complaintRef, {
+        await withFirestoreTimeout(updateDoc(complaintRef, {
           upvoteCount: increment(1),
-        });
+        }), 'upvote.updateDoc');
 
-        const refreshedDoc = await getDoc(complaintRef);
+        const refreshedDoc = await withFirestoreTimeout(getDoc(complaintRef), 'upvote.refreshDoc');
         if (refreshedDoc.exists()) {
           updatedCountFromFirestore = (refreshedDoc.data() as any).upvoteCount || 0;
         }
@@ -740,7 +790,7 @@ export class ApiService {
     if (isFirebaseConfigured && firestoreDb) {
       try {
         const complaintRef = doc(firestoreDb, 'complaints', complaintId);
-        const currentSnap = await getDoc(complaintRef);
+        const currentSnap = await withFirestoreTimeout(getDoc(complaintRef), 'updateStatus.getDoc');
 
         if (currentSnap.exists()) {
           const currentRaw = currentSnap.data() as any;
@@ -777,7 +827,7 @@ export class ApiService {
           if (isStatusChange) {
             batch.set(doc(firestoreDb, 'statusUpdates', updateId), statusUpdateDoc);
           }
-          await batch.commit();
+          await withFirestoreTimeout(batch.commit(), 'updateStatus.batch');
 
           return normalizeComplaintData({ ...currentRaw, ...updatePayload, complaintId }, false);
         }
@@ -911,7 +961,7 @@ export class ApiService {
     if (isFirebaseConfigured && firestoreDb) {
       try {
         const complaintRef = doc(firestoreDb, 'complaints', complaintId);
-        const currentSnap = await getDoc(complaintRef);
+        const currentSnap = await withFirestoreTimeout(getDoc(complaintRef), 'flagDispute.getDoc');
 
         if (currentSnap.exists()) {
           const currentRaw = currentSnap.data() as Record<string, any>;
@@ -935,7 +985,7 @@ export class ApiService {
           const batch = writeBatch(firestoreDb);
           batch.update(complaintRef, updatePayload);
           batch.set(doc(firestoreDb, 'statusUpdates', updateId), statusUpdateDoc);
-          await batch.commit();
+          await withFirestoreTimeout(batch.commit(), 'flagDispute.batch');
 
           return normalizeComplaintData({ ...currentRaw, ...updatePayload, complaintId }, false);
         }
@@ -1041,7 +1091,7 @@ export class ApiService {
       try {
         const logsRef = collection(firestoreDb, 'revealLogs');
         const q = query(logsRef, orderBy('timestamp', 'desc'));
-        const snapshot = await getDocs(q);
+        const snapshot = await withFirestoreTimeout(getDocs(q), 'getRevealLogs');
         snapshot.forEach((docSnap) => {
           const data = docSnap.data() as RevealLogDoc;
           if (data && data.logId) merged.set(data.logId, data);
@@ -1102,7 +1152,7 @@ export class ApiService {
           where('complaintId', '==', complaintId),
           orderBy('timestamp', 'asc')
         );
-        const snapshot = await getDocs(q);
+        const snapshot = await withFirestoreTimeout(getDocs(q), 'getStatusUpdates');
         if (!snapshot.empty) {
           const updates = snapshot.docs.map((docSnap) => docSnap.data() as StatusUpdateDoc);
           // Persist locally so the timeline survives offline refreshes
@@ -1172,7 +1222,7 @@ export class ApiService {
     if (isFirebaseConfigured && firestoreDb) {
       try {
         const settingsRef = doc(firestoreDb, 'settings', 'escalation');
-        const snap = await getDoc(settingsRef);
+        const snap = await withFirestoreTimeout(getDoc(settingsRef), 'getEscalationSettings');
         if (snap.exists()) {
           const data = snap.data() as Partial<EscalationSettingsDoc>;
           const normalized: EscalationSettingsDoc = {
@@ -1248,7 +1298,7 @@ export class ApiService {
     if (isFirebaseConfigured && firestoreDb) {
       try {
         const settingsRef = doc(firestoreDb, 'settings', 'escalation');
-        const snap = await getDoc(settingsRef);
+        const snap = await withFirestoreTimeout(getDoc(settingsRef), 'setEscalationThreshold.get');
         const current = snap.exists() ? (snap.data() as Partial<EscalationSettingsDoc>) : {};
         const merged: EscalationSettingsDoc = {
           settingsId: 'escalation',
@@ -1259,7 +1309,7 @@ export class ApiService {
           lastRunAt: current.lastRunAt ?? null,
           lastRun: current.lastRun ?? null,
         };
-        await setDoc(settingsRef, merged, { merge: true });
+        await withFirestoreTimeout(setDoc(settingsRef, merged, { merge: true }), 'setEscalationThreshold.set');
         try {
           localStorage.setItem(ESCALATION_SETTINGS_STORAGE_KEY, JSON.stringify(merged));
         } catch {
@@ -1377,11 +1427,11 @@ export class ApiService {
             where('status', '==', 'submitted'),
             where('upvoteCount', '>=', threshold)
           );
-          const snap = await getDocs(q);
+          const snap = await withFirestoreTimeout(getDocs(q), 'escalation.eligible');
           eligible = snap.docs.map((d) => normalizeComplaintData({ ...d.data(), complaintId: d.id }));
         } catch {
           // Composite index / connectivity issue -> fall back to an unfiltered scan
-          const allSnap = await getDocs(complaintsRef);
+          const allSnap = await withFirestoreTimeout(getDocs(complaintsRef), 'escalation.scan');
           eligible = allSnap.docs
             .map((d) => normalizeComplaintData({ ...d.data(), complaintId: d.id }))
             .filter((c) => c.status === 'submitted' && c.upvoteCount >= threshold);
@@ -1391,7 +1441,7 @@ export class ApiService {
         for (const complaint of eligible) {
           try {
             const complaintRef = doc(firestoreDb, 'complaints', complaint.complaintId);
-            const currentSnap = await getDoc(complaintRef);
+            const currentSnap = await withFirestoreTimeout(getDoc(complaintRef), 'escalation.getDoc');
             if (!currentSnap.exists()) continue;
             const current = normalizeComplaintData({ ...currentSnap.data(), complaintId: complaint.complaintId });
             if (current.status !== 'submitted') continue; // moved since query -> skip
@@ -1409,7 +1459,7 @@ export class ApiService {
             const batch = writeBatch(firestoreDb);
             batch.update(complaintRef, { status: 'under_review', highPriority: true });
             batch.set(doc(firestoreDb, 'statusUpdates', updateId), statusUpdateDoc);
-            await batch.commit();
+            await withFirestoreTimeout(batch.commit(), 'escalation.batch');
 
             report.escalated.push({
               complaintId: complaint.complaintId,
@@ -1433,7 +1483,7 @@ export class ApiService {
         // Persist the run report back to settings/escalation (mirrors recordEscalationRun)
         try {
           const settingsRef = doc(firestoreDb, 'settings', 'escalation');
-          const snap = await getDoc(settingsRef);
+          const snap = await withFirestoreTimeout(getDoc(settingsRef), 'recordEscalationRun.get');
           const existing = snap.exists() ? (snap.data() as Partial<EscalationSettingsDoc>) : {};
           const updatedSettings: EscalationSettingsDoc = {
             settingsId: 'escalation',
@@ -1444,7 +1494,7 @@ export class ApiService {
             lastRunAt: nowIso,
             lastRun: report,
           };
-          await setDoc(settingsRef, updatedSettings, { merge: true });
+          await withFirestoreTimeout(setDoc(settingsRef, updatedSettings, { merge: true }), 'recordEscalationRun.set');
           try {
             localStorage.setItem(ESCALATION_SETTINGS_STORAGE_KEY, JSON.stringify(updatedSettings));
           } catch {
