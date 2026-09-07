@@ -24,7 +24,15 @@ export async function authenticate(
 
     if (isFirebaseLive && auth) {
       try {
-        const decodedToken = await auth.verifyIdToken(token);
+        // Race the token verification against a 5-second timeout so a hung
+        // Google endpoint (network issue / cold start / rate-limit) cannot
+        // freeze the entire request pipeline indefinitely.
+        const decodedToken = await Promise.race([
+          auth.verifyIdToken(token),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('verifyIdToken timed out')), 5000)
+          ),
+        ]);
         const role = (decodedToken.role as UserRole) || (decodedToken.admin ? 'admin' : 'student');
 
         req.user = {
@@ -35,7 +43,15 @@ export async function authenticate(
         };
         return next();
       } catch (err: any) {
-        console.warn(`[Auth Middleware] Invalid Firebase token: ${err.message}`);
+        console.warn(`[Auth Middleware] Firebase token verification failed: ${err.message}`);
+        // FAIL-CLOSED: never silently fall through to dev-header role override.
+        // An invalid/expired/timed-out token must result in rejection so the
+        // caller cannot bypass Firebase verification with x-sage-role headers.
+        res.status(401).json({
+          error: 'Unauthorized',
+          message: `Firebase token verification failed: ${err.message}`,
+        });
+        return;
       }
     } else {
       // In dev mode with mock tokens

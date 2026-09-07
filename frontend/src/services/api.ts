@@ -134,21 +134,42 @@ export class ApiService {
       ...(options.headers as Record<string, string>),
     };
 
-    const url = `${API_BASE_URL}${endpoint}`;
-    const res = await fetch(url, { ...options, headers });
+    // Timeout: prevent infinite loading when the backend hangs (e.g. cold
+    // start, network issue, or a slow verifyIdToken). AbortController
+    // cancels the fetch after the deadline so the UI can surface an error
+    // instead of spinning forever.
+    const REQUEST_TIMEOUT_MS = 20000; // 20 seconds
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => null);
-      if (errorData && (errorData.error || errorData.message)) {
-        throw new Error(errorData.error || errorData.message || `HTTP error ${res.status}`);
+    try {
+      const url = `${API_BASE_URL}${endpoint}`;
+      const res = await fetch(url, { ...options, headers, signal: controller.signal });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        if (errorData && (errorData.error || errorData.message)) {
+          throw new Error(errorData.error || errorData.message || `HTTP error ${res.status}`);
+        }
+        // Non-JSON error body — most commonly the Vite dev proxy returning 500
+        // because the backend process is down. Use phrasing downstream callers
+        // already understand so it maps to an actionable message.
+        throw new Error('Sealing server unavailable');
       }
-      // Non-JSON error body — most commonly the Vite dev proxy returning 500
-      // because the backend process is down. Use phrasing downstream callers
-      // already understand so it maps to an actionable message.
-      throw new Error('Sealing server unavailable');
-    }
 
-    return res.json() as Promise<T>;
+      return res.json() as Promise<T>;
+    } catch (err: any) {
+      // Map AbortError (timeout) to a user-friendly message so the UI never
+      // shows infinite loading — callers already handle thrown errors.
+      if (err?.name === 'AbortError' || /aborted/i.test(err?.message)) {
+        throw new Error(
+          `Request to ${API_BASE_URL}${endpoint} timed out after ${REQUEST_TIMEOUT_MS / 1000}s. The backend may be starting up — please wait a moment and try again.`
+        );
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   /**

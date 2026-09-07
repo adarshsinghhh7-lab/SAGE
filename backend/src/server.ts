@@ -100,17 +100,6 @@ if (process.env.SERVE_STATIC === 'true') {
   });
 }
 
-// Seed data on startup
-FirestoreService.seedIfEmpty().catch((err: any) => {
-  console.warn(`[Startup Seeding] ${err?.message}`);
-});
-
-// Hourly automatic complaint escalation job (see services/escalationService.ts)
-// Skips NODE_ENV=test so test suites never arm long timers.
-if (process.env.NODE_ENV !== 'test') {
-  startHourlyEscalationScheduler();
-}
-
 // Direct-run guard: when this module is the entry point (node backend/dist/server.js
 // or tsx backend/src/server.ts) we start the HTTP listener. When it is imported
 // as an app factory (e.g. by the Vercel serverless wrapper in api/index.ts), we
@@ -123,6 +112,16 @@ const isDirectRun =
     import.meta.url === pathToFileURL(process.argv[1]).href);
 
 if (isDirectRun && process.env.NODE_ENV !== 'test') {
+  // These expensive startup side-effects belong ONLY to the long-running
+  // process (node backend/dist/server.js, Render, Railway, VPS). On Vercel the
+  // module is imported on EVERY cold start; running a Firestore seed query or
+  // arming setInterval timers there would slow down the first request and keep
+  // serverless instances busier than necessary.
+  FirestoreService.seedIfEmpty().catch((err: any) => {
+    console.warn(`[Startup Seeding] ${err?.message}`);
+  });
+  startHourlyEscalationScheduler();
+
   app.listen(PORT, () => {
     console.log(`=======================================================`);
     console.log(`  S.A.G.E. Backend Server running on port ${PORT}`);
