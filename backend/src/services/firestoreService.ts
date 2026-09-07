@@ -183,32 +183,40 @@ export function normalizeComplaint(doc: any): Complaint {
     urgency = 'Elevated';
   }
 
-  return {
-    ...data,
-    complaintId,
-    // Only carry the ciphertext if the source record actually has one
-    // (server-sealed records). Never fabricate a client-side AES blob here.
-    encryptedUserRef: data.encryptedUserRef || undefined,
-    category,
-    description: data.description || '',
-    hostelOrLocation: location,
-    status,
-    upvoteCount,
-    urgencyScore,
-    createdAt: data.createdAt || new Date().toISOString(),
-    resolutionNotes: data.resolutionNotes,
-    resolvedAt: data.resolvedAt,
-    disputed: data.disputed === true,
-    disputeReason: data.disputeReason,
-    disputedAt: data.disputedAt,
-    disputedBy: data.disputedBy,
-    isSandbox: data.isSandbox === true,
-    // Aliases for seamless UI compatibility
-    id: complaintId,
-    location,
-    upvotes: upvoteCount,
-    urgency,
-  };
+ return {
+  ...data,
+  complaintId,
+
+  // Only carry the ciphertext if the source record actually has one
+  // Firestore rejects undefined values
+  encryptedUserRef: data.encryptedUserRef ?? null,
+
+  category,
+  description: data.description || '',
+  hostelOrLocation: location,
+  status,
+  upvoteCount,
+  urgencyScore,
+
+  createdAt: data.createdAt || new Date().toISOString(),
+
+  // Firestore-safe fields
+  resolutionNotes: data.resolutionNotes ?? null,
+  resolvedAt: data.resolvedAt ?? null,
+
+  disputed: data.disputed === true,
+  disputeReason: data.disputeReason ?? null,
+  disputedAt: data.disputedAt ?? null,
+  disputedBy: data.disputedBy ?? null,
+
+  isSandbox: data.isSandbox === true,
+
+  // Aliases for seamless UI compatibility
+  id: complaintId,
+  location,
+  upvotes: upvoteCount,
+  urgency,
+};
 }
 
 // In-Memory Fallback Stores for the 5 Collections
