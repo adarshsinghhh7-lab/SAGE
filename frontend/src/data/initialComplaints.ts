@@ -1,4 +1,4 @@
-import { Complaint } from '../types';
+﻿import { Complaint } from '../types';
 
 // Demo/sandbox seed ledger. These records deliberately carry NO real sealed
 // identity — isSandbox: true marks them so the UI never presents them as
@@ -10,8 +10,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
     isSandbox: true,
     category: 'wifi',
-    hostelOrLocation: 'Hostel Block B (3rd & 4th Floor)',
-    location: 'Hostel Block B (3rd & 4th Floor)',
+    hostelOrLocation: 'Ramanujan Block - 3rd & 4th Floor',
+    location: 'Ramanujan Block - 3rd & 4th Floor',
     description: 'The primary access points on the 3rd and 4th floors have been completely unresponsive since yesterday night. Students preparing for semester lab examinations are unable to access university portals.',
     status: 'under_review',
     upvoteCount: 42,
@@ -27,8 +27,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
     isSandbox: true,
     category: 'mess',
-    hostelOrLocation: 'Central Dining Mess - South Wing',
-    location: 'Central Dining Mess - South Wing',
+    hostelOrLocation: 'Chanakya Bhavan - South Wing',
+    location: 'Chanakya Bhavan - South Wing',
     description: 'Undercooked lentils and sour milk served during today’s breakfast batch. Multiple students have reported stomach cramps. Requesting immediate food safety inspection by the student mess council.',
     photoUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80',
     status: 'submitted',
@@ -45,8 +45,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
     isSandbox: true,
     category: 'infrastructure',
-    hostelOrLocation: 'Girls Hostel 2, Wing A (Washroom 204)',
-    location: 'Girls Hostel 2, Wing A (Washroom 204)',
+    hostelOrLocation: 'Sarojini Bhavan - Wing A (Washroom 204)',
+    location: 'Sarojini Bhavan - Wing A (Washroom 204)',
     description: 'Severe water leakage in the ceiling overhead causing electric switchboard sparks when light switches are pressed. Needs urgent electrician dispatch before an accident occurs.',
     photoUrl: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80',
     status: 'under_review',
@@ -64,8 +64,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
     isSandbox: true,
     category: 'infrastructure',
-    hostelOrLocation: 'Academic Complex Block 4 - Lift 2',
-    location: 'Academic Complex Block 4 - Lift 2',
+    hostelOrLocation: 'Raman Block - Lift 2',
+    location: 'Raman Block - Lift 2',
     description: 'The elevator jerked and stopped between the 2nd and 3rd floors with 4 people inside for 20 minutes this morning. Emergency alarm button inside the lift car is non-operational.',
     status: 'resolved',
     upvoteCount: 35,
@@ -83,8 +83,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
     isSandbox: true,
     category: 'harassment',
-    hostelOrLocation: 'East Gate Campus Pathway / Bus Stop',
-    location: 'East Gate Campus Pathway / Bus Stop',
+    hostelOrLocation: 'FR Building - Main Gate Pathway',
+    location: 'FR Building - Main Gate Pathway',
     description: 'Aggressive verbal catcalling and follow-up stalking observed repeatedly around 9:00 PM near the dimly-lit pathway between Library and East Gate. Requesting increased security patrolling and repaired streetlights.',
     status: 'under_review',
     upvoteCount: 114,
@@ -101,8 +101,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
     isSandbox: true,
     category: 'hygiene',
-    hostelOrLocation: 'Hostel Block C - Ground Floor Common Washrooms',
-    location: 'Hostel Block C - Ground Floor Common Washrooms',
+    hostelOrLocation: 'Kasturba Bhavan - Ground Floor Washrooms',
+    location: 'Kasturba Bhavan - Ground Floor Washrooms',
     description: 'Severe drainage blockage causing foul-smelling overflow in the ground floor shower stalls. Daily sanitation has not been carried out for 3 days.',
     status: 'under_review',
     upvoteCount: 54,
@@ -118,8 +118,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
     isSandbox: true,
     category: 'other',
-    hostelOrLocation: 'Central Library 2nd Floor Silent Reading Area',
-    location: 'Central Library 2nd Floor Silent Reading Area',
+    hostelOrLocation: 'Business Block - 2nd Floor Silent Reading Area',
+    location: 'Business Block - 2nd Floor Silent Reading Area',
     description: 'AC unit #3 rattling loudly with a screeching fan bearing noise for the past week, making quiet study in the examination zone impossible.',
     status: 'resolved',
     upvoteCount: 18,
@@ -137,8 +137,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
     isSandbox: true,
     category: 'wifi',
-    hostelOrLocation: 'Hostel Block A - West Wing',
-    location: 'Hostel Block A - West Wing',
+    hostelOrLocation: 'Aryabhatta Block - West Wing',
+    location: 'Aryabhatta Block - West Wing',
     description: 'Bandwidth throttling dropping ping spikes to 800ms during online lab assessments. Router in corridor 2 repeatedly rebooting.',
     status: 'submitted',
     upvoteCount: 29,
@@ -154,8 +154,8 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     encryptedUserRef: undefined, // sandbox: no server sealing; marked isSandbox
     isSandbox: true,
     category: 'infrastructure',
-    hostelOrLocation: 'Girls Hostel 1 - 1st Floor Corridor',
-    location: 'Girls Hostel 1 - 1st Floor Corridor',
+    hostelOrLocation: 'Dayanand Bhavan - 1st Floor Corridor',
+    location: 'Dayanand Bhavan - 1st Floor Corridor',
     description: 'Broken corridor window pane shattered by heavy monsoon gusts. Glass shards on walkway pose risk of foot injuries.',
     status: 'resolved',
     upvoteCount: 47,

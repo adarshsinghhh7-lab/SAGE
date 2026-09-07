@@ -18,7 +18,7 @@ interface NavbarProps {
   totalComplaintsCount: number;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
+export const Navbar: React.FC<NavbarProps> = React.memo(({
   currentView,
   onNavigate,
   totalComplaintsCount,
@@ -96,7 +96,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
     </motion.header>
   );
-};
+});
+Navbar.displayName = 'Navbar';
 
 const NavButton: React.FC<{ id: string; active: boolean; onClick: () => void; children: React.ReactNode }> = ({ id, active, onClick, children }) => (
   <button

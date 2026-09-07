@@ -38,6 +38,7 @@ import { getCategoryBadgeStyle, getStatusBadgeStyle, getAiFlaggedBadgeStyle, get
 import { AdminComplaintModal } from './AdminComplaintModal';
 import { FlagDisputedModal } from './FlagDisputedModal';
 import { useAuth } from '../context/AuthContext';
+import { OFFICIAL_LOCATIONS } from '../constants/locations';
 
 interface AdminDashboardProps {
   complaints: Complaint[];
@@ -192,42 +193,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     })).filter((item) => item.value > 0);
   }, [complaints]);
 
-  // 3. Analytics: Hostel breakdown (Bar Chart data)
-  const hostelChartData = useMemo(() => {
+  // 3. Analytics: Location breakdown (Bar Chart data)
+  // Uses OFFICIAL_LOCATIONS from constants so the chart always matches the
+  // exact location presets shown in the grievance form and feed filters.
+  const locationChartData = useMemo(() => {
     const counts: Record<string, number> = {};
 
     complaints.forEach((c) => {
-      let hostelKey = 'Campus General';
-      const loc = (c.hostelOrLocation || c.location || '').toLowerCase();
-
-      if (loc.includes('hostel block a') || loc.includes('block a')) {
-        hostelKey = 'Block A';
-      } else if (loc.includes('hostel block b') || loc.includes('block b')) {
-        hostelKey = 'Block B';
-      } else if (loc.includes('hostel block c') || loc.includes('block c')) {
-        hostelKey = 'Block C';
-      } else if (loc.includes('girls hostel 1') || loc.includes('gh1')) {
-        hostelKey = 'Girls H-1';
-      } else if (loc.includes('girls hostel 2') || loc.includes('gh2')) {
-        hostelKey = 'Girls H-2';
-      } else if (loc.includes('dining') || loc.includes('mess')) {
-        hostelKey = 'Mess Hall';
-      } else if (loc.includes('library')) {
-        hostelKey = 'Library';
-      } else if (loc.includes('academic') || loc.includes('complex')) {
-        hostelKey = 'Academic';
-      } else if (loc.includes('gate') || loc.includes('pathway')) {
-        hostelKey = 'Gate / Grounds';
-      } else {
-        const raw = c.hostelOrLocation || c.location || 'General';
-        hostelKey = raw.split('(')[0].split('-')[0].trim().slice(0, 14);
+      const raw = (c.hostelOrLocation || c.location || '').trim();
+      if (!raw) {
+        counts['Campus General'] = (counts['Campus General'] || 0) + 1;
+        return;
       }
-
-      counts[hostelKey] = (counts[hostelKey] || 0) + 1;
+      // Match against official campus locations (case-insensitive).
+      // Use the canonical display name from OFFICIAL_LOCATIONS so labels are
+      // always clean and consistent regardless of how the user typed it.
+      const rawLower = raw.toLowerCase();
+      const matched = OFFICIAL_LOCATIONS.find(
+        (official) => official.toLowerCase() === rawLower
+      );
+      const key = matched || raw.split('(')[0].split('-')[0].trim().slice(0, 18);
+      counts[key] = (counts[key] || 0) + 1;
     });
 
     return Object.keys(counts).map((key) => ({
-      hostel: key,
+      location: key,
       complaints: counts[key],
     })).sort((a, b) => b.complaints - a.complaints);
   }, [complaints]);
@@ -702,14 +692,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           </div>
 
-          {/* Chart 2: Complaints by Hostel / Campus Location (Bar Chart) */}
+          {/* Chart 2: Complaints by Location (Bar Chart) */}
           <div className="lg:col-span-7 bg-surface border border-line-strong rounded-xl p-5 shadow-soft paper-grain flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between gap-2 mb-1 border-b border-line pb-2">
                 <div className="flex items-center gap-1.5">
                   <BarChart3 className="w-4 h-4 text-bronze-deep" />
                   <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-ink">
-                    Complaints by Hostel & Location
+                    Complaints by Location
                   </h3>
                 </div>
                 <span className="text-[10px] font-mono text-ink-soft uppercase">
@@ -717,20 +707,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </span>
               </div>
               <p className="text-xs font-sans text-ink-soft mb-3">
-                Concentration of unresolved and active complaints by campus residential block.
+                Concentration of active complaints by campus location — hostels, blocks &amp; buildings.
               </p>
             </div>
 
             <div className="h-64 sm:h-72 w-full">
-              {hostelChartData.length > 0 ? (
+              {locationChartData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
-                    data={hostelChartData}
+                    data={locationChartData}
                     margin={{ top: 10, right: 10, left: -15, bottom: 20 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
                     <XAxis
-                      dataKey="hostel"
+                      dataKey="location"
                       stroke="#94A3B8"
                       fontSize={10}
                       fontFamily="monospace"
@@ -998,7 +988,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             {/* Location Filter */}
             <div>
               <label htmlFor="admin-filter-loc" className="block text-[10px] font-mono font-bold uppercase tracking-wider text-ink-soft mb-1">
-                Hostel / Area
+                Location
               </label>
               <select
                 id="admin-filter-loc"
@@ -1006,7 +996,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 onChange={(e) => setSelectedLocation(e.target.value)}
                 className="w-full bg-surface border border-line-strong rounded-lg p-2 text-xs font-mono text-ink focus:outline-none cursor-pointer truncate"
               >
-                <option value="All">All Hostels & Zones</option>
+                <option value="All">All Locations</option>
                 {uniqueLocations.map((loc) => (
                   <option key={loc} value={loc}>
                     {loc}

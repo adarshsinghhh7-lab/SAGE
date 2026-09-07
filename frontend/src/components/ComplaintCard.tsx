@@ -23,7 +23,7 @@ interface ComplaintCardProps {
   onOpenImage?: (imageUrl: string, title: string) => void;
 }
 
-export const ComplaintCard: React.FC<ComplaintCardProps> = ({
+export const ComplaintCard: React.FC<ComplaintCardProps> = React.memo(({
   complaint,
   onUpvote,
   onSelect,
@@ -191,4 +191,6 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
       </div>
     </motion.article>
   );
-};
+
+});
+ComplaintCard.displayName = 'ComplaintCard';

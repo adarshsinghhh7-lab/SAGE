@@ -241,7 +241,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
     }
 
     if (!isLocationValid) {
-      setErrorMsg('Please specify your hostel or campus location.');
+      setErrorMsg('Please specify your campus location.');
       return;
     }
 
@@ -473,18 +473,18 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
               </div>
             </div>
           </motion.div>
-          {/* Field 3: Hostel / Location Dropdown or Text Input */}
+          {/* Field 3: Location Dropdown or Text Input */}
           <motion.div variants={formFieldVariants} id="field-location" className="space-y-2">
             <div className="flex items-center justify-between">
               <label htmlFor="location-select" className="block text-xs font-mono font-bold uppercase tracking-wider text-ink">
-                3. Hostel / Campus Location <span className="text-bronze-deep">*</span>
+                3. Campus Location <span className="text-bronze-deep">*</span>
               </label>
               <span className="text-[10px] font-mono text-ink-faint uppercase">Where Located</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="location-select" className="sr-only">Hostel Preset</label>
+                <label htmlFor="location-select" className="sr-only">Location Preset</label>
                 <select
                   id="location-select"
                   value={locationPreset}

@@ -33,75 +33,36 @@ export class AnalyticsController {
         value: categoryCounts[cat] || 0,
       }));
 
-      // 2. Hostel Breakdown
-      const hostelCounts: Record<string, number> = {};
+      // 2. Location Breakdown
+      // Canonical campus locations — must match the frontend constants/locations.ts
+      const OFFICIAL_LOCATIONS: string[] = [
+        'Aryabhatta Block', 'Ramanujan Block', 'Bhabha Block',
+        'Raman Block', 'Vishwakarma Block', 'Business Block',
+        'Vivekanand Bhavan', 'Dayanand Bhavan', 'Chanakya Bhavan',
+        'Aurobindo Bhavan', 'Ramakrishna Bhavan', 'FR Building',
+        'Kasturba Bhavan', 'Sarojini Bhavan',
+      ];
+
+      const locationCounts: Record<string, number> = {};
       complaints.forEach((c: any) => {
-        let hostelKey = 'Campus General';
-        const loc = c.location.toLowerCase();
-
-        // Official hostels (checked before loose 'block' matches so a bhavan
-        // name never gets mis-bucketed as a campus building).
-        if (loc.includes('vivekanand bhavan')) {
-          hostelKey = 'Vivekanand Bhavan';
-        } else if (loc.includes('dayanand bhavan')) {
-          hostelKey = 'Dayanand Bhavan';
-        } else if (loc.includes('chanakya bhavan')) {
-          hostelKey = 'Chanakya Bhavan';
-        } else if (loc.includes('aurobindo bhavan')) {
-          hostelKey = 'Aurobindo Bhavan';
-        } else if (loc.includes('ramakrishna bhavan')) {
-          hostelKey = 'Ramakrishna Bhavan';
-        } else if (loc.includes('fr building')) {
-          hostelKey = 'FR Building';
-        } else if (loc.includes('kasturba bhavan')) {
-          hostelKey = 'Kasturba Bhavan';
-        } else if (loc.includes('sarojini bhavan')) {
-          hostelKey = 'Sarojini Bhavan';
+        const raw = (c.hostelOrLocation || c.location || '').trim();
+        if (!raw) {
+          locationCounts['Campus General'] = (locationCounts['Campus General'] || 0) + 1;
+          return;
         }
-        // Campus academic / administrative buildings
-        else if (loc.includes('aryabhatta block')) {
-          hostelKey = 'Aryabhatta Block';
-        } else if (loc.includes('ramanujan block')) {
-          hostelKey = 'Ramanujan Block';
-        } else if (loc.includes('bhabha block')) {
-          hostelKey = 'Bhabha Block';
-        } else if (loc.includes('raman block')) {
-          hostelKey = 'Raman Block';
-        } else if (loc.includes('vishwakarma block')) {
-          hostelKey = 'Vishwakarma Block';
-        } else if (loc.includes('business block')) {
-          hostelKey = 'Business Block';
-        } else if (loc.includes('dining') || loc.includes('mess')) {
-          hostelKey = 'Mess Hall';
-        } else if (loc.includes('library')) {
-          hostelKey = 'Library';
-        } else if (loc.includes('academic') || loc.includes('complex')) {
-          hostelKey = 'Academic';
-        } else if (loc.includes('gate') || loc.includes('pathway')) {
-          hostelKey = 'Gate / Grounds';
-        }
-        // Legacy demo-seed hostel labels (kept for backwards compatibility)
-        else if (loc.includes('hostel block a')) {
-          hostelKey = 'Block A';
-        } else if (loc.includes('hostel block b')) {
-          hostelKey = 'Block B';
-        } else if (loc.includes('hostel block c')) {
-          hostelKey = 'Block C';
-        } else if (loc.includes('girls hostel 1') || loc.includes('gh1')) {
-          hostelKey = 'Girls H-1';
-        } else if (loc.includes('girls hostel 2') || loc.includes('gh2')) {
-          hostelKey = 'Girls H-2';
-        } else {
-          hostelKey = c.location.split('(')[0].split('-')[0].trim().slice(0, 14);
-        }
-
-        hostelCounts[hostelKey] = (hostelCounts[hostelKey] || 0) + 1;
+        // Match against official campus locations (case-insensitive).
+        const rawLower = raw.toLowerCase();
+        const matched = OFFICIAL_LOCATIONS.find(
+          (official) => official.toLowerCase() === rawLower
+        );
+        const key = matched || raw.split('(')[0].split('-')[0].trim().slice(0, 18);
+        locationCounts[key] = (locationCounts[key] || 0) + 1;
       });
 
-      const hostelData = Object.keys(hostelCounts)
+      const locationData = Object.keys(locationCounts)
         .map((k) => ({
-          hostel: k,
-          complaints: hostelCounts[k],
+          location: k,
+          complaints: locationCounts[k],
         }))
         .sort((a, b) => b.complaints - a.complaints);
 
@@ -147,7 +108,7 @@ export class AnalyticsController {
             resolutionRate,
           },
           categoryData,
-          hostelData,
+          locationData,
         },
       });
     } catch (error: any) {

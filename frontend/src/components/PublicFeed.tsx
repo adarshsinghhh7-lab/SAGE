@@ -222,7 +222,7 @@ export const PublicFeed: React.FC<PublicFeedProps> = ({
           </div>
 
           <div>
-            <label htmlFor="feed-loc-select" className="s-label">Hostel / Location</label>
+            <label htmlFor="feed-loc-select" className="s-label">Location</label>
             <select
               id="feed-loc-select"
               value={selectedLocation}

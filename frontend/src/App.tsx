@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { paperSpring, instantFade } from './motion/tokens';
 import { Complaint, ComplaintStatus, PageView } from './types';
@@ -8,8 +8,6 @@ import { SubmissionForm } from './components/SubmissionForm';
 import { ConfirmationScreen } from './components/ConfirmationScreen';
 import { PublicFeed } from './components/PublicFeed';
 import { ComplaintDetail } from './components/ComplaintDetail';
-import { AdminDashboard } from './components/AdminDashboard';
-import { HeadAdminDashboard } from './components/HeadAdminDashboard';
 import { LandingPage } from './components/LandingPage';
 import { PublicComplaintPage } from './components/PublicComplaintPage';
 import { ImageModal } from './components/ImageModal';
@@ -21,6 +19,16 @@ import { isFirebaseConfigured } from './firebase/config';
 import { AdminAccessDenied } from './components/AdminAccessDenied';
 import { NotFoundPage } from './components/NotFoundPage';
 import { ErrorBoundary } from './components/ErrorBoundary';
+
+// Lazy-load the admin dashboards so the heavy recharts bundle is only fetched
+// when an admin actually opens the panel — cutting the initial bundle size and
+// improving perceived load time for students on the student-facing views.
+const AdminDashboard = lazy(() =>
+  import('./components/AdminDashboard').then((m) => ({ default: m.AdminDashboard }))
+);
+const HeadAdminDashboard = lazy(() =>
+  import('./components/HeadAdminDashboard').then((m) => ({ default: m.HeadAdminDashboard }))
+);
 
 function MainApp() {
   const { activeRole, user } = useAuth();
@@ -349,7 +357,14 @@ function MainApp() {
         )}
 
         {currentView === 'admin' && (
-          isAdminRole ? (
+          <Suspense
+            fallback={
+              <div className="max-w-7xl mx-auto py-24 px-4 text-center font-mono text-xs text-ink-soft">
+                Loading admin dashboard...
+              </div>
+            }
+          >
+          {isAdminRole ? (
             activeRole === 'head_admin' ? (
               <HeadAdminDashboard
                 complaints={complaints}
@@ -366,6 +381,8 @@ function MainApp() {
           ) : (
             <AdminAccessDenied />
           )
+          }
+          </Suspense>
         )}
 
         {currentView === 'detail' && !activeComplaint && (

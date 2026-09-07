@@ -4,7 +4,7 @@ import { ApiService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { BackendHealthResponse } from '../types';
 
-export const ConnectionBanner: React.FC = () => {
+export const ConnectionBanner: React.FC = React.memo(() => {
   const { activeRole, openAuthModal } = useAuth();
   const [healthData, setHealthData] = useState<BackendHealthResponse | null>(null);
   const [isChecking, setIsChecking] = useState<boolean>(false);
@@ -23,7 +23,9 @@ export const ConnectionBanner: React.FC = () => {
 
   useEffect(() => {
     checkConnection();
-    const interval = setInterval(checkConnection, 15000);
+    // Poll every 30 seconds instead of 15 to reduce network overhead and
+    // prevent unnecessary background work on mobile devices.
+    const interval = setInterval(checkConnection, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -67,4 +69,5 @@ export const ConnectionBanner: React.FC = () => {
       </div>
     </div>
   );
-};
+});
+ConnectionBanner.displayName = 'ConnectionBanner';
