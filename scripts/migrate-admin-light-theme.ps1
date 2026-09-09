@@ -88,10 +88,10 @@ $pairs = @(
 )
 
 $files = @(
-  'src/components/AdminComplaintModal.tsx'
-  'src/components/AdminDashboard.tsx'
-  'src/components/HeadAdminDashboard.tsx'
-  'src/context/ToastContext.tsx'
+  'src/components/AdminComplaintModal.jsx'
+  'src/components/AdminDashboard.jsx'
+  'src/components/HeadAdminDashboard.jsx'
+  'src/context/ToastContext.jsx'
 )
 
 $root = 'c:\Users\adars\Desktop\SAGE'

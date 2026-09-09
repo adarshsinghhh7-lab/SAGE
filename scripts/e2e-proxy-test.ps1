@@ -1,9 +1,9 @@
 $ErrorActionPreference = 'Stop'
 $root = 'c:\Users\adars\Desktop\SAGE'
 
-# 1) Start the backend (plain tsx, single process, easy to stop)
+# 1) Start the backend (plain node, single process, easy to stop)
 $be = Start-Process -FilePath node `
-  -ArgumentList '..\node_modules\tsx\dist\cli.mjs','src/server.ts' `
+  -ArgumentList 'src/server.js' `
   -WorkingDirectory "$root\backend" `
   -RedirectStandardOutput "$root\e2e-be.log" `
   -RedirectStandardError "$root\e2e-be-err.log" `

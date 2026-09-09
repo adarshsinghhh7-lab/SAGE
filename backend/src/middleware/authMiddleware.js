@@ -1,0 +1,127 @@
+import { auth, isFirebaseLive } from '../config/firebaseAdmin.js';
+
+export async function authenticate(
+  req,
+  res,
+  next
+) {
+  const authHeader = req.headers.authorization;
+  const devRoleHeader = req.headers['x-sage-role'];
+  const devUidHeader = req.headers['x-sage-uid'];
+
+  // 1. Check for Firebase Bearer Token
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split('Bearer ')[1];
+
+    if (isFirebaseLive && auth) {
+      try {
+        // Race the token verification against a 5-second timeout so a hung
+        // Google endpoint (network issue / cold start / rate-limit) cannot
+        // freeze the entire request pipeline indefinitely.
+        const decodedToken = await Promise.race([
+          auth.verifyIdToken(token),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('verifyIdToken timed out')), 5000)
+          ),
+        ]);
+        const role = decodedToken.role || (decodedToken.admin ? 'admin' : 'student');
+
+        req.user = {
+          uid: decodedToken.uid,
+          email: decodedToken.email,
+          role: role,
+          isAnonymous: decodedToken.firebase?.sign_in_provider === 'anonymous',
+        };
+        return next();
+      } catch (err) {
+        console.warn(`[Auth Middleware] Firebase token verification failed: ${err.message}`);
+        // FAIL-CLOSED: never silently fall through to dev-header role override.
+        // An invalid/expired/timed-out token must result in rejection so the
+        // caller cannot bypass Firebase verification with x-sage-role headers.
+        res.status(401).json({
+          error: 'Unauthorized',
+          message: `Firebase token verification failed: ${err.message}`,
+        });
+        return;
+      }
+    } else {
+      // In dev mode with mock tokens
+      const role = devRoleHeader === 'admin' || devRoleHeader === 'head_admin' ? devRoleHeader : 'student';
+      req.user = {
+        uid: devUidHeader || `user-${token.slice(0, 8)}`,
+        email: `${role}@sage-campus.edu`,
+        role: role,
+      };
+      return next();
+    }
+  }
+
+  // 2. Check for Development Role Override (for easy role testing in UI)
+  if (devRoleHeader) {
+    const validRole =
+      devRoleHeader === 'head_admin'
+        ? 'head_admin'
+        : devRoleHeader === 'admin'
+        ? 'admin'
+        : 'student';
+
+    req.user = {
+      uid: devUidHeader || `dev-${validRole}-user`,
+      email: `${validRole}@sage-campus.edu`,
+      role: validRole,
+    };
+    return next();
+  }
+
+  // 3. Unauthenticated default: assign anonymous student role
+  req.user = {
+    uid: 'anonymous-visitor',
+    role: 'student',
+    isAnonymous: true,
+  };
+
+  next();
+}
+
+/**
+ * Middleware to enforce authentication
+ */
+export function requireAuth(
+  req,
+  res,
+  next
+) {
+  if (!req.user || req.user.uid === 'anonymous-visitor') {
+    res.status(401).json({
+      error: 'Authentication Required',
+      message: 'You must be signed in to perform this administrative action.',
+    });
+    return;
+  }
+  next();
+}
+
+/**
+ * Middleware to enforce Admin / Head Admin role
+ */
+export function requireRole(allowedRoles) {
+  return (req, res, next) => {
+    if (!req.user) {
+      res.status(401).json({ error: 'Unauthorized: User identity not established.' });
+      return;
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      res.status(403).json({
+        error: 'Forbidden: Insufficient Permissions',
+        message: `This action requires one of the following roles: [${allowedRoles.join(', ')}]. Current role: '${req.user.role}'.`,
+      });
+      return;
+    }
+
+    next();
+  };
+}
+
+export const requireAdmin = requireRole(['admin', 'head_admin']);
+export const requireHeadAdmin = requireRole(['head_admin']);

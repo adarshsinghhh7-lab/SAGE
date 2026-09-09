@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const file = path.join(__dirname, '..', 'src', 'components', 'RevealIdentityModal.tsx');
+const file = path.join(__dirname, '..', 'src', 'components', 'RevealIdentityModal.jsx');
 let src = fs.readFileSync(file, 'utf8');
 
 const successBlockOld = `          {revealResult ? (

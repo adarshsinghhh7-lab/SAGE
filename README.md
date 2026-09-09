@@ -41,11 +41,11 @@ S.A.G.E. is a full-stack web application that enables **anonymous** reporting of
 ```
 ┌────────────────────────────────────────────────────────────────┐
 │                     FRONTEND (React 19)                        │
-│  Vite 6 · TypeScript · Tailwind CSS 4 · Motion · Recharts     │
+│  Vite 6 · JavaScript (ESM) · Tailwind CSS 4 · Motion · Recharts     │
 │  LandingPage · SubmissionForm · PublicFeed · ComplaintDetail   │
 │  AdminDashboard (+ FlagDisputedModal)                          │
 │  HeadAdminDashboard (+ RevealIdentityModal · Reveal Logs)      │
-│  AuthContext · services/api.ts (VITE_API_URL, default /api)    │
+│  AuthContext · services/api.js (VITE_API_URL, default /api)    │
 └───────────────────────┬────────────────────────────────────────┘
                         │  /api (proxied by the Vite dev server)
 ┌───────────────────────▼────────────────────────────────────────┐
@@ -253,38 +253,37 @@ SAGE/
 ├── frontend/                       # React frontend (Vite, :3000) — self-contained
 │   ├── src/
 │   │   ├── components/               # 23 components
-│   │   │   ├── SubmissionForm.tsx     # Sealed-deposit wizard
-│   │   │   ├── FlagDisputedModal.tsx  # Admin dispute flag (10-char reason gate)
-│   │   │   ├── RevealIdentityModal.tsx# Head-Admin identity reveal
-│   │   │   ├── HeadAdminDashboard.tsx # Reveal buttons + reveal-log ledger
-│   │   │   └── PublicFeed.tsx, ComplaintDetail.tsx, AuthModal.tsx, ...
-│   │   ├── context/AuthContext.tsx   # Global auth + role state
-│   │   ├── services/api.ts           # API layer (proxy → :5000, sandbox fallback)
-│   │   ├── utils/crypto.ts           # SHA-256 voter helpers only — no client decrypt
-│   │   └── firebase/config.ts        # Client Firebase init
+│   │   │   ├── SubmissionForm.jsx    # Sealed-deposit wizard
+│   │   │   ├── FlagDisputedModal.jsx # Admin dispute flag (10-char reason gate)
+│   │   │   ├── RevealIdentityModal.jsx # Head-Admin identity reveal
+│   │   │   ├── HeadAdminDashboard.jsx # Reveal buttons + reveal-log ledger
+│   │   │   └── PublicFeed.jsx, ComplaintDetail.jsx, AuthModal.jsx, ...
+│   │   ├── context/AuthContext.jsx   # Global auth + role state
+│   │   ├── services/api.js           # API layer (proxy → :5000, sandbox fallback)
+│   │   ├── utils/crypto.js           # SHA-256 voter helpers only — no client decrypt
+│   │   └── firebase/config.js        # Client Firebase init
 │   ├── index.html                    # Vite entry point
 │   ├── public/                       # Static assets served at / (sage-logo.svg, …)
-│   ├── vite.config.ts                # proxy /api → :5000 + backend auto-start plugin
-│   ├── tsconfig.json                 # TypeScript config (react-jsx, @/* paths)
+│   ├── vite.config.js                # proxy /api → :5000 + backend auto-start plugin
 │   ├── package.json                  # Frontend deps (react, vite, tailwind, …)
 │   └── dist/                         # Production build output (served by backend)
 ├── backend/src/                      # Express sealing server (:5000)
 │   ├── controllers/                  # complaint · auth · analytics · escalation settings
 │   ├── services/
-│   │   ├── firestoreService.ts        # create / reveal / dispute / escalate + sandbox store
-│   │   ├── mlService.ts              # ML call + NLP fallback
-│   │   └── escalationService.ts       # hourly auto-escalation scheduler
-│   ├── middleware/authMiddleware.ts   # JWT verify / dev headers / requireAdmin, requireHeadAdmin
-│   ├── routes/ · types/ · utils/crypto.ts (AES seal/decrypt, SHA-256)
+│   │   ├── firestoreService.js       # create / reveal / dispute / escalate + sandbox store
+│   │   ├── mlService.js              # ML call + NLP fallback
+│   │   └── escalationService.js      # hourly auto-escalation scheduler
+│   ├── middleware/authMiddleware.js  # JWT verify / dev headers / requireAdmin, requireHeadAdmin
+│   ├── routes/ · utils/crypto.js (AES seal/decrypt, SHA-256)
 │   └── config/                       # firebaseAdmin · escalationConfig
 ├── ml-service/                       # Flask ML microservice (:5001)
 │   ├── app.py                        # POST /predict-urgency
 │   ├── train_and_evaluate.py          # model training script
 │   └── urgency_model.joblib           # trained TF-IDF + LogReg model
-├── database/                         # firestore.rules · firestore.indexes.json · seed.ts
+├── database/                         # firestore.rules · firestore.indexes.json · seed.js
 ├── scripts/                          # e2e-reveal-test.mjs · diag-reveal.cjs · …
 ├── app.py · train_and_evaluate.py · requirements.txt  # legacy ML entry points
-└── api/index.ts                      # Vercel serverless entry (serverless-http wrapper)
+└── api/index.js                      # Vercel serverless entry (serverless-http wrapper)
 ```
 
 ---
@@ -422,8 +421,8 @@ curl -X POST http://localhost:5001/predict-urgency \
 
 ## ⏱️ Auto-Escalation Engine
 
-- An hourly scheduler (`services/escalationService.ts`) sweeps complaints that cross the configurable upvote threshold (default **20**) and escalates them.
-- Escalation follows per-department email routing (`backend/src/config/escalationConfig.ts`) with console/webhook delivery.
+- An hourly scheduler (`services/escalationService.js`) sweeps complaints that cross the configurable upvote threshold (default **20**) and escalates them.
+- Escalation follows per-department email routing (`backend/src/config/escalationConfig.js`) with console/webhook delivery.
 - Admins can tune the threshold or trigger a sweep immediately via `/api/settings/escalation*`.
 
 ---
@@ -433,13 +432,12 @@ curl -X POST http://localhost:5001/predict-urgency \
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Frontend on :3000 — Vite auto-starts the backend if :5000 is free |
-| `npm run dev:backend` | Backend sealing server on :5000 (`tsx watch backend/src/server.ts`) |
+| `npm run dev:backend` | Backend sealing server on :5000 (`node backend/src/server.js`) |
 | `npm run build` | Production frontend build to `frontend/dist/` |
 | `npm run preview` | Preview the production build locally |
-| `npm run lint` | Frontend type-checking (`cd frontend && tsc --noEmit`) |
-| `npm run clean` | Remove build output (`frontend/dist`, `backend/dist`) |
-| `cd backend && npm run dev` | Backend only (`tsx watch`) |
-| `cd backend && npm run build && npm start` | Build + run compiled backend |
+| `npm run clean` | Remove build output (`frontend/dist`) |
+| `cd backend && npm run dev` | Backend only (`node --watch src/server.js`) |
+| `cd backend && npm start` | Run backend directly on :5000 |
 | `cd frontend && npm run dev` | Frontend only on :3000 |
 | `python ml-service/app.py` | ML microservice on :5001 |
 | `node scripts/e2e-reveal-test.mjs` | End-to-end reveal-protocol test (requires backend on :5000) |
@@ -454,11 +452,11 @@ curl -X POST http://localhost:5001/predict-urgency \
 > development only because the Vite dev server **proxies** `/api` → the
 > backend on `:5000`. A deployed static build has no proxy and no backend
 > process, so every `/api` call fails (see the fail-closed guard in
-> `frontend/src/services/api.ts`). The fix is to deploy the Express Sealing Server too.
+> `frontend/src/services/api.js`). The fix is to deploy the Express Sealing Server too.
 
 ### Option A — Vercel serverless (recommended, single project)
 
-The repo ships with an `api/index.ts` serverless entry point that wraps the
+The repo ships with an `api/index.js` serverless entry point that wraps the
 Express app with `serverless-http`, plus a `vercel.json` that routes every
 `/api/*` request to that function while serving the built React app
 (from `frontend/dist/`). One Vercel project = frontend **and** backend on the
@@ -483,9 +481,9 @@ same origin — free tier included, no credit card required.
 4. Open the site and submit a grievance end-to-end. Done.
 
 **How it works:** `vercel.json` rewrites `/api/*` → `/api/index`, and
-`api/index.ts` imports the Express app from `backend/src/server.ts` via
-`serverless-http`. The direct-run guard in `server.ts` means `app.listen()`
-only fires when the file is executed directly (e.g. `node backend/dist/server.js`);
+`api/index.js` imports the Express app from `backend/src/server.js` via
+`serverless-http`. The direct-run guard in `server.js` means `app.listen()`
+only fires when the file is executed directly (e.g. `node backend/src/server.js`);
 under the Vercel runtime the function is imported, so no port is ever bound.
 
 **Limitations:** the Vercel Hobby (free) tier caps request bodies at **~4.5 MB**,
@@ -497,8 +495,8 @@ media in Firebase Storage and reference it by URL, if this is a concern.
 The included `render.yaml` blueprint still works on container PaaS hosts:
 
 ```bash
-# Build:   npm ci && cd frontend && npm ci && cd .. && npm run build && cd backend && npm ci && npm run build
-# Start:   node backend/dist/server.js
+# Build:   npm ci && cd frontend && npm ci && cd .. && npm run build
+# Start:   node backend/src/server.js
 # Env:     NODE_ENV=production, SERVE_STATIC=true
 ```
 

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const file = path.join(__dirname, '..', 'src', 'components', 'RevealIdentityModal.tsx');
+const file = path.join(__dirname, '..', 'src', 'components', 'RevealIdentityModal.jsx');
 const src = fs.readFileSync(file, 'utf8');
 const start = src.indexOf('{revealResult ? (');
 const end = src.indexOf(') : isRevealing ? (');

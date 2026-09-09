@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const file = path.join(__dirname, '..', 'src', 'App.tsx');
+const file = path.join(__dirname, '..', 'src', 'App.jsx');
 let s = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
 const i = s.indexOf('{/* Footer */}');
 const j = s.indexOf('</footer>');
@@ -26,4 +26,4 @@ const newFooter = `      {/* Footer */}
 
 s = s.slice(0, i) + newFooter + s.slice(j + '</footer>'.length);
 fs.writeFileSync(file, s.replace(/\n/g, '\r\n'), 'utf8');
-console.log('App.tsx footer OK, len', s.length);
+console.log('App.jsx footer OK, len', s.length);
