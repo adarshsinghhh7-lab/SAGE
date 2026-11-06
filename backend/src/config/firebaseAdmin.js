@@ -11,25 +11,29 @@ let db = null;
 let auth = null;
 let bucket = null;
 let isFirebaseLive = false;
-let initMessage = '';
+let initMessage = 'Initializing Firebase...';
 
+// VERCEL COLD START FIX: Synchronous initialization with error handling
+// This must complete quickly (< 1s) to avoid Vercel timeout
 try {
+  console.log('[Firebase] Initializing Admin SDK...');
   const serviceAccountEnv = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
   const projectId = process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID;
 
   if (getApps().length > 0) {
+    console.log('[Firebase] Reusing existing app instance');
     adminApp = getApps()[0];
     db = getFirestore(adminApp);
     auth = getAuth(adminApp);
     try {
       bucket = getStorage(adminApp).bucket();
     } catch (e) {
-      console.warn('[Firebase Storage] Not available in this deployment');
       bucket = null;
     }
     isFirebaseLive = true;
-    initMessage = 'Reusing existing Firebase Admin instance';
+    initMessage = 'Connected (reused instance)';
   } else if (serviceAccountEnv) {
+    console.log('[Firebase] Initializing with service account...');
     let serviceAccount;
     try {
       serviceAccount = JSON.parse(serviceAccountEnv);
@@ -47,12 +51,12 @@ try {
     try {
       bucket = getStorage(adminApp).bucket();
     } catch (e) {
-      console.warn('[Firebase Storage] Not available in this deployment:', e?.message);
       bucket = null;
     }
     isFirebaseLive = true;
-    initMessage = 'Connected to Live Firebase Firestore via Service Account Key';
+    initMessage = 'Connected (service account)';
   } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    console.log('[Firebase] Initializing with Application Default Credentials...');
     adminApp = initializeApp({
       credential: applicationDefault(),
       projectId: projectId,
@@ -62,26 +66,30 @@ try {
     try {
       bucket = getStorage(adminApp).bucket();
     } catch (e) {
-      console.warn('[Firebase Storage] Not available in this deployment:', e?.message);
       bucket = null;
     }
     isFirebaseLive = true;
-    initMessage = 'Connected to Live Firebase Firestore via Application Default Credentials';
+    initMessage = 'Connected (ADC)';
   } else if (projectId && process.env.FIRESTORE_EMULATOR_HOST) {
+    console.log('[Firebase] Using Firestore Emulator...');
     adminApp = initializeApp({
       projectId: projectId,
     });
     db = getFirestore(adminApp);
     auth = getAuth(adminApp);
     isFirebaseLive = true;
-    initMessage = `Connected to Firebase Firestore Emulator on ${process.env.FIRESTORE_EMULATOR_HOST}`;
+    initMessage = `Emulator on ${process.env.FIRESTORE_EMULATOR_HOST}`;
   } else {
-    initMessage = 'Running in Development / Sandbox Mode with Synchronized In-Memory Firestore & Auth';
+    console.log('[Firebase] No credentials found - using in-memory fallback');
+    isFirebaseLive = false;
+    initMessage = 'In-memory fallback (no credentials)';
   }
 } catch (error) {
-  console.warn(`[Firebase Admin] Initializing fallback store: ${error?.message}`);
-  initMessage = `Fallback Mode: ${error?.message}`;
+  console.error(`[Firebase] Init failed: ${error?.message}`);
+  initMessage = `Error: ${error?.message}`;
   isFirebaseLive = false;
+  db = null;
+  auth = null;
   bucket = null;
 }
 
