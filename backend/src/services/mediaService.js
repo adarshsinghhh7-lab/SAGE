@@ -3,6 +3,7 @@ import { bucket } from '../config/firebaseAdmin.js';
 /**
  * MediaService: Firebase Storage media upload handler
  * Handles video/photo uploads with signed URL generation
+ * Gracefully degrades if Storage is unavailable
  */
 export class MediaService {
   /**
@@ -11,21 +12,22 @@ export class MediaService {
    * @param {Buffer|string} mediaData - base64 or buffer data
    * @param {string} mediaType - 'video' or 'photo'
    * @param {string} mimeType - MIME type (video/mp4, image/jpeg, etc.)
-   * @returns {Promise<string>} Signed URL for the uploaded media
+   * @returns {Promise<string|null>} Signed URL for the uploaded media, or null if unavailable
    */
   static async uploadMedia(complaintId, mediaData, mediaType = 'video', mimeType = 'video/mp4') {
     if (!bucket) {
-      throw new Error('Firebase Storage not configured. Set FIREBASE_SERVICE_ACCOUNT_KEY in environment.');
+      console.warn(`[MediaService] Storage not configured, skipping ${mediaType} upload`);
+      return null; // Return null instead of throwing
     }
 
     try {
       // Convert base64 to buffer if needed
-      let buffer;
+      let bufferData;
       if (typeof mediaData === 'string') {
         // Assume it's base64
-        buffer = Buffer.from(mediaData, 'base64');
+        bufferData = Buffer.from(mediaData, 'base64');
       } else {
-        buffer = mediaData;
+        bufferData = mediaData;
       }
 
       // Create unique file path
@@ -33,7 +35,7 @@ export class MediaService {
       const file = bucket.file(fileName);
 
       // Upload with metadata
-      await file.save(buffer, {
+      await file.save(bufferData, {
         metadata: {
           contentType: mimeType,
           metadata: {
@@ -53,8 +55,8 @@ export class MediaService {
 
       return signedUrl;
     } catch (error) {
-      console.error(`[MediaService] Upload failed for ${mediaType}:`, error);
-      throw new Error(`Failed to upload ${mediaType}: ${error?.message}`);
+      console.error(`[MediaService] Upload failed for ${mediaType}:`, error?.message);
+      return null; // Graceful degradation: return null instead of throwing
     }
   }
 
@@ -63,7 +65,7 @@ export class MediaService {
    * @param {string} complaintId - Complaint ID
    * @param {string|Buffer} videoData - base64 or buffer video data
    * @param {string} mimeType - Video MIME type (default: video/mp4)
-   * @returns {Promise<string>} Signed URL for video
+   * @returns {Promise<string|null>} Signed URL for video or null
    */
   static async uploadVideo(complaintId, videoData, mimeType = 'video/mp4') {
     return this.uploadMedia(complaintId, videoData, 'video', mimeType);
@@ -74,7 +76,7 @@ export class MediaService {
    * @param {string} complaintId - Complaint ID
    * @param {string|Buffer} photoData - base64 or buffer photo data
    * @param {string} mimeType - Photo MIME type (default: image/jpeg)
-   * @returns {Promise<string>} Signed URL for photo
+   * @returns {Promise<string|null>} Signed URL for photo or null
    */
   static async uploadPhoto(complaintId, photoData, mimeType = 'image/jpeg') {
     return this.uploadMedia(complaintId, photoData, 'photo', mimeType);

@@ -33,11 +33,9 @@ app.use(
   })
 );
 
-// Body limit must accommodate the largest allowed evidence upload: a 25MB
-// video encoded as a base64 data-URI inflates to ~33MB of JSON, so we allow
-// 35MB (was 10mb â€” large video submissions were being rejected with 413).
-app.use(express.json({ limit: '35mb' }));
-app.use(express.urlencoded({ extended: true, limit: '35mb' }));
+// Body limit reduced to 10MB for Vercel compatibility (serverless has strict limits)
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Optional single-service production hosting: when SERVE_STATIC=true the
 // backend also serves the built React app (frontend/dist/) plus an SPA

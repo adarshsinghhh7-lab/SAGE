@@ -21,30 +21,38 @@ export class MLService {
       };
     }
 
-    // Try Python Flask Microservice
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+    // Skip ML service if endpoint is localhost (won't work on Vercel)
+    const isLocalhost = this.mlEndpoint.includes('localhost') || this.mlEndpoint.includes('127.0.0.1');
+    
+    if (!isLocalhost) {
+      // Try Python Flask Microservice (production)
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
 
-      const response = await fetch(this.mlEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-        signal: controller.signal,
-      });
+        const response = await fetch(this.mlEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text }),
+          signal: controller.signal,
+        });
 
-      clearTimeout(timeoutId);
+        clearTimeout(timeoutId);
 
-      if (response.ok) {
-        const data = await response.json();
-        return {
-          urgency_score: data.urgency_score ?? (data.label === 'urgent' ? 0.9 : 0.2),
-          label: data.label ?? (data.urgency_score >= 0.5 ? 'urgent' : 'normal'),
-          source: 'ml_microservice',
-        };
+        if (response.ok) {
+          const data = await response.json();
+          return {
+            urgency_score: data.urgency_score ?? (data.label === 'urgent' ? 0.9 : 0.2),
+            label: data.label ?? (data.urgency_score >= 0.5 ? 'urgent' : 'normal'),
+            source: 'ml_microservice',
+          };
+        }
+      } catch (err) {
+        // ML microservice not reachable, use intelligent NLP fallback
+        console.warn('[MLService] ML endpoint unavailable, using NLP fallback:', err?.message);
       }
-    } catch {
-      // ML microservice not reachable, use intelligent NLP fallback
+    } else {
+      console.warn('[MLService] ML endpoint is localhost — skipping on serverless. Use NLP fallback.');
     }
 
     // Fallback NLP heuristic

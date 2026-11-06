@@ -158,7 +158,7 @@ export class ComplaintController {
       // 1. Run ML Urgency Classification
       const mlPrediction = await MLService.predictUrgency(descTrimmed);
 
-      // 2. Upload media to Firebase Storage (if provided)
+      // 2. Upload media to Firebase Storage (if provided and storage available)
       let finalPhotoUrl = photoUrl;
       let finalVideoUrl = videoUrl;
 
@@ -169,19 +169,30 @@ export class ComplaintController {
           // Extract base64 from data URI
           const base64Photo = photoUrl.split(',')[1];
           const photoMimeType = photoUrl.match(/data:([^;]+)/)?.[1] || 'image/jpeg';
-          finalPhotoUrl = await MediaService.uploadPhoto(complaintIdForMedia, base64Photo, photoMimeType);
+          const uploadedUrl = await MediaService.uploadPhoto(complaintIdForMedia, base64Photo, photoMimeType);
+          if (uploadedUrl) {
+            finalPhotoUrl = uploadedUrl;
+          } else {
+            console.warn('[Complaint] Photo upload failed, storing base64 as fallback');
+            finalPhotoUrl = photoUrl; // Keep original base64 as fallback
+          }
         }
 
         if (videoUrl && typeof videoUrl === 'string' && videoUrl.startsWith('data:')) {
           // Extract base64 from data URI
           const base64Video = videoUrl.split(',')[1];
           const videoMimeType = videoUrl.match(/data:([^;]+)/)?.[1] || 'video/mp4';
-          finalVideoUrl = await MediaService.uploadVideo(complaintIdForMedia, base64Video, videoMimeType);
+          const uploadedUrl = await MediaService.uploadVideo(complaintIdForMedia, base64Video, videoMimeType);
+          if (uploadedUrl) {
+            finalVideoUrl = uploadedUrl;
+          } else {
+            console.warn('[Complaint] Video upload failed, storing base64 as fallback');
+            finalVideoUrl = videoUrl; // Keep original base64 as fallback
+          }
         }
       } catch (uploadErr) {
-        console.error('[Media Upload] Error uploading media:', uploadErr?.message);
+        console.error('[Complaint] Media upload error:', uploadErr?.message);
         // Continue with complaint creation even if media upload fails
-        // The complaint is valid without media
       }
 
       // 3. SEAL AT SUBMISSION (server-only): AES-encrypt the verified Firebase

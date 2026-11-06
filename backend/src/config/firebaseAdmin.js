@@ -25,6 +25,7 @@ try {
       bucket = getStorage(adminApp).bucket();
     } catch (e) {
       console.warn('[Firebase Storage] Not available in this deployment');
+      bucket = null;
     }
     isFirebaseLive = true;
     initMessage = 'Reusing existing Firebase Admin instance';
@@ -46,7 +47,8 @@ try {
     try {
       bucket = getStorage(adminApp).bucket();
     } catch (e) {
-      console.warn('[Firebase Storage] Not available in this deployment');
+      console.warn('[Firebase Storage] Not available in this deployment:', e?.message);
+      bucket = null;
     }
     isFirebaseLive = true;
     initMessage = 'Connected to Live Firebase Firestore via Service Account Key';
@@ -60,7 +62,8 @@ try {
     try {
       bucket = getStorage(adminApp).bucket();
     } catch (e) {
-      console.warn('[Firebase Storage] Not available in this deployment');
+      console.warn('[Firebase Storage] Not available in this deployment:', e?.message);
+      bucket = null;
     }
     isFirebaseLive = true;
     initMessage = 'Connected to Live Firebase Firestore via Application Default Credentials';
@@ -76,9 +79,10 @@ try {
     initMessage = 'Running in Development / Sandbox Mode with Synchronized In-Memory Firestore & Auth';
   }
 } catch (error) {
-  console.warn(`[Firebase Admin Warning] Initializing fallback store: ${error?.message}`);
+  console.warn(`[Firebase Admin] Initializing fallback store: ${error?.message}`);
   initMessage = `Fallback Mode: ${error?.message}`;
   isFirebaseLive = false;
+  bucket = null;
 }
 
 export { adminApp, db, auth, bucket, isFirebaseLive, initMessage };
