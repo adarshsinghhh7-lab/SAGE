@@ -81,7 +81,7 @@ service cloud.firestore {
         ||
         // Case B
         (isAdmin()
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'resolutionNotes', 'resolvedAt', 'urgencyScore'])
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'resolutionNotes', 'resolvedAt', 'urgencyScore', 'photoUrl', 'videoUrl'])
           && request.resource.data.status in ['submitted', 'under_review', 'resolved']
           && !('studentEmail' in request.resource.data)
           && !('studentName' in request.resource.data)

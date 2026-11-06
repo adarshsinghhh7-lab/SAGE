@@ -20,10 +20,14 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for frontend Vite dev server (port 3000 / 5173 / all origins)
+// Enable CORS: dev allows all origins (Vite proxy), production restricts to frontend origin
+const corsOrigin = process.env.NODE_ENV === 'production'
+  ? (process.env.VITE_APP_URL || 'http://localhost:3000')
+  : '*';
+
 app.use(
   cors({
-    origin: '*',
+    origin: corsOrigin,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-sage-role', 'x-sage-uid', 'x-sage-voter-id'],
   })

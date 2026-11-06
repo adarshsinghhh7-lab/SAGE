@@ -1,5 +1,6 @@
 import { FirestoreService } from '../services/firestoreService.js';
 import { MLService } from '../services/mlService.js';
+import { MediaService } from '../services/mediaService.js';
 import { encryptAES, isMasterKeyReady } from '../utils/crypto.js';
 
 export class ComplaintController {
@@ -157,7 +158,33 @@ export class ComplaintController {
       // 1. Run ML Urgency Classification
       const mlPrediction = await MLService.predictUrgency(descTrimmed);
 
-      // 2. SEAL AT SUBMISSION (server-only): AES-encrypt the verified Firebase
+      // 2. Upload media to Firebase Storage (if provided)
+      let finalPhotoUrl = photoUrl;
+      let finalVideoUrl = videoUrl;
+
+      const complaintIdForMedia = complaintId || id || `complaint-${Date.now()}`;
+
+      try {
+        if (photoUrl && typeof photoUrl === 'string' && photoUrl.startsWith('data:')) {
+          // Extract base64 from data URI
+          const base64Photo = photoUrl.split(',')[1];
+          const photoMimeType = photoUrl.match(/data:([^;]+)/)?.[1] || 'image/jpeg';
+          finalPhotoUrl = await MediaService.uploadPhoto(complaintIdForMedia, base64Photo, photoMimeType);
+        }
+
+        if (videoUrl && typeof videoUrl === 'string' && videoUrl.startsWith('data:')) {
+          // Extract base64 from data URI
+          const base64Video = videoUrl.split(',')[1];
+          const videoMimeType = videoUrl.match(/data:([^;]+)/)?.[1] || 'video/mp4';
+          finalVideoUrl = await MediaService.uploadVideo(complaintIdForMedia, base64Video, videoMimeType);
+        }
+      } catch (uploadErr) {
+        console.error('[Media Upload] Error uploading media:', uploadErr?.message);
+        // Continue with complaint creation even if media upload fails
+        // The complaint is valid without media
+      }
+
+      // 3. SEAL AT SUBMISSION (server-only): AES-encrypt the verified Firebase
       //    uid with SAGE_MASTER_KEY. This ciphertext is the only identity the
       //    ledger ever stores. It never exists in the browser, is never
       //    generated client-side, and cannot be decrypted by any client code.
@@ -186,14 +213,14 @@ export class ComplaintController {
         return;
       }
 
-      // 3. Save to complaints collection
+      // 3. Save to complaints collection with Firebase Storage URLs
       const newComplaint = await FirestoreService.createComplaint({
         complaintId: complaintId || id,
         category: normCategory,
         hostelOrLocation: String(effectiveLoc).trim(),
         description: descTrimmed,
-        photoUrl: photoUrl ? String(photoUrl) : undefined,
-        videoUrl: videoUrl ? String(videoUrl) : undefined,
+        photoUrl: finalPhotoUrl ? String(finalPhotoUrl) : undefined,
+        videoUrl: finalVideoUrl ? String(finalVideoUrl) : undefined,
         urgencyScore: mlPrediction.urgency_score,
         encryptedUserRef: sealedUserRef,
       });

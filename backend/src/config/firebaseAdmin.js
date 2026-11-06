@@ -1,6 +1,7 @@
 import { initializeApp, cert, applicationDefault, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
+import { getStorage } from 'firebase-admin/storage';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -8,6 +9,7 @@ dotenv.config();
 let adminApp = null;
 let db = null;
 let auth = null;
+let bucket = null;
 let isFirebaseLive = false;
 let initMessage = '';
 
@@ -19,6 +21,11 @@ try {
     adminApp = getApps()[0];
     db = getFirestore(adminApp);
     auth = getAuth(adminApp);
+    try {
+      bucket = getStorage(adminApp).bucket();
+    } catch (e) {
+      console.warn('[Firebase Storage] Not available in this deployment');
+    }
     isFirebaseLive = true;
     initMessage = 'Reusing existing Firebase Admin instance';
   } else if (serviceAccountEnv) {
@@ -36,6 +43,11 @@ try {
 
     db = getFirestore(adminApp);
     auth = getAuth(adminApp);
+    try {
+      bucket = getStorage(adminApp).bucket();
+    } catch (e) {
+      console.warn('[Firebase Storage] Not available in this deployment');
+    }
     isFirebaseLive = true;
     initMessage = 'Connected to Live Firebase Firestore via Service Account Key';
   } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
@@ -45,6 +57,11 @@ try {
     });
     db = getFirestore(adminApp);
     auth = getAuth(adminApp);
+    try {
+      bucket = getStorage(adminApp).bucket();
+    } catch (e) {
+      console.warn('[Firebase Storage] Not available in this deployment');
+    }
     isFirebaseLive = true;
     initMessage = 'Connected to Live Firebase Firestore via Application Default Credentials';
   } else if (projectId && process.env.FIRESTORE_EMULATOR_HOST) {
@@ -64,4 +81,4 @@ try {
   isFirebaseLive = false;
 }
 
-export { adminApp, db, auth, isFirebaseLive, initMessage };
+export { adminApp, db, auth, bucket, isFirebaseLive, initMessage };
