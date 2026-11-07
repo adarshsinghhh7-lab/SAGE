@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-sage-role, x-sage-uid');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -69,6 +69,8 @@ export default async function handler(req, res) {
         urgencyScore: 0.5,
         createdAt: new Date().toISOString(),
         encryptedUserRef: 'sealed-identity',
+        disputed: false,
+        disputeReason: undefined,
       };
 
       complaints.set(id, complaint);
@@ -104,10 +106,108 @@ export default async function handler(req, res) {
       });
     }
 
+    // PATCH /api/complaints/:id/status - Update status
+    if (pathname.match(/^\/api\/complaints\/[^/]+\/status$/) && req.method === 'PATCH') {
+      const id = pathname.split('/')[3];
+      const { status, resolutionNotes } = req.body || {};
+
+      const complaint = complaints.get(id);
+      if (!complaint) {
+        return res.status(404).json({
+          success: false,
+          error: `Complaint '${id}' not found`,
+        });
+      }
+
+      complaint.status = status || 'submitted';
+      complaint.resolutionNotes = resolutionNotes;
+
+      return res.status(200).json({
+        success: true,
+        message: `Complaint updated to status '${status}'`,
+        data: complaint,
+      });
+    }
+
+    // POST /api/complaints/:id/dispute - Flag as disputed
+    if (pathname.match(/^\/api\/complaints\/[^/]+\/dispute$/) && req.method === 'POST') {
+      const id = pathname.split('/')[3];
+      const { reason } = req.body || {};
+
+      const complaint = complaints.get(id);
+      if (!complaint) {
+        return res.status(404).json({
+          success: false,
+          error: `Complaint '${id}' not found`,
+        });
+      }
+
+      if (!reason || String(reason).trim().length < 10) {
+        return res.status(400).json({
+          success: false,
+          error: 'Reason must be at least 10 characters',
+        });
+      }
+
+      complaint.disputed = true;
+      complaint.disputeReason = String(reason).trim();
+
+      return res.status(200).json({
+        success: true,
+        message: `Complaint '${id}' flagged as disputed`,
+        data: complaint,
+      });
+    }
+
+    // POST /api/complaints/:id/upvote - Upvote complaint
+    if (pathname.match(/^\/api\/complaints\/[^/]+\/upvote$/) && req.method === 'POST') {
+      const id = pathname.split('/')[3];
+      const complaint = complaints.get(id);
+
+      if (!complaint) {
+        return res.status(404).json({
+          success: false,
+          error: `Complaint '${id}' not found`,
+        });
+      }
+
+      complaint.upvoteCount = (complaint.upvoteCount || 0) + 1;
+
+      return res.status(200).json({
+        success: true,
+        message: 'Complaint successfully endorsed',
+        data: complaint,
+      });
+    }
+
+    // POST /api/complaints/:id/reveal - Reveal identity (head admin)
+    if (pathname.match(/^\/api\/complaints\/[^/]+\/reveal$/) && req.method === 'POST') {
+      const id = pathname.split('/')[3];
+      const { reason } = req.body || {};
+
+      const complaint = complaints.get(id);
+      if (!complaint) {
+        return res.status(404).json({
+          success: false,
+          error: `Complaint '${id}' not found`,
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: 'Identity revealed',
+        data: {
+          ...complaint,
+          revealedIdentity: 'student@campus.edu',
+        },
+      });
+    }
+
     // Default
     return res.status(404).json({
       error: 'Not found',
       path: pathname,
+      method: req.method,
     });
   } catch (error) {
     console.error('[Handler Error]', error);
